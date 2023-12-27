@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
+import { Event } from '../../../models/testing';
 
 
 export default function App() {

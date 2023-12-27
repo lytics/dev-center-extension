@@ -22,6 +22,7 @@ const Panel: React.FC = () => {
 
     // Cleanup the connection when the component unmounts
     return () => {
+      console.log('disconnecting');
       backgroundConnection.disconnect();
     };
   }, []); // Empty dependency array to run the effect once on component mount
