@@ -9,18 +9,11 @@ const manifest = {
   name: packageJson.name,
   version: packageJson.version,
   description: packageJson.description,
-  permissions: [
-    'storage', 
-    'sidePanel',
-    "webRequest",
-  ],
+  permissions: ['storage', 'sidePanel'],
   side_panel: {
     default_path: 'src/pages/sidepanel/index.html',
   },
   options_page: 'src/pages/options/index.html',
-  host_permissions: [
-    "*://*.lytics.io/*"
-  ],
   background: {
     service_worker: 'src/pages/background/index.js',
     type: 'module',
