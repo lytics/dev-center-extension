@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
-import { Event } from '../../../models/testing';
+// import { Event } from '../../../models/testing';
 
 
 export default function App() {
@@ -12,9 +12,9 @@ export default function App() {
     const injectScript = () => {
       const script = document.createElement("script");
     
-      script.src = chrome.runtime.getURL("/assets/js/injectables/lyticsRelay.js"); // Use chrome.runtime.getURL to get the external script URL
+      script.src = chrome.runtime.getURL("/src/pages/tagLink/index.js");
       script.onload = () => {
-        script.remove(); // Clean up the injected script tag
+        script.remove();
       };
     
       document.documentElement.appendChild(script);

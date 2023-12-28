@@ -39,8 +39,8 @@ const manifest = {
   devtools_page: 'src/pages/devtools/index.html',
   web_accessible_resources: [
     {
-      resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-34.png'],
-      matches: ['*://*/*'],
+      resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-34.png', 'src/pages/tagLink/index.js'],
+      "matches": ["<all_urls>"],
     },
   ],
 };

@@ -68,6 +68,7 @@ export default defineConfig({
         newtab: resolve(pagesDir, 'newtab', 'index.html'),
         options: resolve(pagesDir, 'options', 'index.html'),
         sidepanel: resolve(pagesDir, 'sidepanel', 'index.html'),
+        tagLink: resolve(pagesDir, 'tagLink', 'index.tsx'),
       },
       output: {
         entryFileNames: 'src/pages/[name]/index.js',
