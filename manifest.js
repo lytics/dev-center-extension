@@ -9,7 +9,27 @@ const manifest = {
   name: packageJson.name,
   version: packageJson.version,
   description: packageJson.description,
-  permissions: ['storage', 'sidePanel', 'activeTab', 'tabs'],
+  permissions: [
+    'storage', 
+    'sidePanel', 
+    'activeTab', 
+    'tabs', 
+    "webRequest",
+    'declarativeNetRequest',
+    'declarativeNetRequestFeedback',
+  ],
+  host_permissions: [
+    '<all_urls>'
+  ],
+  declarative_net_request: {
+    rule_resources: [
+      {
+        id: "lyticsBlockRule",
+        enabled: true,
+        path: "rules.json"
+      }
+    ]
+  },
   side_panel: {
     default_path: 'src/pages/sidepanel/index.html',
   },

@@ -9,10 +9,26 @@ reloadOnUpdate('pages/content/style.scss');
 
 console.log('background loaded');
 
+// --------------------------------------------------------
+// Handle Storage Clear on Tab Change
+// --------------------------------------------------------
 chrome.tabs.onActivated.addListener(() => {
   tagConfigStore.clear();
   entityStore.clear();
 });
+
+// --------------------------------------------------------
+// Handle Listen for Requests to lytics.io
+// --------------------------------------------------------
+chrome.webRequest.onBeforeRequest.addListener(
+  function(details) {
+    console.log("Request made:", details, details.url);
+  },
+  {
+    urls: ["*://*.lytics.io/*"],
+  },
+  []
+);
 
 // chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 //   if(activeTabId == tabId) {

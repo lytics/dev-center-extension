@@ -130,7 +130,7 @@ const Popup = () => {
 
   return (
     <Box
-      width="500px"
+      width="600px"
       height="500px"
       display="flex"
       flexDirection="column"
