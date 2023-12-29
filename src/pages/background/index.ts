@@ -1,5 +1,6 @@
 import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
+import entityStore from '@src/shared/storages/entityStorage';
 import 'webextension-polyfill';
 
 reloadOnUpdate('pages/background');
@@ -10,6 +11,7 @@ console.log('background loaded');
 
 chrome.tabs.onActivated.addListener(() => {
   tagConfigStore.clear();
+  entityStore.clear();
 });
 
 // chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {

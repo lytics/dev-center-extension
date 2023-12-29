@@ -1,17 +1,16 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
-import useStorage from '@src/shared/hooks/useStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
-import { TagConfigModel } from '@src/shared/models/tagConfigModel';
-// import { Event } from '../../../models/testing';
-
+import entityStore from '@src/shared/storages/entityStorage';
 
 export default function App() {
   const variableName = "jstag";
   let retries = 0;
-  const storedTagConfig = useStorage(tagConfigStore);
 
   useEffect(() => {
+    // ------------------------------
+    // Handle Tag Link Injection
+    // ------------------------------
     const injectScript = () => {
       const script = document.createElement("script");
     
@@ -33,13 +32,6 @@ export default function App() {
     };
     window.addEventListener("message", handleMessage);
 
-    document.addEventListener('config', function (event) {
-      const payload = (event as any).detail.data;
-      tagConfigStore.set(payload).then(() => {
-        console.log('Tag config saved.');
-      });
-    });
-
     window.addEventListener('message', function (event) {
       if (event.source === window && event.data.action === 'backgroundToContent') {
         // Handle the message from background.js
@@ -48,33 +40,37 @@ export default function App() {
       }
     });
 
-    // chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    //   console.log('Message from popup script:', message);
-      
-    //   // Send a response back to the content script if needed
-    //   sendResponse({ received: true });
-    // });
-    // chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    //   if (request.action === 'popuptocontent') {
-    //     console.log('popup to content');
-    //   }
-    // });
-
-    // const port = chrome.runtime.connect({ name: 'content-script' });
-    // port.onMessage.addListener(function (message) {
-    //   // Handle messages from the background script
-    //   console.log('Received message from background:', message);
-    // });
-
+    // ------------------------------
+    // Handle Requests to Tag Link
+    // ------------------------------
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.action == 'getConfig') {
         window.postMessage({ action: 'getConfig' }, '*');
       }
+
+      if (message.action == 'getEntity') {
+        window.postMessage({ action: 'getEntity' }, '*');
+      }
     });
 
+    // ------------------------------
+    // Handle Requests From Tag Link
+    // ------------------------------
+
+    // Listen for and Store JS Tag Config
+    document.addEventListener('config', function (event) {
+      const payload = (event as any).detail.data;
+      tagConfigStore.set(payload).then(() => {
+        console.log('Tag config saved.');
+      });
+    });
+
+    // Listen for and Store JS Tag Entity
     document.addEventListener('entity', function (event) {
-      console.log('entity ping');
-      console.log((event as any).detail);    
+      const payload = (event as any).detail.data;
+      entityStore.set(payload).then(() => {
+        console.log('Entity saved.');
+      });
     });
   }, []);
 
@@ -101,3 +97,24 @@ export default function App() {
     </Box>
   );
 }
+
+
+
+
+    // chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    //   console.log('Message from popup script:', message);
+      
+    //   // Send a response back to the content script if needed
+    //   sendResponse({ received: true });
+    // });
+    // chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    //   if (request.action === 'popuptocontent') {
+    //     console.log('popup to content');
+    //   }
+    // });
+
+    // const port = chrome.runtime.connect({ name: 'content-script' });
+    // port.onMessage.addListener(function (message) {
+    //   // Handle messages from the background script
+    //   console.log('Received message from background:', message);
+    // });

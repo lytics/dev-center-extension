@@ -19,6 +19,7 @@ export class TagLink {
             break;
           case 'getEntity':
             console.log('get entity');
+            this.getEntity();
             break;
           case 'getUID':
             console.log('get UID');
