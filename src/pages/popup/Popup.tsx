@@ -15,9 +15,10 @@ import Personalization from '@pages/popup/sections/Personalization';
 import Configuration from '@pages/popup/sections/Configuration';
 import TopNavigation from '@pages/popup/components/TopNavigation';
 import BottomNavigation from '@pages/popup/components/BottomNavigation';
-import { TagConfigModel } from '@root/src/pages/popup/models/tagConfigModel';
+import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
 import useStorage from '@src/shared/hooks/useStorage';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
+import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import { DeveloperCenterIcon } from '@pages/popup/assets/svg/developerCenterIcon';
 // import SampleConfig from '@pages/popup/assets/data/sampleConfig.json';
 
@@ -26,9 +27,9 @@ const Popup = () => {
   const location = useLocation();
   const extensionState = useStorage(extensionStateStorage);
   const [isEnabled, setIsEnabled] = useState(extensionState);
+  const [tagIsInstalled, setTagIsInstalled] = useState(false);
   const [activePath, setActivePath] = useState('/');
   const [isLoading, setIsLoading] = useState(true);
-  const [tagIsInstalled, setTagIsInstalled] = useState(false);
   const [tagConfig, setTagConfig] = useState<TagConfigModel>({} as TagConfigModel);
 
   // Define a callback function to handle storage changes
@@ -44,24 +45,30 @@ const Popup = () => {
   }
   chrome.storage.onChanged.addListener(handleStorageChange);
 
-  // temp
   useEffect(() => {
-    if (!isEnabled) return;
+    if (!isEnabled) {
+      return;
+    }
+    
+    const fetchData = async () => {
+      try {
+        const data = await tagConfigStore.get();
+        setIsLoading(false);
+        if (!data) {
+          chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+            chrome.tabs.sendMessage(tabs[0].id, {action: "getConfig"}, function(response) { console.log('response', response); });  
+          });
+          setTimeout(fetchData, 1000);
+        } else {
+          setTagConfig(JSON.parse(data) as TagConfigModel);
+          setTagIsInstalled(true);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [isEnabled]);
-
-  useEffect(() => {
-    if (!isEnabled) return;
-
-    chrome.storage.local.get(['tagConfig'], function (result) {
-      const storedConfig = JSON.parse(result.tagConfig);
-      setTagConfig(storedConfig);
-      setTagIsInstalled(true);
-    });
+    fetchData();
   }, [isEnabled]);
 
   useEffect(() => {
@@ -69,7 +76,6 @@ const Popup = () => {
       setActivePath('/');
       return;
     }
-
     setActivePath(location.pathname);
   }, [location.pathname]);
 
@@ -81,19 +87,6 @@ const Popup = () => {
   const handleStateToggle = (isActive) => {
     setIsEnabled(isActive);
     extensionStateStorage.set(isActive);
-    
-    // const port = chrome.tabs.connect({name: "knockknock"});
-    // port.postMessage({joke: "Knock knock"});
-    // port.onMessage.addListener(function(msg) {
-    //   if (msg.question === "Who's there?")
-    //     port.postMessage({answer: "Madame"});
-    //   else if (msg.question === "Madame who?")
-    //     port.postMessage({answer: "Madame... Bovary"});
-    // });
-
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-      chrome.tabs.sendMessage(tabs[0].id, {action: "open_dialog_box"}, function(response) { console.log(response); });  
-    });
   };
 
 

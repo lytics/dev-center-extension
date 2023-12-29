@@ -3,7 +3,7 @@ import { Box, Stack, Tab, Tabs, Typography } from '@mui/material';
 import TagStatus from '@pages/popup/sections/TagStatus';
 import TagConfig from '@pages/popup/sections/TagConfig';
 import TagActivity from '@pages/popup/sections/TagActivity';
-import { TagConfigModel } from '@root/src/pages/popup/models/tagConfigModel';
+import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
 
 interface DebuggerProps {
   tagIsInstalled: boolean;
@@ -49,28 +49,12 @@ const Debugger: React.FC<DebuggerProps> = ({ tagIsInstalled, tagConfig }) => {
     setActiveTab(newValue);
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setIsLoading(true);
-  //     try {
-  //       await new Promise((resolve) => setTimeout(resolve, 1000));
-  //       setLyticsIsInstalled(true);
-  //       setIsLoading(false);
-  //     } catch (error) {
-  //       console.error('Error:', error);
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
   return (
     <Box
       m={1}
       sx={{
-        width: 'calc(100% - 20px)', // 10px margin on each side
-        height: 'calc(100% - 20px)', // 10px margin on top and bottom
+        width: 'calc(100% - 20px)',
+        height: 'calc(100% - 20px)',
       }}>
       <Stack>
         <Box
@@ -88,7 +72,7 @@ const Debugger: React.FC<DebuggerProps> = ({ tagIsInstalled, tagConfig }) => {
           <TagStatus tagIsInstalled={tagIsInstalled} tagConfig={tagConfig} />
         </CustomTabPanel>
         <CustomTabPanel value={activeTab} index={1}>
-          <TagConfig />
+          <TagConfig tagConfig={tagConfig} />
         </CustomTabPanel>
         <CustomTabPanel value={activeTab} index={2}>
           <TagActivity />

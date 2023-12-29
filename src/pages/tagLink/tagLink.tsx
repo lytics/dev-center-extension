@@ -6,14 +6,33 @@ export class TagLink {
   init() {
     this.emitLog('initialized');
     this.jstagReady();
+    this.addListeners();
+  }
 
-    window.addEventListener('message', function (event) {
-      // Ensure the message is from a trusted source, e.g., your extension
-      if (event.source === window && event.data.action === 'callFunctionInInjectedScript') {
-        console.log('ping');
+  addListeners() {
+    window.addEventListener('message', (event) => {
+      if (event.source === window) {
+        switch (event.data.action) {
+          case 'getConfig':
+            console.log('get config');
+            this.getConfig();
+            break;
+          case 'getEntity':
+            console.log('get entity');
+            break;
+          case 'getUID':
+            console.log('get UID');
+            break;
+          case 'getExperiences':
+            console.log('get experiences');
+            break;
+          default:
+            console.log('invalid action:', event.data.action);
+            break;
+        }
       }
     });
-  }
+  } 
 
   emitLog(name: string, payload?: any) {
     console.log(`taglink ::: ${name} ::`, payload);
@@ -36,6 +55,7 @@ export class TagLink {
 
   getConfig() {
     (window as any).jstag.call('entityReady', () => {
+      console.log('update');
       this.dispatchEvent('config', (window as any).jstag.config);
     });
   }

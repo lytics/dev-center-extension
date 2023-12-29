@@ -1,4 +1,5 @@
 import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
+import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import 'webextension-polyfill';
 
 reloadOnUpdate('pages/background');
@@ -6,6 +7,16 @@ reloadOnUpdate('pages/background');
 reloadOnUpdate('pages/content/style.scss');
 
 console.log('background loaded');
+
+chrome.tabs.onActivated.addListener(() => {
+  tagConfigStore.clear();
+});
+
+// chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+//   if(activeTabId == tabId) {
+//     getTabInfo(tabId);
+//   }
+// });
 
 // Listen for messages from content scripts
 // chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
@@ -15,17 +26,17 @@ console.log('background loaded');
 //   sendResponse({ received: true });
 // });
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.action === 'popupToBackground') {
-    // Handle the message from popup.js
-    const popupData = request.data;
-    console.log('Received message from popup in background:', popupData);
+// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+//   if (request.action === 'popupToBackground') {
+//     // Handle the message from popup.js
+//     const popupData = request.data;
+//     console.log('Received message from popup in background:', popupData);
 
-    chrome.runtime.onConnect.addListener(function (port) {
-      port.postMessage({ action: 'backgroundToContent', data: 'Hello from background to content!' });
-    });
-  }
-});
+//     chrome.runtime.onConnect.addListener(function (port) {
+//       port.postMessage({ action: 'backgroundToContent', data: 'Hello from background to content!' });
+//     });
+//   }
+// });
 
 // // Initialize a variable to hold the DevTools panel connection
 // let devToolsConnection = null;

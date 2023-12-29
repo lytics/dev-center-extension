@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Chip, CircularProgress, Stack, Typography } from '@mui/material';
 import { CheckCircle, Error } from '@mui/icons-material';
-import { TagConfigModel } from '@root/src/pages/popup/models/tagConfigModel';
+import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
 import SimpleTable from '@pages/popup/components/SimpleTable';
 
 interface TagStatusProps {
@@ -70,11 +70,11 @@ const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig }) => {
               border: '4px solid transparent',
             }}>
             <Error style={{ fontSize: 26, color: '#FF9A01' }} />
-            <Typography variant="body2">Unable to detect the Lytics JavaScript SDK</Typography>
+            <Typography variant="body2">Searching for Lytics JavaScript SDK</Typography>
           </Stack>
           <Box>
             <Typography variant="body2" align={'center'} p={1}>
-              We were unable to find the Lytics JavaScript SDK on this page. We&apos;ll check again in a moment. If you
+              We have not been able to find the Lytics JavaScript SDK on this page. We&apos;ll continue checking but if you
               haven&apos;t yet installed the tag please refer to our{' '}
               <a
                 href="https://docs.lytics.com/docs/lytics-javascript-tag#installation"

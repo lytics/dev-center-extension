@@ -1,12 +1,15 @@
 import { useEffect } from 'react';
 import { Box } from '@mui/material';
+import useStorage from '@src/shared/hooks/useStorage';
+import tagConfigStore from '@src/shared/storages/tagConfigStorage';
+import { TagConfigModel } from '@src/shared/models/tagConfigModel';
 // import { Event } from '../../../models/testing';
 
 
 export default function App() {
   const variableName = "jstag";
-  // const maxRetries = 12;
   let retries = 0;
+  const storedTagConfig = useStorage(tagConfigStore);
 
   useEffect(() => {
     const injectScript = () => {
@@ -32,14 +35,9 @@ export default function App() {
 
     document.addEventListener('config', function (event) {
       const payload = (event as any).detail.data;
-      chrome.storage.local.set({ "tagConfig": payload }, function () {
+      tagConfigStore.set(payload).then(() => {
         console.log('Tag config saved.');
       });
-      // chrome.runtime.sendMessage({ message: 'Hello from content script to background' });
-      
-      // // Establish a connection with the popup
-      // const port = chrome.runtime.connect({ name: 'content-script' });
-      // port.postMessage({ message: 'Hello from content script to popup' });
     });
 
     window.addEventListener('message', function (event) {
@@ -69,9 +67,8 @@ export default function App() {
     // });
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-      if (message.action == 'open_dialog_box') {
-        console.log("Message recieved!");
-        window.postMessage({ action: 'callFunctionInInjectedScript' }, '*');
+      if (message.action == 'getConfig') {
+        window.postMessage({ action: 'getConfig' }, '*');
       }
     });
 
