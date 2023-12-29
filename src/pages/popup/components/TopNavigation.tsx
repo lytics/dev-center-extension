@@ -9,10 +9,11 @@ import Toggle from '@pages/popup/components/Toggle';
 import { LyticsLogo } from '@pages/popup/assets/svg/logo';
 
 interface TopNavProps {
+  isEnabled: boolean;
   onChange: (value: boolean) => void;
 }
 
-const TopNavigation: React.FC<TopNavProps> = ({ onChange }) => {
+const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
   const [toggleLabel, setToggleLabel] = useState('Disabled');
 
   const handleToggleChange = event => {
@@ -38,7 +39,7 @@ const TopNavigation: React.FC<TopNavProps> = ({ onChange }) => {
         />
         <FormGroup>
           <FormControlLabel
-            control={<Toggle />}
+            control={<Toggle checked={isEnabled} />}
             onChange={handleToggleChange}
             label={<Box sx={{ pl: 1 }}>{toggleLabel}</Box>}
           />

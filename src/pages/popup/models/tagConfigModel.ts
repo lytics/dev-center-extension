@@ -1,6 +1,7 @@
 export interface TagConfigModel {
   src?: string;
   cid?: string[];
+  stream?: string;
   audit?: {
     topic?: string;
     level?: string;

@@ -40,6 +40,7 @@ const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig }) => {
             <SimpleTable
               rows={[
                 { label: 'Account ID', value: tagConfig?.cid[0] },
+                { label: 'Stream', value: tagConfig?.stream || "Default" },
                 { label: 'Cookie Name', value: tagConfig?.cookie },
                 { label: 'Profile Key', value: tagConfig?.entity?.byFieldKey },
                 { label: '3rd Party Cookies', value: tagConfig?.loadid ? 'Enabled' : 'Disabled' },

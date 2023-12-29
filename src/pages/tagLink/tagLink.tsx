@@ -6,6 +6,13 @@ export class TagLink {
   init() {
     this.emitLog('initialized');
     this.jstagReady();
+
+    window.addEventListener('message', function (event) {
+      // Ensure the message is from a trusted source, e.g., your extension
+      if (event.source === window && event.data.action === 'callFunctionInInjectedScript') {
+        console.log('ping');
+      }
+    });
   }
 
   emitLog(name: string, payload?: any) {
