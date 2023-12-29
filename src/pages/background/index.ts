@@ -2,14 +2,19 @@ import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
 import 'webextension-polyfill';
 
 reloadOnUpdate('pages/background');
-
-/**
- * Extension reloading is necessary because the browser automatically caches the CSS.
- * If you do not use the CSS of the content script, please delete it.
- */
 reloadOnUpdate('pages/content/style.scss');
 
 console.log('background loaded');
+
+// Listen for messages from content scripts
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  console.log('Message from content script:', message);
+  
+  // Send a response back to the content script if needed
+  sendResponse({ received: true });
+});
+
+
 
 // // Initialize a variable to hold the DevTools panel connection
 // let devToolsConnection = null;
@@ -58,22 +63,22 @@ console.log('background loaded');
 //   }
 // });
 
-chrome.webRequest.onBeforeSendHeaders.addListener(
-  function(details) {
-    // Check if the request URL matches "lytics.io"
-    console.log('checking');
-    if (details.url.includes("lytics.io")) {
-      // Access request headers
-      const requestHeaders = details.requestHeaders;
+// chrome.webRequest.onBeforeSendHeaders.addListener(
+//   function(details) {
+//     // Check if the request URL matches "lytics.io"
+//     console.log('checking');
+//     if (details.url.includes("lytics.io")) {
+//       // Access request headers
+//       const requestHeaders = details.requestHeaders;
 
-      // Handle the network request here, observe request headers, or log information
-      console.log("Request URL:", details.url);
-      console.log("Request Headers:", requestHeaders);
-    }
-  },
-  { urls: ["*://*.lytics.io/*"] }, // Match all subdomains and paths under lytics.io
-  ["requestHeaders"]
-);
+//       // Handle the network request here, observe request headers, or log information
+//       console.log("Request URL:", details.url);
+//       console.log("Request Headers:", requestHeaders);
+//     }
+//   },
+//   { urls: ["*://*.lytics.io/*"] }, // Match all subdomains and paths under lytics.io
+//   ["requestHeaders"]
+// );
 
 // import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
 // import 'webextension-polyfill';

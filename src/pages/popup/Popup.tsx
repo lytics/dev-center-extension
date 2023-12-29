@@ -28,6 +28,19 @@ const Popup = () => {
   const [tagIsInstalled, setTagIsInstalled] = useState(false);
   const [tagConfig, setTagConfig] = useState<TagConfigModel>({} as TagConfigModel);
 
+  // Define a callback function to handle storage changes
+  function handleStorageChange(changes, areaName) {
+    if (areaName === 'sync') {
+      for (const key in changes) {
+        if (key === 'tagConfig') {
+          const newValue = changes[key].newValue;
+          console.log(`Tag config storage changed:`, newValue);
+        }
+      }
+    }
+  }
+  chrome.storage.onChanged.addListener(handleStorageChange);
+
   // temp
   useEffect(() => {
     if (!isEnabled) return;
@@ -42,8 +55,11 @@ const Popup = () => {
     if (!isEnabled) return;
 
     const timer = setTimeout(() => {
-      setTagConfig(SampleConfig);
-      setTagIsInstalled(true);
+      chrome.storage.local.get(['tagConfig'], function (result) {
+        const storedConfig = JSON.parse(result.tagConfig);
+        setTagConfig(storedConfig);
+        setTagIsInstalled(true);
+      });
     }, 2000);
     return () => clearTimeout(timer);
   }, [isEnabled]);
@@ -62,6 +78,11 @@ const Popup = () => {
     setActivePath(newValue);
     navigate(newValue);
   };
+
+  const port = chrome.runtime.connect({ name: 'popup' });
+  port.onMessage.addListener(function (message) {
+    console.log('Message from content script to popup:', message);
+  });
 
   return (
     <Box

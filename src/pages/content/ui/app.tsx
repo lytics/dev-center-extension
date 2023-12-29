@@ -30,35 +30,25 @@ export default function App() {
     };
     window.addEventListener("message", handleMessage);
 
-    document.addEventListener('RW759_connectExtension', () => {
-      // Generate a random number between 0 and 999999999
-      const randomNumber: number = Math.floor(Math.random() * 1000000000);
-    
-      console.log('Random Number:', randomNumber);
-    
-      // // Update the event detail with the random number
-      // if (event.detail) {
-      //   event.detail.rand = randomNumber;
-      // }
-    
-      // Send the random number to the background script using chrome.runtime.sendMessage
-      chrome.runtime.sendMessage({ message: randomNumber });
+    document.addEventListener('config', function (event) {
+      console.log('event', event.detail.data);
+      const payload = event.detail.data;
+      console.log('saving', payload);
+      chrome.storage.local.set({ "tagConfig": payload }, function () {
+        console.log('Tag config saved.');
+      });
+
+      // chrome.runtime.sendMessage({ message: 'Hello from content script to background' });
+      
+      // // Establish a connection with the popup
+      // const port = chrome.runtime.connect({ name: 'content-script' });
+      // port.postMessage({ message: 'Hello from content script to popup' });
     });
 
-    // // Function to re-run your content script when needed
-    // const runContentScript = () => {
-    //   retries = 0; // Reset the retry count
-    //   injectScript(); // Inject the script initially
-    // };
-
-    // // Listen for URL changes within the same website
-    // chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    //   console.log(message);
-    //   if (message && message.type === "urlChange") {
-    //     // When the URL changes within the same website, re-run the content script
-    //     runContentScript();
-    //   }
-    // });
+    document.addEventListener('entity', function (event) {
+      console.log('entity ping');
+      console.log((event as any).detail);    
+    });
   }, []);
 
   useEffect(() => {
