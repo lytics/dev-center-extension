@@ -1,6 +1,8 @@
 import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import entityStore from '@src/shared/storages/entityStorage';
+import tagActivityStore from '@src/shared/storages/tagActivityStorage';
+import { EventModel } from '@src/shared/models/eventModel';
 import 'webextension-polyfill';
 
 reloadOnUpdate('pages/background');
@@ -15,19 +17,140 @@ console.log('background loaded');
 chrome.tabs.onActivated.addListener(() => {
   tagConfigStore.clear();
   entityStore.clear();
+  tagActivityStore.clear();
 });
 
 // --------------------------------------------------------
 // Handle Listen for Requests to lytics.io
 // --------------------------------------------------------
+const parseURL = (url: string, body: any, type: string): EventModel => {
+  // Parse URL
+  const parsedURL = new URL(url);
+  const parsedBody = new URLSearchParams(body);
+
+  // Get URL components
+  const protocol = parsedURL.protocol; // e.g., 'https:'
+  const host = parsedURL.host; // e.g., 'example.com'
+  const pathname = parsedURL.pathname; // e.g., '/path/to/page'
+  const search = parsedURL.search; // e.g., '?param1=value1&param2=value2'
+
+  // Parse query parameters into an object
+  const queryParams = new URLSearchParams(search);
+  const queryParamObj: Record<string, string> = {};
+  queryParams.forEach((value, key) => {
+    queryParamObj[key] = value;
+  });
+
+  const parsedBodyDataObj = {};
+  if(parsedBody) {
+    parsedBody.forEach((value, key) => {
+      parsedBodyDataObj[key] = decodeURIComponent(value);
+    });
+  }
+
+  let ts: string;
+  if (queryParamObj.ts) {
+    ts = queryParamObj.ts;
+  } else if ((parsedBodyDataObj as any).ts) {
+    ts = (parsedBodyDataObj as any).ts;
+  } else {
+    ts = Date.now().toString();
+  }
+
+  // Assign description based on type
+  let description: string;
+  switch (type) {
+    case "load-js-tag":
+      description = "Loaded the core Lytics JavaScript SDK. Used for collecting data and surfacing the active visitors profile back to the browser.";
+      break;
+    case "load-profile":
+      description = "Loaded the active visitors full profile from Lytics.";
+      break;
+    case "collect-data":
+      description = "Collected data via jstag.send based on visitor activity.";
+      break;
+    case "load-pathfora-tag":
+      description = "Loaded the Pathfora JavaScript SDK for advanced onsite personalization.";
+      break;
+    case "load-pathfora-css":
+      description = "Loaded the default Pathfora JavaScript SDK styles to ensure modals and inline widgets are styled correctly.";
+      break;
+    case "load-campaign-config":
+      description = "Loaded the campaign configuration from the Lytics Experience Engine.";
+      break;
+    default:
+      description = "Communicated with Lytics via a generic or unhandled request.";
+  }
+
+  return {
+    protocol,
+    host,
+    pathname,
+    queryParamObj,
+    parsedBodyDataObj,
+    ts: parseInt(ts),
+    type,
+    description,
+  } as EventModel;
+}
+
 chrome.webRequest.onBeforeRequest.addListener(
   function(details) {
-    console.log("Request made:", details, details.url);
+    const url = details.url;
+    let postData;
+    let result: EventModel;
+
+    switch (true) {
+      case url.includes("/api/tag/"):
+        console.log("Loaded Tag ::", url);
+        result = parseURL(url, {}, "load-js-tag");
+        break;
+
+      case url.includes("/api/personalize/"):
+        console.log("Loaded Entity ::", url);
+        result = parseURL(url, {}, "load-profile");
+        break;
+
+      case url.includes("/c/"):
+        console.log("Collected Data ::", url);
+        if (details.requestBody) {
+          postData = details?.requestBody?.formData?._js[0];
+        }
+        result = parseURL(url, postData || {}, "collect-data");
+        break;
+
+      case url.includes("/static/pathfora.min.js"):
+        console.log("Loaded Pathfora ::", url);
+        result = parseURL(url, {}, "load-pathfora-tag");
+        break;
+      
+      case url.includes("static/pathfora.min.css"):
+        console.log("Loaded Pathfora Styles ::", url);
+        result = parseURL(url, {}, "load-pathfora-css");
+        break;
+
+      case url.includes("/api/program/campaign/config"):
+        console.log("Loaded Experience Config ::", url);
+        result = parseURL(url, {}, "load-campaign-config");
+        break;
+
+      default:
+        console.log("Unhandled Lytics Request:", url);
+    }
+
+    tagActivityStore.add(JSON.stringify(result))
+    
+    // console.log("result", result);
+    // tagActivityStore.add(JSON.stringify(result)).then(() => {
+    //   tagActivityStore.get().then((currentValue) => {
+    //     console.log("currentValue", currentValue);
+    //   });
+    // });
   },
   {
     urls: ["*://*.lytics.io/*"],
   },
-  []
+  ["requestBody"]
 );
 
 // chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
