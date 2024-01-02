@@ -43,7 +43,8 @@ export default function App() {
     // ------------------------------
     // Handle Requests to Tag Link
     // ------------------------------
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    // chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener((message) => {
       if (message.action == 'getConfig') {
         window.postMessage({ action: 'getConfig' }, '*');
       }
@@ -98,23 +99,20 @@ export default function App() {
   );
 }
 
+// chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+//   console.log('Message from popup script:', message);
+  
+//   // Send a response back to the content script if needed
+//   sendResponse({ received: true });
+// });
+// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+//   if (request.action === 'popuptocontent') {
+//     console.log('popup to content');
+//   }
+// });
 
-
-
-    // chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    //   console.log('Message from popup script:', message);
-      
-    //   // Send a response back to the content script if needed
-    //   sendResponse({ received: true });
-    // });
-    // chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    //   if (request.action === 'popuptocontent') {
-    //     console.log('popup to content');
-    //   }
-    // });
-
-    // const port = chrome.runtime.connect({ name: 'content-script' });
-    // port.onMessage.addListener(function (message) {
-    //   // Handle messages from the background script
-    //   console.log('Received message from background:', message);
-    // });
+// const port = chrome.runtime.connect({ name: 'content-script' });
+// port.onMessage.addListener(function (message) {
+//   // Handle messages from the background script
+//   console.log('Received message from background:', message);
+// });

@@ -1,46 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Stack, Tab, Tabs } from '@mui/material';
 import TagStatus from '@pages/popup/sections/TagStatus';
 import TagConfig from '@pages/popup/sections/TagConfig';
 import TagActivity from '@pages/popup/sections/TagActivity';
 import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
+import CustomTabPanel from '@src/pages/popup/components/CustomTabPanel';
 
 interface DebuggerProps {
   tagIsInstalled: boolean;
   tagConfig: TagConfigModel;
 }
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-const CustomTabPanel = (props: TabPanelProps) => {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}>
-      {value === index && (
-        <Box sx={{ p: 2 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-};
-
-const a11yProps = (index: number) => {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-};
 
 const Debugger: React.FC<DebuggerProps> = ({ tagIsInstalled, tagConfig }) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -63,9 +32,9 @@ const Debugger: React.FC<DebuggerProps> = ({ tagIsInstalled, tagConfig }) => {
             borderColor: 'divider',
           }}>
           <Tabs value={activeTab} onChange={handleSetTab} textColor="secondary" indicatorColor="secondary">
-            <Tab label="Status" {...a11yProps(0)} />
-            <Tab disabled={!tagIsInstalled} label="Configuration" {...a11yProps(1)} />
-            <Tab disabled={!tagIsInstalled} label="Activity" {...a11yProps(2)} />
+            <Tab id="status" label="Status" />
+            <Tab id="configuration" disabled={!tagIsInstalled} label="Configuration" />
+            <Tab id="activity" disabled={!tagIsInstalled} label="Activity" />
           </Tabs>
         </Box>
         <CustomTabPanel value={activeTab} index={0}>

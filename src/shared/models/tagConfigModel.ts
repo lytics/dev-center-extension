@@ -1,3 +1,8 @@
+export interface TagConfigPathforaCandidates {
+  experiences?: any[];
+  variations?: any[];
+  legacyABTests?: any[];
+}
 export interface TagConfigModel {
   src?: string;
   cid?: string[];
@@ -74,11 +79,7 @@ export interface TagConfigModel {
       recommendations?: {
         experience?: any[];
       };
-      candidates?: {
-        experiences?: any[];
-        variations?: any[];
-        legacyABTests?: any[];
-      };
+      candidates?: TagConfigPathforaCandidates;
       useLegacy?: boolean;
     };
   };

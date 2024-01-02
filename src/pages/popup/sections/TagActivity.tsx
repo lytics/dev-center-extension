@@ -52,53 +52,57 @@ function TagActivity() {
     >
       <Stack>
         {tagActivity.map((item, index) => (
-          <Accordion disableGutters key={index}>
-            <AccordionSummary
-              expandIcon={<ExpandMore />}
-              aria-controls="panel1a-content"
-              id={index.toString()}
-            >
-              <Stack
-                direction={"row"}
-                justifyContent="space-between"
-                width="100%"
-                alignItems="center"
-                spacing={2}
+          <>
+          {item && (
+            <Accordion disableGutters key={index}>
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                aria-controls="panel1a-content"
+                id={index.toString()}
               >
-                <Chip size="small" variant="outlined" label={translateEventType(item.type)} />
-                <Typography variant='body2'>{calculateTimeAgo(item.ts)}</Typography>
-              </Stack>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Stack>
-                <Box
-                  p={1}
-                  textAlign={"left"}
-                  border={0}
-                  borderRadius={1}
-                  bgcolor={"#F3F3F3"}
-                  fontSize={10}
+                <Stack
+                  direction={"row"}
+                  justifyContent="space-between"
+                  width="100%"
+                  alignItems="center"
+                  spacing={2}
                 >
-                  <Typography variant={"body2"}>{item.description}</Typography>
-                </Box>
-                {item.type === "collect-data" && (
+                  <Chip size="small" variant="outlined" label={translateEventType(item.type)} />
+                  <Typography variant='body2'>{calculateTimeAgo(item.ts)}</Typography>
+                </Stack>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Stack>
                   <Box
-                    fontSize={12}
+                    p={1}
+                    textAlign={"left"}
+                    border={0}
+                    borderRadius={1}
+                    bgcolor={"#F3F3F3"}
+                    fontSize={10}
                   >
-                    {item.queryParamObj ? (
-                        <SyntaxHighlighter language="json" style={{ ...materialDark }}>
-                        {formatRawData(item.queryParamObj)}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <SyntaxHighlighter language="json" style={{ ...materialDark }}>
-                        {formatRawData(item.parsedBodyDataObj)}
-                      </SyntaxHighlighter>
-                    )}
+                    <Typography variant={"body2"}>{item.description}</Typography>
                   </Box>
-                )}
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
+                  {item.type === "collect-data" && (
+                    <Box
+                      fontSize={12}
+                    >
+                      {item.queryParamObj ? (
+                          <SyntaxHighlighter language="json" style={{ ...materialDark }}>
+                          {formatRawData(item.queryParamObj)}
+                        </SyntaxHighlighter>
+                      ) : (
+                        <SyntaxHighlighter language="json" style={{ ...materialDark }}>
+                          {formatRawData(item.parsedBodyDataObj)}
+                        </SyntaxHighlighter>
+                      )}
+                    </Box>
+                  )}
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          )}
+          </>
         ))}        
       </Stack>
     </Box>

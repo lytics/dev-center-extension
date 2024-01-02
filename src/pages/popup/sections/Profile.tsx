@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
-import { Box, CircularProgress } from '@mui/material';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import React, { useState } from 'react';
+import { Box, Stack, Tab, Tabs, CircularProgress } from '@mui/material';
+import CustomTabPanel from '@src/pages/popup/components/CustomTabPanel';
+import ProfileDetail from '@src/pages/popup/sections/ProfileDetail';
+import ProfileSummary from '@src/pages/popup/sections/ProfileSummary';
 
 interface ProfileTabProps {
   profile: any;
@@ -9,34 +10,43 @@ interface ProfileTabProps {
 }
 
 const Profile: React.FC<ProfileTabProps> = ({ profileIsLoading, profile }) => {
-  useEffect(() => {
-    console.log('profile', profile);
-  }, [profile]);
+  const [activeTab, setActiveTab] = useState(0);
 
-  const jsonString = JSON.stringify(profile, null, 2);
+  const handleSetTab = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
   return (
-    <Box 
+    <Box
+      m={1}
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        flexGrow: 1,
-        fontSize: "12px",
-        height: "350px",
-        overflow: 'auto', 
-      }}
-    >
-      {profileIsLoading ? (
-        <Box m={2}>
-          <CircularProgress color="secondary" />
+        width: 'calc(100% - 20px)',
+        height: 'calc(100% - 20px)',
+      }}>
+      <Stack>
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: 'divider',
+          }}>
+          <Tabs value={activeTab} onChange={handleSetTab} textColor="secondary" indicatorColor="secondary">
+            <Tab id="summary" label="Summary" />
+            <Tab id="raw" disabled={profileIsLoading} label="Details" />
+          </Tabs>
         </Box>
-      ) : (
-        <Box m={2}>
-          <SyntaxHighlighter language="json" style={{ ...materialDark }}>
-            {jsonString}
-          </SyntaxHighlighter>
-        </Box>
-      )}
+        <CustomTabPanel value={activeTab} index={0}>
+          {profileIsLoading ? (
+            <Box m={2}>
+              <CircularProgress color="secondary" />
+            </Box>
+          ) : (
+            <ProfileSummary profile={profile} />
+          )}
+        </CustomTabPanel>
+        <CustomTabPanel value={activeTab} index={1}>
+          <ProfileDetail profile={profile} />
+        </CustomTabPanel>
+      </Stack>
     </Box>
   );
 };

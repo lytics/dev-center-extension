@@ -154,7 +154,7 @@ const Popup = () => {
                 <Routes>
                   <Route path="/settings" element={<Configuration />} />
                   <Route path="/profile" element={<Profile profileIsLoading={profileIsLoading} profile={currentProfile} />} />
-                  <Route path="/personalization" element={<Personalization />} />
+                  <Route path="/personalization" element={<Personalization candidates={tagConfig?.pathfora?.publish?.candidates} />} />
                   <Route path="*" element={<Debugger tagIsInstalled={tagIsInstalled} tagConfig={tagConfig} />} />
                 </Routes>
               </Box>

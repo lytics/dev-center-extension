@@ -16,4 +16,5 @@ export const EventType = {
   "load-pathfora-tag": "Load Pathfora Tag",
   "load-pathfora-css": "Load Pathfora CSS",
   "load-campaign-config": "Load Campaign Config",
+  "load-experience-config": "Load Experience Config",
 }

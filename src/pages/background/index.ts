@@ -75,11 +75,14 @@ const parseURL = (url: string, body: any, type: string): EventModel => {
     case "load-pathfora-css":
       description = "Loaded the default Pathfora JavaScript SDK styles to ensure modals and inline widgets are styled correctly.";
       break;
-    case "load-campaign-config":
-      description = "Loaded the campaign configuration from the Lytics Experience Engine.";
+    case "load-experience-config":
+      description = "Loaded the experience configurations from the Lytics Experience Engine.";
+      break;
+      case "load-campaign-config":
+      description = "Loaded the legacy campaign configurations from Lytics. This feature is being deprecated. Reach out to support for additional guidance.";
       break;
     default:
-      description = "Communicated with Lytics via a generic or unhandled request.";
+      description = `Communicated with Lytics via a generic or unhandled request (${type}).`;
   }
 
   return {
@@ -129,8 +132,13 @@ chrome.webRequest.onBeforeRequest.addListener(
         result = parseURL(url, {}, "load-pathfora-css");
         break;
 
-      case url.includes("/api/program/campaign/config"):
+      case url.includes("/experience/candidate"):
         console.log("Loaded Experience Config ::", url);
+        result = parseURL(url, {}, "load-experience-config");
+        break;
+
+      case url.includes("/api/program/campaign/config"):
+        console.log("Loaded Legacy Campaign Config ::", url);
         result = parseURL(url, {}, "load-campaign-config");
         break;
 
@@ -139,7 +147,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     }
 
     tagActivityStore.add(JSON.stringify(result))
-    
+
     // console.log("result", result);
     // tagActivityStore.add(JSON.stringify(result)).then(() => {
     //   tagActivityStore.get().then((currentValue) => {
