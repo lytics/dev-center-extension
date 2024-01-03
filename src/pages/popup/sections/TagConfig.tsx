@@ -1,31 +1,14 @@
-import React, { useEffect } from 'react';
-import Box from '@mui/material/Box';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import React from 'react';
 import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
+import JSONTree from '@root/src/pages/popup/components/jsonTree';
 
 interface ConfigTabProps {
   tagConfig: TagConfigModel;
 }
 
 const TagConfig: React.FC<ConfigTabProps> = ({ tagConfig }) => {
-  useEffect(() => {
-    console.log('tagConfig', tagConfig);
-  }, [tagConfig]);
-
-  const jsonString = JSON.stringify(tagConfig, null, 2);
-
   return (
-    <Box 
-      sx={{
-        fontSize: "12px",
-        maxHeight: '280px',
-        overflow: 'auto', 
-      }}>
-      <SyntaxHighlighter language="json" style={{ ...materialDark }}>
-        {jsonString}
-      </SyntaxHighlighter>
-    </Box>
+    <JSONTree data={tagConfig} />
   );
 };
 

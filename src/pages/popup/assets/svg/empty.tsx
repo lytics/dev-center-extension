@@ -1,6 +1,6 @@
 export const GeneralEmpty = () => {
   return (
-    <svg width="125" height="96" viewBox="0 0 151 115" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 151 115" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="24.9751" y="23.5886" width="100.972" height="81.6684" rx="3.5121" fill="#DDD9EF" />
       <path
         fillRule="evenodd"
@@ -32,7 +32,7 @@ export const GeneralEmpty = () => {
 
 export const ListeningEmpty = () => {
   return (
-    <svg width="138" height="96" viewBox="0 0 138 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 138 96" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="18.7144" y="13.5886" width="100.972" height="81.6684" rx="3.5121" fill="#DDD9EF" />
       <path
         fillRule="evenodd"
@@ -60,7 +60,7 @@ export const ListeningEmpty = () => {
 
 export const DeprecatedEmpty = () => {
   return (
-    <svg width="138" height="96" viewBox="0 0 138 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100%" viewBox="0 0 138 96" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="18.7144" y="13.5886" width="100.972" height="81.6684" rx="3.5121" fill="#DDD9EF" />
       <path
         fillRule="evenodd"

@@ -14,7 +14,16 @@ interface BottomNavProps {
 
 const BottomNav: React.FC<BottomNavProps> = ({ value, tagIsInstalled, onChange }) => {
   return (
-    <BottomNavigation showLabels value={value} onChange={(_, newValue) => onChange(newValue)}>
+    <BottomNavigation 
+      showLabels 
+      value={value} 
+      onChange={(_, newValue) => onChange(newValue)}
+      sx={{
+        position: 'fixed',
+        bottom: 0,
+        width: '100%',
+      }}
+    >
       <BottomNavigationAction
         label="Debugger"
         value="/"

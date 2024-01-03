@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -10,18 +10,20 @@ const CustomTabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
-      role="tabpanel"
+    <Box
+      p={1}
+      role={"tabpanel"}
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      {...other}>
+      {...other}
+    >
       {value === index && (
-        <Box sx={{ p: 2 }}>
-          <Typography>{children}</Typography>
+        <Box>
+          {children}
         </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

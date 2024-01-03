@@ -165,9 +165,6 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         flexDirection: 'column',
         flexGrow: 1,
         fontSize: '12px',
-        height: '265px',
-        overflow: 'auto',
-        p: 1,
       }}>
       <Stack
         direction={"row"}
@@ -232,7 +229,7 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
             },
             { label: 'Computed Attributes', value: (
                 computedAttributesValue.split(',').map((attribute, index) => (
-                  <Typography key={index} variant="subtitle2" align="left">
+                  <Typography key={index} variant="subtitle2" align="left" fontSize={"12px"}>
                     {attribute}
                   </Typography>
                 ))

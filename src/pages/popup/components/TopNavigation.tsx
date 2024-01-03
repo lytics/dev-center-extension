@@ -23,7 +23,7 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
 
   return (
     <AppBar
-      position="static"
+      position={"static"}
       elevation={0}
       sx={{
         background: 'linear-gradient(to right, #6C31B8, #AB32DE)',
@@ -33,9 +33,7 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
           <LyticsLogo />
         </Box>
         <Box
-          sx={{
-            flexGrow: 1,
-          }}
+          flexGrow={1}
         />
         <FormGroup>
           <FormControlLabel

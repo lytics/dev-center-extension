@@ -19,24 +19,29 @@ const Debugger: React.FC<DebuggerProps> = ({ tagIsInstalled, tagConfig }) => {
   };
 
   return (
-    <Box
-      m={1}
-      sx={{
-        width: 'calc(100% - 20px)',
-        height: 'calc(100% - 20px)',
-      }}>
-      <Stack>
-        <Box
-          sx={{
-            borderBottom: 1,
-            borderColor: 'divider',
-          }}>
-          <Tabs value={activeTab} onChange={handleSetTab} textColor="secondary" indicatorColor="secondary">
-            <Tab id="status" label="Status" />
-            <Tab id="configuration" disabled={!tagIsInstalled} label="Configuration" />
-            <Tab id="activity" disabled={!tagIsInstalled} label="Activity" />
-          </Tabs>
-        </Box>
+    <Stack
+      alignItems={"flex-start"}
+      justifyContent={"center"}
+      height={"100%"}
+      width={"100%"}
+      overflow={"hidden"}
+    >
+      <Box
+        borderBottom={1}
+        borderColor={"divider"}
+        width={"100%"}
+      >
+        <Tabs value={activeTab} onChange={handleSetTab} textColor="secondary" indicatorColor="secondary">
+          <Tab id="status" label="Status" />
+          <Tab id="configuration" disabled={!tagIsInstalled} label="Configuration" />
+          <Tab id="activity" disabled={!tagIsInstalled} label="Activity" />
+        </Tabs>
+      </Box>
+      <Box
+        flexGrow={1}
+        width={"100%"}
+        overflow={"auto"}
+      >
         <CustomTabPanel value={activeTab} index={0}>
           <TagStatus tagIsInstalled={tagIsInstalled} tagConfig={tagConfig} />
         </CustomTabPanel>
@@ -46,8 +51,8 @@ const Debugger: React.FC<DebuggerProps> = ({ tagIsInstalled, tagConfig }) => {
         <CustomTabPanel value={activeTab} index={2}>
           <TagActivity />
         </CustomTabPanel>
-      </Stack>
-    </Box>
+      </Box>
+    </Stack>
   );
 };
 

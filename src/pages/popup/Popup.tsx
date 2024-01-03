@@ -143,14 +143,21 @@ const Popup = () => {
       {isEnabled ? (
         <>
           {isLoading ? (
-            <>
-              <Box flex={1} display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                <CircularProgress color="secondary" />
-              </Box>
-            </>
+            <Box
+              width={"100%"}
+              height={"380px"}
+              justifyContent={'center'} 
+              alignItems={'center'}
+            >
+              <CircularProgress color="secondary" />
+            </Box>
           ) : (
             <>
-              <Box flex={1} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+              <Box 
+                height={"380px"}
+                justifyContent={'center'} 
+                alignItems={'flex-start'}
+              >
                 <Routes>
                   <Route path="/settings" element={<Configuration />} />
                   <Route path="/profile" element={<Profile profileIsLoading={profileIsLoading} profile={currentProfile} />} />

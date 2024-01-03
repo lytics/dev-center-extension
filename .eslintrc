@@ -32,7 +32,7 @@
     "import/no-unresolved": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "react/prop-types": "warn"
+    "react/prop-types": "off"
   },
   "globals": {
     "chrome": "readonly"

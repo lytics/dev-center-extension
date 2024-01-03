@@ -1,8 +1,8 @@
-import React from 'react';
-import { Box, Stack } from '@mui/material';
-import { DeprecatedEmpty, GeneralEmpty, ListeningEmpty } from '@root/src/pages/popup/assets/svg/empty';
+import React from "react";
+import { Box, Stack } from "@mui/material";
+import { DeprecatedEmpty, GeneralEmpty, ListeningEmpty } from "@root/src/pages/popup/assets/svg/empty";
 
-type EmptyType = 'empty' | 'listening' | 'deprecated';
+type EmptyType = "empty" | "listening" | "deprecated";
 
 interface EmptyStateProps {
   body: React.ReactNode;
@@ -12,9 +12,9 @@ interface EmptyStateProps {
 const EmptyState: React.FC<EmptyStateProps> = ({ body, type }) => {
   const translateType = (type: EmptyType) => {
     switch (type) {
-      case 'listening':
+      case "listening":
         return (<ListeningEmpty />);
-      case 'deprecated':
+      case "deprecated":
         return (<DeprecatedEmpty />);
       default:
         return (<GeneralEmpty />);
@@ -23,20 +23,22 @@ const EmptyState: React.FC<EmptyStateProps> = ({ body, type }) => {
 
   return (
     <Stack
-      sx={{
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
+      width={"100%"}
+      height={"100%"}
+      justifyContent={"center"}
+      alignItems={"center"}
     >
-      {translateType(type)}
       <Box
-        sx={{
-          color: '#B0A5D4',
-          fontSize: '14px',
-          textAlign: 'center',
-        }}
+        width={"125px"}
+      >
+        {translateType(type)}
+      </Box>
+      <Box
+        pt={1}
+        pb={5}
+        fontSize={"14px"}
+        textAlign={"center"}
+        color={"#B0A5D4"}
       >
         {body}
       </Box>

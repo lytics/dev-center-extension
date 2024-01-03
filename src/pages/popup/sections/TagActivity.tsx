@@ -3,8 +3,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Stack, Typogr
 import { ExpandMore } from '@mui/icons-material';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import { EventModel, EventType } from '@src/shared/models/eventModel';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import JSONTree from '@root/src/pages/popup/components/jsonTree';
 import EmptyState from '@src/pages/popup/components/EmptyState';
 import moment from 'moment';
 
@@ -13,10 +12,6 @@ const TagActivity = () => {
 
   const translateEventType = (type: string) => {
     return EventType[type];
-  };
-
-  const formatRawData = (data: any) => {
-    return JSON.stringify(data, null, 2);
   };
 
   function calculateTimeAgo(timestamp) {
@@ -85,13 +80,9 @@ const TagActivity = () => {
                       {item.type === 'collect-data' && (
                         <Box fontSize={12}>
                           {item.queryParamObj ? (
-                            <SyntaxHighlighter language="json" style={{ ...materialDark }}>
-                              {formatRawData(item.queryParamObj)}
-                            </SyntaxHighlighter>
+                            <JSONTree data={item.queryParamObj} collapsed={2} />
                           ) : (
-                            <SyntaxHighlighter language="json" style={{ ...materialDark }}>
-                              {formatRawData(item.parsedBodyDataObj)}
-                            </SyntaxHighlighter>
+                            <JSONTree data={item.parsedBodyDataObj} collapsed={2} />
                           )}
                         </Box>
                       )}
