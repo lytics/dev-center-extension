@@ -15,6 +15,7 @@ const manifest = {
     'activeTab', 
     'tabs', 
     "webRequest",
+    "webNavigation",
     'declarativeNetRequest',
     'declarativeNetRequestFeedback',
   ],

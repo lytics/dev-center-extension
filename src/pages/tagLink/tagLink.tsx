@@ -63,7 +63,10 @@ export class TagLink {
 
   getEntity() {
     (window as any).jstag.call('entityReady', (entity) => {
-      this.dispatchEvent('entity', entity);
+      (window as any).jstag.getid((id) => {
+        entity.data._uid = id;
+        this.dispatchEvent('entity', entity);
+      });
     });
   }
 

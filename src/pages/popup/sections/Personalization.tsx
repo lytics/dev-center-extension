@@ -5,8 +5,9 @@ import { TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigMo
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import CustomTabPanel from '@src/pages/popup/components/CustomTabPanel';
+import EmptyState from '@src/pages/popup/components/EmptyState';
 
-interface PersonlizationProps {
+interface PersonalizationProps {
   candidates: TagConfigPathforaCandidates;
 }
 
@@ -54,7 +55,7 @@ const TabDetails = ({ items }: { items: any[] }) => {
   );
 };
 
-const Personalization: React.FC<PersonlizationProps> = ({ candidates }) => {
+const Personalization: React.FC<PersonalizationProps> = ({ candidates }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const handleSetTab = (event, newValue) => {
@@ -80,21 +81,52 @@ const Personalization: React.FC<PersonlizationProps> = ({ candidates }) => {
           </Tabs>
         </Box>
         <CustomTabPanel value={activeTab} index={0}>
-          {candidates?.experiences.length > 0 ? (
-            <TabDetails items={candidates?.experiences} />
-          ) : (
-            <div>No items to display.</div>
-          )}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              flexGrow: 1,
+              fontSize: '12px',
+              height: '280px',
+              overflow: 'auto',
+            }}>
+            {candidates?.experiences.length > 0 ? (
+              <TabDetails items={candidates?.experiences} />
+            ) : (
+              <EmptyState
+                type={'listening'}
+                body={<Box maxWidth={375}>No active Lytics managed experiences were found.</Box>}
+              />
+            )}
+          </Box>
         </CustomTabPanel>
         <CustomTabPanel value={activeTab} index={1}>
-          {candidates.variations?.length > 0 || candidates.legacyABTests?.length > 0 ? (
-            <>
-              {candidates.variations?.length > 0 && <TabDetails items={candidates.variations} />}
-              {candidates.legacyABTests?.length > 0 && <TabDetails items={candidates.legacyABTests} />}
-            </>
-          ) : (
-            <div>No items to display.</div>
-          )}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              flexGrow: 1,
+              fontSize: '12px',
+              height: '280px',
+              overflow: 'auto',
+            }}>
+            {candidates.variations?.length > 0 || candidates.legacyABTests?.length > 0 ? (
+              <>
+                {candidates.variations?.length > 0 && <TabDetails items={candidates.variations} />}
+                {candidates.legacyABTests?.length > 0 && <TabDetails items={candidates.legacyABTests} />}
+              </>
+            ) : (
+              <EmptyState
+                type={'deprecated'}
+                body={
+                  <Box maxWidth={375}>
+                    Great news! No legacy campaigns are currently active on this page and you are not at risk of using a
+                    sunset feature.
+                  </Box>
+                }
+              />
+            )}
+          </Box>
         </CustomTabPanel>
       </Stack>
     </Box>

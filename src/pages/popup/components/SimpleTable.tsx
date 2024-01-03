@@ -4,6 +4,7 @@ import { Grid, Divider, Typography } from '@mui/material';
 interface TableRow {
   label: string;
   value: string;
+  fancyValue?: React.ReactNode;
 }
 
 interface SimpleTableProps {
@@ -21,7 +22,13 @@ const SimpleTable: React.FC<SimpleTableProps> = ({ rows }) => {
             </Typography>
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="body2">{row.value}</Typography>
+            {row.fancyValue ? (
+              row.fancyValue
+            ) : (
+              <Typography variant="body2" align={'left'}>
+                {row.value}
+              </Typography>
+            )}
           </Grid>
           {index !== rows.length - 1 && ( // Add a divider unless it's the last row
             <Grid item xs={12}>

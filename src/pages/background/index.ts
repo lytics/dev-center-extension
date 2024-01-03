@@ -6,18 +6,40 @@ import { EventModel } from '@src/shared/models/eventModel';
 import 'webextension-polyfill';
 
 reloadOnUpdate('pages/background');
-
 reloadOnUpdate('pages/content/style.scss');
-
-console.log('background loaded');
 
 // --------------------------------------------------------
 // Handle Storage Clear on Tab Change
 // --------------------------------------------------------
-chrome.tabs.onActivated.addListener(() => {
+const clearAllThings = () => {
   tagConfigStore.clear();
   entityStore.clear();
   tagActivityStore.clear();
+}
+
+chrome.tabs.onActivated.addListener(() => {
+  clearAllThings();
+});
+
+let lastDomain: string;
+chrome.webNavigation.onCompleted.addListener((details) => {
+  // Get the tab details
+  chrome.tabs.get(details.tabId, (tab) => {
+    if (chrome.runtime.lastError) {
+      console.error(chrome.runtime.lastError);
+      return;
+    }
+    const tabUrl = tab.url;
+    if (tabUrl) {
+      const activeDomain = new URL(tabUrl).hostname;
+
+      if(lastDomain !== activeDomain) {
+        clearAllThings();
+        lastDomain = activeDomain;
+        console.log('Domain changed to:', activeDomain);
+      }
+    }
+  });
 });
 
 // --------------------------------------------------------

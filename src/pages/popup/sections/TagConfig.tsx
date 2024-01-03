@@ -19,7 +19,7 @@ const TagConfig: React.FC<ConfigTabProps> = ({ tagConfig }) => {
     <Box 
       sx={{
         fontSize: "12px",
-        maxHeight: '285px',
+        maxHeight: '280px',
         overflow: 'auto', 
       }}>
       <SyntaxHighlighter language="json" style={{ ...materialDark }}>

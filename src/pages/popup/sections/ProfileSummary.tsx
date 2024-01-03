@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Divider, LinearProgress, Stack, Typography } from '@mui/material';
+import { Box, Button, Divider, LinearProgress, Stack, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import SimpleTable from '@pages/popup/components/SimpleTable';
 
 const useStyles = makeStyles(() => ({
   linearProgress: {
-    background: '#C5C5CD',
+    background: '#DCDCEA',
     borderRadius: '2px',
     '& .MuiLinearProgress-bar': {
-      background: 'linear-gradient(90deg, #8356FF 11.36%, #19EFD7 100%)',
+      background: 'linear-gradient(75.62deg, #6C31B8 57.26%, #AB32DE 94.2%)',
     },
   },
 }));
@@ -17,28 +17,54 @@ interface ProfileSummaryTabProps {
   profile: any;
 }
 
-interface Scores {
-  Consistency: number;
-  Frequency: number;
-  Intensity: number;
-  Maturity: number;
-  Momentum: number;
-  Propensity: number;
-  Quantity: number;
-  Recency: number;
-  Volatility: number;
-}
+const HighlightBox: React.FC<{ headline: string; cta?: React.ReactNode; value: React.ReactNode }> = ({ headline, value, cta }) => {
+  return (
+    <Box
+      p={2}
+      sx={{
+        borderRadius: "5px",
+        backgroundColor: "#D9D9E1",
+        width: "100%",
+      }}
+    >
+      <Typography variant="body2" align="center">
+        {headline}
+      </Typography>
+      <Typography variant="h5" align="center" sx={{ fontWeight: 600 }}>
+        {value}
+      </Typography>
+      {cta && (
+        <Box>
+          {cta}
+        </Box>
+      )}
+    </Box>
+  );
+};
 
 function CustomBarChart({ data }) {
   const classes = useStyles();
+  const truncateString = (str, maxLength) => {
+    if (str.length > maxLength) {
+      return str.substring(0, maxLength) + '...';
+    }
+    return str;
+  };
 
   return (
     <Stack spacing={0.5}>
       {data.map((item, index) => (
         <Stack key={index} spacing={1} direction={'row'}>
-          <Typography variant="body2" sx={{ fontSize: 12, textAlign: 'right', width: '300px' }}>
-            {item.label}
-          </Typography>
+           <Box
+            sx={{
+              background: '#EDEDF1',
+              width: '150px'
+            }}
+           >
+            <Typography variant="body2" sx={{ fontSize: 12, textAlign: 'right' }}>
+              {truncateString(item.label, 20)}
+            </Typography>
+          </Box>
           <LinearProgress
             variant="determinate"
             value={Math.round(item.value * 100)} // Scale the value to 0-100
@@ -57,12 +83,26 @@ function CustomBarChart({ data }) {
 const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
   const [hasContent, setHasContent] = useState(false);
   const [hasScores, setHasScores] = useState(false);
-  const [hasComputedAttributes, setHasComputedAttributes] = useState(false);
-
   const [totalAttributes, setTotalAttributes] = useState(0);
-  const [scores, setScores] = useState<Scores>({} as Scores);
+  const [scores, setScores] = useState([]);
   const [affinities, setAffinities] = useState<{ [key: string]: number }>({});
   const [computedAttributes, setComputedAttributes] = useState<{ [key: string]: string }>({});
+
+  const appendScore = (scoresArray, profileData, propertyName, label) => {
+    const propertyValue = profileData?.user?.[propertyName];
+
+    if (propertyValue) {
+      return [
+        ...scoresArray,
+        {
+          label: label,
+          value: propertyValue/100,
+        },
+      ];
+    }
+  
+    return scoresArray;
+  }
 
   useEffect(() => {
     // total attributes available
@@ -86,38 +126,26 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         result[segment] = segment;
         return result;
       }, {});
-
-      // Set the state with the resulting map
       setComputedAttributes(computedAttributesObject);
-      setHasComputedAttributes(true);
     }
 
     // populate scores
-    if (
-      profile?.data?.user?.score_consistency ||
-      profile?.data?.user?.score_frequency ||
-      profile?.data?.user?.score_intensity ||
-      profile?.data?.user?.score_maturity ||
-      profile?.data?.user?.score_momentum ||
-      profile?.data?.user?.score_propensity ||
-      profile?.data?.user?.score_quantity ||
-      profile?.data?.user?.score_recency ||
-      profile?.data?.user?.score_volatility
-    ) {
+    let updatedScores = appendScore(scores, profile.data, 'score_consistency', 'Consistency');
+    updatedScores = appendScore(updatedScores, profile.data, 'score_frequency', 'Frequency');
+    updatedScores = appendScore(updatedScores, profile.data, 'score_intensity', 'Intensity');
+    updatedScores = appendScore(updatedScores, profile.data, 'score_maturity', 'Maturity');
+    updatedScores = appendScore(updatedScores, profile.data, 'score_momentum', 'Momentum');
+    updatedScores = appendScore(updatedScores, profile.data, 'score_propensity', 'Propensity');
+    updatedScores = appendScore(updatedScores, profile.data, 'score_quantity', 'Quantity');
+    updatedScores = appendScore(updatedScores, profile.data, 'score_recency', 'Recency');
+    updatedScores = appendScore(updatedScores, profile.data, 'score_volatility', 'Volatility');
+    
+    if(updatedScores.length > 0){
       setHasScores(true);
-      setScores({
-        Consistency: profile.data.user.score_consistency,
-        Frequency: profile.data.user.score_frequency,
-        Intensity: profile.data.user.score_intensity,
-        Maturity: profile.data.user.score_maturity,
-        Momentum: profile.data.user.score_momentum,
-        Propensity: profile.data.user.score_propensity,
-        Quantity: profile.data.user.score_quantity,
-        Recency: profile.data.user.score_recency,
-        Volatility: profile.data.user.score_volatility,
-      });
-      console.log('scores', scores);
+    } else {
+      setHasScores(false);
     }
+    setScores(updatedScores);
   }, [profile]);
 
   const computedAttributesValue = Object.values(computedAttributes).join(', ');
@@ -125,6 +153,10 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
   const sortedData = Object.entries(affinities)
     .map(([label, value]) => ({ label, value }))
     .sort((a, b) => b.value - a.value);
+
+  const openNewTab = (url) => {
+    window.open(url, '_blank');
+  };
 
   return (
     <Box
@@ -137,97 +169,78 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         overflow: 'auto',
         p: 1,
       }}>
+      <Stack
+        direction={"row"}
+        spacing={2}
+        justifyContent={'center'}
+        alignItems={'center'}
+      >
+        <HighlightBox
+          headline={"Available Attributes"}
+          value={totalAttributes}
+          cta={
+            <Box
+              borderRadius={2}
+              textAlign={"center"}
+              mt={1}
+              pt={2}
+              sx={{
+                backgroundColor: "#E9E9EA",
+              }}
+            >
+              <Button variant="outlined" size="small" color="secondary" onClick={() => openNewTab('https://www.example.com')}>
+                Surface Additional Attributes
+              </Button>
+              <Typography
+                p={2}
+                sx={{
+                  fontSize: "12px"
+                }}
+              >
+                You may have more attributes available for personalization. Review documentation on how to configure which attributes are surfaced to the web.
+              </Typography>
+            </Box>
+          }
+        />
+      </Stack>
       <Box mt={1}>
         <SimpleTable
           rows={[
-            { label: 'Total Attributes', value: totalAttributes },
             { label: 'Lytics ID', value: profile?.data?.user?._id || 'Unknown' },
-            { label: 'Last Web Cookie', value: profile?.data?.user?._uid || 'Unknown' },
+            { label: 'Last Web Cookie', value: profile?.data?.user?._uid || profile?.data?._uid  || 'Unknown' },
+            { label: 'Behavior', value: (
+              <Box>
+                {hasScores ? (
+                  <CustomBarChart data={scores} />
+                ) : (
+                  <Typography variant="subtitle2" align="left">
+                    No scores available (ensure they are turned on)
+                  </Typography>
+                )}
+              </Box>
+            )},
+            { label: 'Interests', value: (
+              <Box>
+                {hasContent ? (
+                  <CustomBarChart data={sortedData} />
+                ) : (
+                  <Typography variant="subtitle2" align="left">
+                    No interests available (ensure they are turned on)
+                  </Typography>
+                )}
+              </Box>) 
+            },
+            { label: 'Computed Attributes', value: (
+                computedAttributesValue.split(',').map((attribute, index) => (
+                  <Typography key={index} variant="subtitle2" align="left">
+                    {attribute}
+                  </Typography>
+                ))
+            ) }
           ]}
         />
         <Divider sx={{ mt: 0.5 }} />
       </Box>
-      <Stack direction="row" spacing={2} mt={1} alignItems={'flex-start'} justifyContent={'center'}>
-        <Stack
-          spacing={0}
-          sx={{
-            width: '100%',
-          }}>
-          <Box>
-            <Typography variant="subtitle2" align="center" sx={{ fontWeight: 600 }}>
-              Behaviors
-            </Typography>
-          </Box>
-          <Stack
-            p={2}
-            spacing={0.5}
-            sx={{
-              borderRadius: '5px',
-              backgroundColor: '#D9D9E1',
-            }}>
-            {hasScores ? (
-              <>
-                {Object.entries(scores).map(([label, value], index) => (
-                  <Stack key={index} direction="row" spacing={1} alignItems="center">
-                    <Box
-                      sx={{
-                        borderRadius: '50%',
-                        width: '35px',
-                        height: '35px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        background: 'linear-gradient(90deg, #7938CB 50%, #9A2EC8 100%)',
-                        fontWeight: 800,
-                        color: '#fff',
-                      }}>
-                      {value}
-                    </Box>
-                    <Typography variant="subtitle2" pl={1} align="left">
-                      {label}
-                    </Typography>
-                  </Stack>
-                ))}
-              </>
-            ) : (
-              <Typography variant="subtitle2" align="center">
-                No scores available
-              </Typography>
-            )}
-          </Stack>
-        </Stack>
-        <Stack spacing={0}>
-          <Box>
-            <Typography variant="subtitle2" pr={1} align="center" sx={{ fontWeight: 600 }}>
-              Interests
-            </Typography>
-          </Box>
-          <Box
-            p={2}
-            sx={{
-              borderRadius: '5px',
-              backgroundColor: '#D9D9E1',
-            }}>
-              {hasContent ? (
-                <CustomBarChart data={sortedData} />
-              ) : (
-                <Typography variant="subtitle2" align="center">
-                  No interests available
-                </Typography>
-              )}
-          </Box>
-        </Stack>
-      </Stack>
-      {hasComputedAttributes && (
-        <Box mt={1}>
-          <SimpleTable
-            rows={[
-              { label: 'Computed Attributes', value: computedAttributesValue },
-            ]}
-          />
-          <Divider sx={{ mt: 0.5 }} />
-        </Box>
-      )}
     </Box>
   );
 };

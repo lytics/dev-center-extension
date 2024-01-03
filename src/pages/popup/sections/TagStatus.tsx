@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Chip, CircularProgress, Stack, Typography } from '@mui/material';
-import { CheckCircle, Error } from '@mui/icons-material';
+import { Cancel, CheckCircle, Error } from '@mui/icons-material';
 import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
 import SimpleTable from '@pages/popup/components/SimpleTable';
 
@@ -10,6 +10,17 @@ interface TagStatusProps {
 }
 
 const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig }) => {
+  const [legacyTag, setLegacyTag] = useState(false);
+
+  useEffect(() => {
+    if (tagConfig?.version) {
+      const version = tagConfig.version.split('.');
+      if (version[0] < '3') {
+        setLegacyTag(true);
+      }
+    }
+  }, [tagConfig]);
+
   return (
     <Box>
       {tagIsInstalled ? (
@@ -30,17 +41,28 @@ const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig }) => {
               borderRadius: 2,
               border: '4px solid transparent',
             }}>
-            <CheckCircle style={{ fontSize: 30, color: '#00D27C' }} />
-            <Typography variant="body1">
-              Lytics JavaScript SDK Installed <Chip label={`v${tagConfig?.version}`} size="small" sx={{ ml: 0.5 }} />
-            </Typography>
+            {legacyTag ? (
+              <>
+                <Cancel style={{ fontSize: 30, color: '#F00' }} />
+                <Typography variant="body1">
+                  You are using a deprecated version of the Lytics SDK <Chip label={`v${tagConfig?.version}`} size="small" sx={{ ml: 0.5 }} />
+                </Typography>
+              </>
+            ) : (
+              <>
+                <CheckCircle style={{ fontSize: 30, color: '#00D27C' }} />
+                <Typography variant="body1">
+                  Lytics JavaScript SDK Installed <Chip label={`v${tagConfig?.version}`} size="small" sx={{ ml: 0.5 }} />
+                </Typography>
+              </>
+              )}
           </Stack>
 
           <Box mt={2}>
             <SimpleTable
               rows={[
                 { label: 'Account ID', value: tagConfig?.cid[0] },
-                { label: 'Stream', value: tagConfig?.stream || "Default" },
+                { label: 'Stream', value: tagConfig?.stream || "default" },
                 { label: 'Cookie Name', value: tagConfig?.cookie },
                 { label: 'Profile Key', value: tagConfig?.entity?.byFieldKey },
                 { label: '3rd Party Cookies', value: tagConfig?.loadid ? 'Enabled' : 'Disabled' },

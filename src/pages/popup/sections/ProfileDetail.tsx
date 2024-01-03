@@ -19,7 +19,7 @@ const ProfileDetail: React.FC<ProfileDetailTabProps> = ({ profile }) => {
         flexDirection: 'column',
         flexGrow: 1,
         fontSize: '12px',
-        height: '285px',
+        height: '280px',
         overflow: 'auto',
       }}
     >
