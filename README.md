@@ -1,1 +1,75 @@
-# Future Home Of Dev Center Extension
+# Lytics Developer Tools
+
+<!-- ![Lytics Developer Tools Logo](https://example.com/lytics-developer-tools-logo.png) -->
+
+Lytics Developer Tools is a Chrome extension designed to empower developers, marketers, and data analysts by providing powerful capabilities to test, debug, and maximize the potential of the Lytics personalization engine. With this extension, you can gain insights into your Lytics installation, access visitor profiles, and manage personalization experiences effortlessly.
+
+## Features
+
+### 1. Lytics Installation Status
+- Check the overall health and status of your Lytics installation.
+- Verify if your Lytics instance is up-to-date and running smoothly.
+
+### 2. Visitor Profile Overview
+- Gain full access to the Lytics profile for the current visitor.
+- Explore key insights and all available attributes of individual visitors.
+- Use this feature to better understand your audience and tailor experiences accordingly.
+
+### 3. Personalization Experience Overview
+- Get an overview of existing personalization experiences within Lytics.
+- Access a summary of each available experience and its corresponding configuration.
+- Streamline the management of personalization strategies for your content.
+
+## Installation
+
+<!-- ### Install via Chrome Web Store (coming soon)
+
+1. Go to the [Chrome Web Store](https://chrome.google.com/webstore/detail/lytics-developer-tools) page for Lytics Developer Tools.
+2. Click the "Add to Chrome" button to install the extension. -->
+
+### Manual Installation
+
+1. Download the extension package ZIP file from our [GitHub releases](https://github.com/lytics/dev-center-extension/releases) page.
+2. Extract the contents of the ZIP file to a local directory.
+3. Open Chrome and navigate to `chrome://extensions/`.
+4. Enable the "Developer mode" toggle at the top-right corner of the page.
+5. Click the "Load unpacked" button and select the "dist" directory within the extracted extension files.
+6. Lytics Developer Tools will be added to your Chrome extensions.
+
+## Running Locally
+
+To run Lytics Developer Tools locally for development purposes, follow these steps:
+
+1. Clone the repository to your local machine:
+
+    ```bash
+    git clone https://github.com/lytics/dev-center-extension.git
+    ```
+
+2. Change your current directory to the project folder:
+
+    ```bash
+    cd dev-center-extension
+    ```
+
+3. Install project dependencies using Yarn:
+
+    ```bash
+    yarn && yarn build
+    ```
+
+4. Start the development server:
+
+    ```bash
+    yarn dev
+    ```
+
+5. Follow the instructions under `manual installation`` but use the `dist` directory.
+
+## Feedback and Issues
+
+If you have any questions, encounter issues, or have ideas for improvements, please [submit an issue](https://github.com/lytics/dev-center-extension/issues).
+
+## License
+
+Lytics Developer Tools is licensed under the [MIT License](https://github.com/lytics/dev-center-extension/blob/main/LICENSE).
