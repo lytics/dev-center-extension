@@ -10,26 +10,24 @@ const manifest = {
   version: packageJson.version,
   description: packageJson.description,
   permissions: [
-    'storage', 
-    'sidePanel', 
-    'activeTab', 
-    'tabs', 
-    "webRequest",
-    "webNavigation",
+    'storage',
+    'sidePanel',
+    'activeTab',
+    'tabs',
+    'webRequest',
+    'webNavigation',
     'declarativeNetRequest',
     'declarativeNetRequestFeedback',
   ],
-  host_permissions: [
-    '<all_urls>'
-  ],
+  host_permissions: ['<all_urls>'],
   declarative_net_request: {
     rule_resources: [
       {
-        id: "lyticsBlockRule",
+        id: 'lyticsBlockRule',
         enabled: true,
-        path: "rules.json"
-      }
-    ]
+        path: 'rules.json',
+      },
+    ],
   },
   side_panel: {
     default_path: 'src/pages/sidepanel/index.html',
@@ -43,9 +41,9 @@ const manifest = {
     default_popup: 'src/pages/popup/index.html',
     default_icon: 'icon-34.png',
   },
-  chrome_url_overrides: {
-    newtab: 'src/pages/newtab/index.html',
-  },
+  // chrome_url_overrides: {
+  //   newtab: 'src/pages/newtab/index.html',
+  // },
   icons: {
     128: 'icon-128.png',
   },
@@ -57,11 +55,11 @@ const manifest = {
       css: ['assets/css/contentStyle<KEY>.chunk.css'],
     },
   ],
-  devtools_page: 'src/pages/devtools/index.html',
+  // devtools_page: 'src/pages/devtools/index.html',
   web_accessible_resources: [
     {
       resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-34.png', 'src/pages/tagLink/index.js'],
-      "matches": ["<all_urls>"],
+      matches: ['<all_urls>'],
     },
   ],
 };
