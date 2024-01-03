@@ -14,12 +14,12 @@
     "build:firefox:watch": "cross-env __DEV__=true __FIREFOX__=true vite build -w --mode development",
     "build:hmr": "rollup --config utils/reload/rollup.config.mjs",
     "wss": "node utils/reload/initReloadServer.js",
-    "dev": "pnpm build:hmr && (run-p wss build:watch)",
-    "dev:firefox": "pnpm build:hmr && (run-p wss build:firefox:watch)",
+    "dev": "yarn build:hmr && (run-p wss build:watch)",
+    "dev:firefox": "yarn build:hmr && (run-p wss build:firefox:watch)",
     "test": "vitest",
     "commitlint": "commitlint --edit",
     "lint": "eslint src --ext .ts",
-    "lint:fix": "pnpm lint --fix",
+    "lint:fix": "yarn lint --fix",
     "prettier": "prettier . --write",
     "prepare": "husky install"
   },
@@ -39,7 +39,6 @@
     "react-json-view": "^1.21.3",
     "react-router-dom": "^6.21.1",
     "react-server-dom-webpack": "^0.0.1",
-    "react-syntax-highlighter": "^15.5.0",
     "webextension-polyfill": "0.10.0"
   },
   "devDependencies": {
@@ -88,5 +87,5 @@
       "eslint --fix"
     ]
   },
-  "packageManager": "pnpm@8.9.2"
+  "packageManager": "yarn@1.22.19"
 }

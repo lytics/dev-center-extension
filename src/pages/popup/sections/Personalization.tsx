@@ -58,10 +58,14 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates }) => {
           {candidates?.experiences.length > 0 ? (
             <TabDetails items={candidates?.experiences} />
           ) : (
-            <EmptyState
-              type={'listening'}
-              body={<Box maxWidth={375}>No active Lytics managed experiences were found.</Box>}
-            />
+            <Box
+              mt={8}
+            >
+              <EmptyState
+                type={'listening'}
+                body={<Box maxWidth={375}>No active Lytics managed experiences were found.</Box>}
+              />
+            </Box>
           )}
         </CustomTabPanel>
         <CustomTabPanel value={activeTab} index={1}>
@@ -71,15 +75,19 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates }) => {
               {candidates.legacyABTests?.length > 0 && <TabDetails items={candidates.legacyABTests} />}
             </>
           ) : (
-            <EmptyState
-              type={'deprecated'}
-              body={
-                <Box maxWidth={375}>
-                  Great news! No legacy campaigns are currently active on this page and you are not at risk of using a
-                  sunset feature.
-                </Box>
-              }
-            />
+            <Box
+              mt={8}
+            >
+              <EmptyState
+                type={'deprecated'}
+                body={
+                  <Box maxWidth={375}>
+                    Great news! No legacy campaigns are currently active on this page and you are not at risk of using a
+                    sunset feature.
+                  </Box>
+                }
+              />
+            </Box>
           )}
         </CustomTabPanel>
       </Box>
