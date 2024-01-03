@@ -3,7 +3,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Stack, Typogr
 import { ExpandMore } from '@mui/icons-material';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import { EventModel, EventType } from '@src/shared/models/eventModel';
-import JSONTree from '@root/src/pages/popup/components/jsonTree';
+import TreeDisplay from '@root/src/pages/popup/components/TreeDisplay';
 import EmptyState from '@src/pages/popup/components/EmptyState';
 import moment from 'moment';
 
@@ -80,9 +80,9 @@ const TagActivity = () => {
                       {item.type === 'collect-data' && (
                         <Box fontSize={12}>
                           {item.queryParamObj ? (
-                            <JSONTree data={item.queryParamObj} collapsed={2} />
+                            <TreeDisplay data={item.queryParamObj} collapsed={2} />
                           ) : (
-                            <JSONTree data={item.parsedBodyDataObj} collapsed={2} />
+                            <TreeDisplay data={item.parsedBodyDataObj} collapsed={2} />
                           )}
                         </Box>
                       )}

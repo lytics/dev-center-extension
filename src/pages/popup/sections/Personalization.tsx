@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Stack, Tab, Tabs, Typography } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
 import { TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
-import JSONTree from '@root/src/pages/popup/components/jsonTree';
+import TreeDisplay from '@root/src/pages/popup/components/TreeDisplay';
 import CustomTabPanel from '@src/pages/popup/components/CustomTabPanel';
 import EmptyState from '@src/pages/popup/components/EmptyState';
 
@@ -26,7 +26,7 @@ const TabDetails = ({ items }: { items: any[] }) => {
               <AccordionDetails>
                 <Stack>
                   <Box fontSize={12}>
-                    <JSONTree data={item} collapsed={2} />
+                    <TreeDisplay data={item} collapsed={2} />
                   </Box>
                 </Stack>
               </AccordionDetails>
@@ -58,9 +58,7 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates }) => {
           {candidates?.experiences.length > 0 ? (
             <TabDetails items={candidates?.experiences} />
           ) : (
-            <Box
-              mt={8}
-            >
+            <Box mt={8}>
               <EmptyState
                 type={'listening'}
                 body={<Box maxWidth={375}>No active Lytics managed experiences were found.</Box>}
@@ -75,9 +73,7 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates }) => {
               {candidates.legacyABTests?.length > 0 && <TabDetails items={candidates.legacyABTests} />}
             </>
           ) : (
-            <Box
-              mt={8}
-            >
+            <Box mt={8}>
               <EmptyState
                 type={'deprecated'}
                 body={
