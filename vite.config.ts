@@ -46,8 +46,8 @@ export default defineConfig({
           dest: '.',
         },
         {
-          src: '.git.tmp',
-          dest: '.git',
+          src: './distConfig/.git',
+          dest: '.',
         },
       ],
     }),
