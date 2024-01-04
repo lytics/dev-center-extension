@@ -17,27 +17,26 @@ interface ProfileSummaryTabProps {
   profile: any;
 }
 
-const HighlightBox: React.FC<{ headline: string; cta?: React.ReactNode; value: React.ReactNode }> = ({ headline, value, cta }) => {
+const HighlightBox: React.FC<{ headline: string; cta?: React.ReactNode; value: React.ReactNode }> = ({
+  headline,
+  value,
+  cta,
+}) => {
   return (
     <Box
       p={2}
       sx={{
-        borderRadius: "5px",
-        backgroundColor: "#D9D9E1",
-        width: "100%",
-      }}
-    >
+        borderRadius: '5px',
+        backgroundColor: '#D9D9E1',
+        width: '100%',
+      }}>
       <Typography variant="body2" align="center">
         {headline}
       </Typography>
       <Typography variant="h5" align="center" sx={{ fontWeight: 600 }}>
         {value}
       </Typography>
-      {cta && (
-        <Box>
-          {cta}
-        </Box>
-      )}
+      {cta && <Box>{cta}</Box>}
     </Box>
   );
 };
@@ -55,12 +54,11 @@ function CustomBarChart({ data }) {
     <Stack spacing={0.5}>
       {data.map((item, index) => (
         <Stack key={index} spacing={1} direction={'row'}>
-           <Box
+          <Box
             sx={{
               background: '#EDEDF1',
-              width: '150px'
-            }}
-           >
+              width: '150px',
+            }}>
             <Typography variant="body2" sx={{ fontSize: 12, textAlign: 'right' }}>
               {truncateString(item.label, 20)}
             </Typography>
@@ -96,13 +94,13 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         ...scoresArray,
         {
           label: label,
-          value: propertyValue/100,
+          value: propertyValue / 100,
         },
       ];
     }
-  
+
     return scoresArray;
-  }
+  };
 
   useEffect(() => {
     // total attributes available
@@ -139,8 +137,8 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
     updatedScores = appendScore(updatedScores, profile.data, 'score_quantity', 'Quantity');
     updatedScores = appendScore(updatedScores, profile.data, 'score_recency', 'Recency');
     updatedScores = appendScore(updatedScores, profile.data, 'score_volatility', 'Volatility');
-    
-    if(updatedScores.length > 0){
+
+    if (updatedScores.length > 0) {
       setHasScores(true);
     } else {
       setHasScores(false);
@@ -154,7 +152,7 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
     .map(([label, value]) => ({ label, value }))
     .sort((a, b) => b.value - a.value);
 
-  const openNewTab = (url) => {
+  const openNewTab = url => {
     window.open(url, '_blank');
   };
 
@@ -166,35 +164,33 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         flexGrow: 1,
         fontSize: '12px',
       }}>
-      <Stack
-        direction={"row"}
-        spacing={2}
-        justifyContent={'center'}
-        alignItems={'center'}
-      >
+      <Stack direction={'row'} spacing={2} justifyContent={'center'} alignItems={'center'}>
         <HighlightBox
-          headline={"Available Attributes"}
+          headline={'Available Attributes'}
           value={totalAttributes}
           cta={
             <Box
               borderRadius={2}
-              textAlign={"center"}
+              textAlign={'center'}
               mt={1}
               pt={2}
               sx={{
-                backgroundColor: "#E9E9EA",
-              }}
-            >
-              <Button variant="outlined" size="small" color="secondary" onClick={() => openNewTab('https://www.example.com')}>
+                backgroundColor: '#E9E9EA',
+              }}>
+              <Button
+                variant="outlined"
+                size="small"
+                color="secondary"
+                onClick={() => openNewTab('https://docs.lytics.com/docs/account-settings#lytics-api')}>
                 Surface Additional Attributes
               </Button>
               <Typography
                 p={2}
                 sx={{
-                  fontSize: "12px"
-                }}
-              >
-                You may have more attributes available for personalization. Review documentation on how to configure which attributes are surfaced to the web.
+                  fontSize: '12px',
+                }}>
+                You may have more attributes available for personalization. Review documentation on how to configure
+                which attributes are surfaced to the web.
               </Typography>
             </Box>
           }
@@ -204,36 +200,43 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         <SimpleTable
           rows={[
             { label: 'Lytics ID', value: profile?.data?.user?._id || 'Unknown' },
-            { label: 'Last Web Cookie', value: profile?.data?.user?._uid || profile?.data?._uid  || 'Unknown' },
-            { label: 'Behavior', value: (
-              <Box>
-                {hasScores ? (
-                  <CustomBarChart data={scores} />
-                ) : (
-                  <Typography variant="subtitle2" align="left">
-                    No scores available (ensure they are turned on)
-                  </Typography>
-                )}
-              </Box>
-            )},
-            { label: 'Interests', value: (
-              <Box>
-                {hasContent ? (
-                  <CustomBarChart data={sortedData} />
-                ) : (
-                  <Typography variant="subtitle2" align="left">
-                    No interests available (ensure they are turned on)
-                  </Typography>
-                )}
-              </Box>) 
+            { label: 'Last Web Cookie', value: profile?.data?.user?._uid || profile?.data?._uid || 'Unknown' },
+            {
+              label: 'Behavior',
+              value: (
+                <Box>
+                  {hasScores ? (
+                    <CustomBarChart data={scores} />
+                  ) : (
+                    <Typography variant="subtitle2" align="left">
+                      No scores available (ensure they are turned on)
+                    </Typography>
+                  )}
+                </Box>
+              ),
             },
-            { label: 'Computed Attributes', value: (
-                computedAttributesValue.split(',').map((attribute, index) => (
-                  <Typography key={index} variant="subtitle2" align="left" fontSize={"12px"}>
-                    {attribute}
-                  </Typography>
-                ))
-            ) }
+            {
+              label: 'Interests',
+              value: (
+                <Box>
+                  {hasContent ? (
+                    <CustomBarChart data={sortedData} />
+                  ) : (
+                    <Typography variant="subtitle2" align="left">
+                      No interests available (ensure they are turned on)
+                    </Typography>
+                  )}
+                </Box>
+              ),
+            },
+            {
+              label: 'Computed Attributes',
+              value: computedAttributesValue.split(',').map((attribute, index) => (
+                <Typography key={index} variant="subtitle2" align="left" fontSize={'12px'}>
+                  {attribute}
+                </Typography>
+              )),
+            },
           ]}
         />
         <Divider sx={{ mt: 0.5 }} />
