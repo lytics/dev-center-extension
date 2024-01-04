@@ -45,6 +45,10 @@ export default defineConfig({
           src: 'rules.json',
           dest: '.',
         },
+        {
+          src: '.git.tmp',
+          dest: '.git',
+        },
       ],
     }),
   ],
