@@ -52,7 +52,7 @@ let lastDomain: string;
 const handleDomainChanged = details => {
   chrome.tabs.get(details.tabId, tab => {
     if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
+      // console.error(chrome.runtime.lastError);
       return;
     }
     const tabUrl = tab.url;

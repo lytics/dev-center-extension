@@ -3,16 +3,19 @@ import { Box, Button, Divider, LinearProgress, Stack, Typography } from '@mui/ma
 import { makeStyles } from '@mui/styles';
 import SimpleTable from '@pages/popup/components/SimpleTable';
 
-const useStyles = makeStyles(() => ({
-  linearProgress: {
+interface BarStylesProps {
+  backgroundGradient: string;
+}
+
+const barStyles = makeStyles(() => ({
+  linearProgress: ({ backgroundGradient }: BarStylesProps) => ({
     background: '#DCDCEA',
     borderRadius: '2px',
     '& .MuiLinearProgress-bar': {
-      background: 'linear-gradient(75.62deg, #6C31B8 57.26%, #AB32DE 94.2%)',
+      background: backgroundGradient,
     },
-  },
+  }),
 }));
-
 interface ProfileSummaryTabProps {
   profile: any;
 }
@@ -41,8 +44,17 @@ const HighlightBox: React.FC<{ headline: string; cta?: React.ReactNode; value: R
   );
 };
 
-function CustomBarChart({ data }) {
-  const classes = useStyles();
+interface CustomBarChartProps {
+  data: any;
+  color1?: string;
+  color2?: string;
+}
+
+const CustomBarChart: React.FC<CustomBarChartProps> = ({ data, color1, color2 }: CustomBarChartProps) => {
+  const classes = barStyles({
+    backgroundGradient: `linear-gradient(75deg, ${color1 || '#6C31B8'} 60%, ${color2 || '#AB32DE'} 100%)`,
+  });
+
   const truncateString = (str, maxLength) => {
     if (str.length > maxLength) {
       return str.substring(0, maxLength) + '...';
@@ -56,7 +68,6 @@ function CustomBarChart({ data }) {
         <Stack key={index} spacing={1} direction={'row'}>
           <Box
             sx={{
-              background: '#EDEDF1',
               width: '150px',
             }}>
             <Typography variant="body2" sx={{ fontSize: 12, textAlign: 'right' }}>
@@ -76,7 +87,7 @@ function CustomBarChart({ data }) {
       ))}
     </Stack>
   );
-}
+};
 
 const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
   const [hasContent, setHasContent] = useState(false);
@@ -206,7 +217,7 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
               value: (
                 <Box>
                   {hasScores ? (
-                    <CustomBarChart data={scores} />
+                    <CustomBarChart data={scores} color1={'#00BAE3'} color2={'#85DB83'} />
                   ) : (
                     <Typography variant="subtitle2" align="left">
                       No scores available (ensure they are turned on)
@@ -220,7 +231,7 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
               value: (
                 <Box>
                   {hasContent ? (
-                    <CustomBarChart data={sortedData} />
+                    <CustomBarChart data={sortedData} color1={'#9D70FD'} color2={'#D36FDE'} />
                   ) : (
                     <Typography variant="subtitle2" align="left">
                       No interests available (ensure they are turned on)

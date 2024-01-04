@@ -38,15 +38,17 @@ const TagActivity = () => {
   return (
     <Box fontSize={12}>
       {tagActivity.length === 0 ? (
-        <EmptyState
-          type={'empty'}
-          body={
-            <Box maxWidth={375}>
-              No activity has been seen since extension activated. Please emit an event using jstag.send or refresh the
-              page.
-            </Box>
-          }
-        />
+        <Box mt={6}>
+          <EmptyState
+            type={'empty'}
+            body={
+              <Box maxWidth={375}>
+                No activity has been seen since extension activated. Please emit an event using jstag.send or refresh
+                the page.
+              </Box>
+            }
+          />
+        </Box>
       ) : (
         <Stack>
           {tagActivity.map((item, index) => (

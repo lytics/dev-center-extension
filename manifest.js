@@ -1,12 +1,8 @@
 import packageJson from './package.json' assert { type: 'json' };
 
-/**
- * After changing, please reload the extension at `chrome://extensions`
- * @type {chrome.runtime.ManifestV3}
- */
 const manifest = {
   manifest_version: 3,
-  name: packageJson.name,
+  name: packageJson.title,
   version: packageJson.version,
   description: packageJson.description,
   permissions: [
