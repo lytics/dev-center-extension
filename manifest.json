@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "chrome-extension-boilerplate-react-vite",
-  "version": "0.0.1",
-  "description": "chrome extension boilerplate",
+  "name": "lytics-dev-tools",
+  "version": "0.0.0",
+  "description": "Chrome extension for exploring and debugging Lytics web SDK and APIs.",
   "permissions": [
     "storage",
     "sidePanel",
