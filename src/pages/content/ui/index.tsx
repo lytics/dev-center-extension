@@ -5,7 +5,7 @@ import refreshOnUpdate from 'virtual:reload-on-update-in-view';
 refreshOnUpdate('pages/content');
 
 const root = document.createElement('div');
-root.id = 'chrome-extension-boilerplate-react-vite-content-view-root';
+root.id = 'lytics-dev-tools';
 
 document.body.append(root);
 
