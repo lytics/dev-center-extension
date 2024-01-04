@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "lytics-dev-tools",
+  "name": "Lytics Dev Tools (Alpha)",
   "version": "0.0.0",
   "description": "Chrome extension for exploring and debugging Lytics web SDK and APIs.",
   "permissions": [
