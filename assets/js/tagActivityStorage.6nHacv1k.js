@@ -1,0 +1,1 @@
+import{c as r,S as s}from"./base.zwil0R1V.js";import{E as c}from"./EmitLog.VaGcFWYO.js";const a="tagActivityStorage",t=r(a,[],{storageType:s.Local,liveUpdate:!0}),m={...t,clear:()=>{chrome.storage.local.remove(a,()=>{c({name:"storage",payload:{msg:`Data associated with ${a} cleared.`}})})},add:e=>{t.get().then(o=>{t.set([...o,e])})}};export{m as t};
