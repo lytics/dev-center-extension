@@ -1,4 +1,5 @@
 import { BaseStorage, createStorage, StorageType } from '@src/shared/storages/base';
+import { EmitLog } from '../components/EmitLog';
 
 const TagConfigStorageKey = 'tagConfigStorage';
 
@@ -15,7 +16,7 @@ const tagConfigStore: TagConfigStorage = {
   ...storage,
   clear: () => {
     chrome.storage.local.remove(TagConfigStorageKey, () => {
-      console.log(`Data associated with ${TagConfigStorageKey} cleared.`);
+      EmitLog({ name: 'storage', payload: { msg: `Data associated with ${TagConfigStorageKey} cleared.` } });
     });
   },
 };

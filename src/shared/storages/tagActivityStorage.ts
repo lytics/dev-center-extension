@@ -1,4 +1,5 @@
 import { BaseStorage, createStorage, StorageType } from '@src/shared/storages/base';
+import { EmitLog } from '@src/shared/components/EmitLog';
 
 const TagActivityStorageKey = 'tagActivityStorage';
 
@@ -15,10 +16,12 @@ const storage = createStorage<string[]>(TagActivityStorageKey, [], {
 const tagActivityStore: TagActivityStorage = {
   ...storage,
   clear: () => {
-    storage.set([]); // Clear the stored array by setting it to an empty array
+    chrome.storage.local.remove(TagActivityStorageKey, () => {
+      EmitLog({ name: 'storage', payload: { msg: `Data associated with ${TagActivityStorageKey} cleared.` } });
+    });
   },
-  add: (value) => {
-    storage.get().then((currentValue) => {
+  add: value => {
+    storage.get().then(currentValue => {
       storage.set([...currentValue, value]);
     });
   },

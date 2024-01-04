@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import '@pages/panel/Panel.css';
+import { EmitLog } from '@root/src/shared/components/EmitLog';
 
 const Panel: React.FC = () => {
   // Initialize a state variable to store the received message
@@ -9,20 +10,19 @@ const Panel: React.FC = () => {
   useEffect(() => {
     // Create a connection to the background script
     const backgroundConnection = chrome.runtime.connect({
-      name: "devtools-panel"
+      name: 'devtools-panel',
     });
 
-    console.log('devtools');
+    EmitLog({ name: 'panel', payload: { msg: 'Devtools panel connected.' } });
 
     // Listen for messages from the background script
-    backgroundConnection.onMessage.addListener((receivedMessage) => {
+    backgroundConnection.onMessage.addListener(receivedMessage => {
       setMessage(receivedMessage.message);
-
     });
 
     // Cleanup the connection when the component unmounts
     return () => {
-      console.log('disconnecting');
+      EmitLog({ name: 'panel', payload: { msg: 'Devtools panel disconnected.' } });
       backgroundConnection.disconnect();
     };
   }, []); // Empty dependency array to run the effect once on component mount
@@ -31,13 +31,7 @@ const Panel: React.FC = () => {
     <Box className="container">
       <Typography variant="h1">Dev Tools Panel</Typography>
       <Button>test</Button>
-      <Box>
-        {message ? (
-          <div>{message}</div>
-        ) : (
-          <div>No message received yet.</div>
-        )}
-      </Box>
+      <Box>{message ? <div>{message}</div> : <div>No message received yet.</div>}</Box>
     </Box>
   );
 };

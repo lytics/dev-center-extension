@@ -1,4 +1,5 @@
 import { BaseStorage, createStorage, StorageType } from '@src/shared/storages/base';
+import { EmitLog } from '@src/shared/components/EmitLog';
 
 const TokenStorageKey = 'lyticsToken';
 
@@ -15,7 +16,7 @@ const tokenStore: TokenStorage = {
   ...storage,
   clear: () => {
     chrome.storage.local.remove(TokenStorageKey, () => {
-      console.log(`Data associated with ${TokenStorageKey} cleared.`);
+      EmitLog({ name: 'storage', payload: { msg: `Data associated with ${TokenStorageKey} cleared.` } });
     });
   },
 };

@@ -4,66 +4,69 @@ export class TagLink {
   }
 
   init() {
-    this.emitLog('initialized');
+    this.emitLog('tag', { msg: 'initialized' });
     this.jstagReady();
     this.addListeners();
   }
 
+  retryCount = 0;
+
   addListeners() {
-    window.addEventListener('message', (event) => {
+    window.addEventListener('message', event => {
       if (event.source === window) {
         switch (event.data.action) {
           case 'getConfig':
-            console.log('get config');
+            this.emitLog('tag', 'get config');
             this.getConfig();
             break;
           case 'getEntity':
-            console.log('get entity');
+            this.emitLog('tag', 'get entity');
             this.getEntity();
             break;
           case 'getUID':
-            console.log('get UID');
+            this.emitLog('tag', 'get UID');
             break;
           case 'getExperiences':
-            console.log('get experiences');
+            this.emitLog('tag', 'get experiences');
             break;
           default:
-            console.log('invalid action:', event.data.action);
+            this.emitLog('tag', `invalid action: ${event.data.action}`);
             break;
         }
       }
     });
-  } 
-
-  emitLog(name: string, payload?: any) {
-    console.log(`taglink ::: ${name} ::`, payload);
   }
 
-  // check to see if jstag exists and if so dispatch, if not sleep for 30 seconds and try again
+  emitLog(name: string, payload?: any) {
+    console.log(`lyticsdev ::: ${name} ::`, payload);
+  }
+
   jstagReady() {
     this.emitLog('tag', 'checking jstag');
+    this.retryCount++;
     if (typeof (window as any).jstag !== 'undefined') {
       this.emitLog('tag', 'found jstag');
       setTimeout(() => {
         this.getConfig();
       }, 2000);
-      this.getEntity()
+      this.getEntity();
     } else {
-      this.emitLog('tag', 'jstag not found');
-      setTimeout(() => this.jstagReady(), 5000);
+      this.emitLog('tag', { msg: 'jstag not found trying again in 2 seconds', retryCount: this.retryCount });
+      setTimeout(() => this.jstagReady(), 2000);
     }
   }
 
   getConfig() {
     (window as any).jstag.call('entityReady', () => {
-      console.log('update');
+      // this.emitLog('tag', 'got jstag config');
       this.dispatchEvent('config', (window as any).jstag.config);
     });
   }
 
   getEntity() {
-    (window as any).jstag.call('entityReady', (entity) => {
-      (window as any).jstag.getid((id) => {
+    (window as any).jstag.call('entityReady', entity => {
+      (window as any).jstag.getid(id => {
+        // this.emitLog('tag', 'got entity');
         entity.data._uid = id;
         this.dispatchEvent('entity', entity);
       });
@@ -75,7 +78,7 @@ export class TagLink {
     const customEvent = new CustomEvent(name, {
       detail: {
         data: JSON.stringify(payload),
-      }
+      },
     });
     document.dispatchEvent(customEvent);
   }

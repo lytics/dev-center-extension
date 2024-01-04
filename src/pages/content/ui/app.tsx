@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import entityStore from '@src/shared/storages/entityStorage';
+import { EmitLog } from '@src/shared/components/EmitLog';
 
 export default function App() {
-  const variableName = 'jstag';
   let retries = 0;
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function App() {
     const handleMessage = event => {
       if (event.data && event.data.type === 'retry') {
         retries++;
-        console.log(`Retry ${retries}: Variable "${variableName}" is not found. Retrying in 5 seconds...`);
+        EmitLog({ name: 'retry', payload: { retries } });
         injectScript();
       }
     };
@@ -33,9 +33,11 @@ export default function App() {
 
     window.addEventListener('message', function (event) {
       if (event.source === window && event.data.action === 'backgroundToContent') {
-        // Handle the message from background.js
         const backgroundData = event.data.data;
-        console.log('Received message from background in content:', backgroundData);
+        EmitLog({
+          name: 'message',
+          payload: { msg: 'Received message from background in content.', data: backgroundData },
+        });
       }
     });
 
@@ -61,7 +63,7 @@ export default function App() {
     document.addEventListener('config', function (event) {
       const payload = (event as any).detail.data;
       tagConfigStore.set(payload).then(() => {
-        console.log('Tag config saved.');
+        EmitLog({ name: 'storage', payload: { msg: 'Tag config saved.' } });
       });
     });
 
@@ -69,14 +71,12 @@ export default function App() {
     document.addEventListener('entity', function (event) {
       const payload = (event as any).detail.data;
       entityStore.set(payload).then(() => {
-        console.log('Entity saved.');
+        EmitLog({ name: 'storage', payload: { msg: 'Entity saved.' } });
       });
     });
   }, []);
 
-  useEffect(() => {
-    console.log('content view loaded');
-  }, []);
+  useEffect(() => {}, []);
 
   return <></>;
 }

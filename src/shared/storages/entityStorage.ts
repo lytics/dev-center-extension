@@ -1,4 +1,5 @@
 import { BaseStorage, createStorage, StorageType } from '@src/shared/storages/base';
+import { EmitLog } from '@src/shared/components/EmitLog';
 
 const EntityStorageKey = 'entityStorage';
 
@@ -15,7 +16,7 @@ const entityStore: EntityStorage = {
   ...storage,
   clear: () => {
     chrome.storage.local.remove(EntityStorageKey, () => {
-      console.log(`Data associated with ${EntityStorageKey} cleared.`);
+      EmitLog({ name: 'storage', payload: { msg: `Data associated with ${EntityStorageKey} cleared.` } });
     });
   },
 };

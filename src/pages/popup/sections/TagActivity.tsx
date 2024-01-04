@@ -36,15 +36,7 @@ const TagActivity = () => {
   }, []);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        flexGrow: 1,
-        fontSize: '12px',
-        height: '280px',
-        overflow: 'auto',
-      }}>
+    <Box fontSize={12}>
       {tagActivity.length === 0 ? (
         <EmptyState
           type={'empty'}
