@@ -34,10 +34,11 @@ Lytics Developer Tools is a Chrome extension designed to empower developers, mar
 2. Extract the contents of the ZIP file to a local directory.
 3. Open Chrome and navigate to [chrome://extensions/](chrome://extensions/).
 4. Enable the "Developer mode" toggle at the top-right corner of the page.
-5. Click the "Load unpacked" button and select the "dist" directory within the extracted extension files.
+5. Click the "Load unpacked" button and select the folder that you unzipped in step 1 (hint, it will be named something like dev-center-extension-0.0.0).
 6. Lytics Developer Tools will be added to your Chrome extensions.
 7. Pin the extension to your top bar using the little "pin" icon.
 8. Navigate to a page with Lytics or refresh.
+9. Open the extension and enable or disable at the top right corner.
 
 ## Running Locally for Development
 

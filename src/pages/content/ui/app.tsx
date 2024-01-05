@@ -45,7 +45,7 @@ export default function App() {
     // Handle Requests to Tag Link
     // ------------------------------
     // chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    chrome.runtime.onMessage.addListener(message => {
+    chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
       if (message.action == 'getConfig') {
         window.postMessage({ action: 'getConfig' }, '*');
       }
@@ -53,6 +53,8 @@ export default function App() {
       if (message.action == 'getEntity') {
         window.postMessage({ action: 'getEntity' }, '*');
       }
+
+      sendResponse();
     });
 
     // ------------------------------

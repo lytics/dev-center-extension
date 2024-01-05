@@ -12,7 +12,7 @@ import useStorage from '@src/shared/hooks/useStorage';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import entityStorage from '@src/shared/storages/entityStorage';
-import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
+import { TagConfigModel , TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
 
 // components
 import Debugger from '@pages/popup/sections/Debugger';
@@ -34,6 +34,7 @@ const Popup = () => {
   const [profileIsLoading, setProfileIsLoading] = useState(true);
   const [tagConfig, setTagConfig] = useState<TagConfigModel>({} as TagConfigModel);
   const [currentProfile, setCurrentProfile] = useState<any>({} as any);
+  const [candidates, setCandidates] = useState<TagConfigPathforaCandidates>({} as TagConfigPathforaCandidates);
 
   // Define a callback function to handle storage changes
   function handleStorageChange(changes, areaName) {
@@ -46,6 +47,7 @@ const Popup = () => {
       }
     }
   }
+
   chrome.storage.onChanged.addListener(handleStorageChange);
 
   useEffect(() => {
@@ -55,6 +57,10 @@ const Popup = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    setCandidates(tagConfig?.pathfora?.publish?.candidates);
+  }, [tagConfig]);
 
   useEffect(() => {
     if (!isEnabled) {
@@ -156,10 +162,7 @@ const Popup = () => {
                     path="/profile"
                     element={<Profile profileIsLoading={profileIsLoading} profile={currentProfile} />}
                   />
-                  <Route
-                    path="/personalization"
-                    element={<Personalization candidates={tagConfig?.pathfora?.publish?.candidates} />}
-                  />
+                  <Route path="/personalization" element={<Personalization candidates={candidates} />} />
                   <Route path="*" element={<Debugger tagIsInstalled={tagIsInstalled} tagConfig={tagConfig} />} />
                 </Routes>
               </Box>
