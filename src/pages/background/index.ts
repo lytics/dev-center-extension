@@ -12,6 +12,13 @@ reloadOnUpdate('pages/background');
 const handleStateChange = () => {
   extensionStateStorage.get().then(state => {
     if (state === true) {
+      chrome.action.setIcon({
+        path: {
+          '16': '../../../assets/img/icon-active.png',
+          '48': '../../../assets/img/icon-active.png',
+          '128': '../../../assets/img/icon-active.png',
+        },
+      });
       EmitLog({ name: 'background', payload: { msg: 'Extension Activated' } });
       clearAllThings();
       chrome.tabs.onActivated.addListener(handleTabChange);
@@ -24,6 +31,13 @@ const handleStateChange = () => {
         ['requestBody'],
       );
     } else {
+      chrome.action.setIcon({
+        path: {
+          '16': '../../../assets/img/icon-inactive.png',
+          '48': '../../../assets/img/icon-inactive.png',
+          '128': '../../../assets/img/icon-inactive.png',
+        },
+      });
       EmitLog({ name: 'background', payload: { msg: 'Extension Deactivated' } });
       clearAllThings();
       chrome.tabs.onActivated.removeListener(handleTabChange);

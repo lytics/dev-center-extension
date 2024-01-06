@@ -49,6 +49,10 @@ export default defineConfig({
           src: './distConfig/.git',
           dest: '.',
         },
+        {
+          src: 'src/assets/img/**.png',
+          dest: 'assets/img',
+        },
       ],
     }),
   ],

@@ -12,7 +12,7 @@ import useStorage from '@src/shared/hooks/useStorage';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import entityStorage from '@src/shared/storages/entityStorage';
-import { TagConfigModel , TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
+import { TagConfigModel, TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
 
 // components
 import Debugger from '@pages/popup/sections/Debugger';
@@ -102,6 +102,12 @@ const Popup = () => {
         if (!data) {
           chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             chrome.tabs.sendMessage(tabs[0].id, { action: 'getEntity' }, response => {
+              if (chrome.runtime.lastError) {
+                console.error('Error:', chrome.runtime.lastError.message);
+              } else {
+                EmitLog({ name: 'popup', payload: { msg: 'Entity response.', data: response } });
+              }
+
               EmitLog({ name: 'popup', payload: { msg: 'Entity response.', data: response } });
             });
           });

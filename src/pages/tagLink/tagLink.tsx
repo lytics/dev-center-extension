@@ -1,15 +1,17 @@
-export class TagLink {
+class TagLinkInternal {
   constructor() {
     this.init();
   }
 
   init() {
+    this.printBoiler();
     this.emitLog('tag', { msg: 'initialized' });
     this.jstagReady();
     this.addListeners();
   }
 
   retryCount = 0;
+  maxRetry = 5;
 
   addListeners() {
     window.addEventListener('message', event => {
@@ -42,8 +44,11 @@ export class TagLink {
   }
 
   jstagReady() {
-    this.emitLog('tag', 'checking jstag');
     this.retryCount++;
+    if (this.retryCount >= this.maxRetry) {
+      this.emitLog('tag', { msg: 'max retry reached' });
+      return;
+    }
     if (typeof (window as any).jstag !== 'undefined') {
       this.emitLog('tag', 'found jstag');
       setTimeout(() => {
@@ -56,14 +61,21 @@ export class TagLink {
     }
   }
 
+  jstagExist() {
+    return typeof (window as any).jstag !== 'undefined';
+  }
+
   getConfig() {
+    if (!this.jstagExist()) return;
+
     (window as any).jstag.call('entityReady', () => {
-      // this.emitLog('tag', 'got jstag config');
       this.dispatchEvent('config', (window as any).jstag.config);
     });
   }
 
   getEntity() {
+    if (!this.jstagExist()) return;
+
     (window as any).jstag.call('entityReady', entity => {
       (window as any).jstag.getid(id => {
         // this.emitLog('tag', 'got entity');
@@ -71,6 +83,21 @@ export class TagLink {
         this.dispatchEvent('entity', entity);
       });
     });
+  }
+
+  printBoiler() {
+    console.log(`
+    ============================================================
+    ============================================================
+    _        _   _       
+    | |  _  _| |_(_)__ ___
+    | |_| || |  _| / _(_-<
+    |____\\_, |\\__|_\\__/__/
+         |__/             
+    ============================================================
+    Lytics Developer Tools Extension Active
+    ============================================================
+    `);
   }
 
   // dispatch event to content script
@@ -83,3 +110,5 @@ export class TagLink {
     document.dispatchEvent(customEvent);
   }
 }
+
+export const TagLink = typeof (window as any).TagLink !== 'undefined' ? (window as any).TagLink : new TagLinkInternal();

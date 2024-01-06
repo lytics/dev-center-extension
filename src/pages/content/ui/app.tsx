@@ -2,11 +2,23 @@ import { useEffect } from 'react';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import entityStore from '@src/shared/storages/entityStorage';
 import { EmitLog } from '@src/shared/components/EmitLog';
+import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 
 export default function App() {
   let retries = 0;
 
   useEffect(() => {
+    // ------------------------------
+    // Handle Extension Activation
+    // ------------------------------
+    const handleStateChange = () => {
+      extensionStateStorage.get().then(state => {
+        if (state === true) {
+          window.location.reload();
+        }
+      });
+    };
+    extensionStateStorage.subscribe(handleStateChange);
     // ------------------------------
     // Handle Tag Link Injection
     // ------------------------------
@@ -14,6 +26,7 @@ export default function App() {
       const script = document.createElement('script');
 
       script.src = chrome.runtime.getURL('/src/pages/tagLink/index.js');
+      script.type = 'module';
       script.onload = () => {
         script.remove();
       };
