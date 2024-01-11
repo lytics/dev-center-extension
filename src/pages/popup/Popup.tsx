@@ -75,7 +75,7 @@ const Popup = () => {
           chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             chrome.tabs.sendMessage(tabs[0].id, { action: 'getConfig' }, response => {
               if (chrome.runtime.lastError) {
-                console.error('Error:', chrome.runtime.lastError.message);
+                // console.error('Error:', chrome.runtime.lastError.message);
               } else if (response) {
                 EmitLog({ name: 'popup', payload: { msg: 'Config response.', data: response } });
               }
@@ -107,7 +107,7 @@ const Popup = () => {
           chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             chrome.tabs.sendMessage(tabs[0].id, { action: 'getEntity' }, response => {
               if (chrome.runtime.lastError) {
-                console.error('Error:', chrome.runtime.lastError.message);
+                // console.error('Error:', chrome.runtime.lastError.message);
               } else if (response) {
                 EmitLog({ name: 'popup', payload: { msg: 'Entity response.', data: response } });
               }
