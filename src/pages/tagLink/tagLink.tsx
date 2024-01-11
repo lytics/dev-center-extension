@@ -62,7 +62,7 @@ class TagLinkInternal {
   }
 
   jstagExist() {
-    return typeof (window as any).jstag !== 'undefined';
+    return typeof (window as any).jstag !== 'undefined' && typeof (window as any).jstag.call !== 'undefined';
   }
 
   getConfig() {
