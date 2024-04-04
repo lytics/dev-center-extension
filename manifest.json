@@ -1,11 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Lytics Dev Tools (Alpha)",
-  "version": "0.0.2",
-  "description": "Chrome extension for exploring and debugging Lytics web SDK and APIs.",
+  "name": "Lytics Dev Tools",
+  "version": "0.0.1",
+  "description": "Chrome extension for exploring and debugging the Lytics web SDK and APIs.",
   "permissions": [
     "storage",
-    "sidePanel",
     "activeTab",
     "tabs",
     "webRequest",
@@ -24,9 +23,6 @@
         "path": "rules.json"
       }
     ]
-  },
-  "side_panel": {
-    "default_path": "src/pages/sidepanel/index.html"
   },
   "options_page": "src/pages/options/index.html",
   "background": {
