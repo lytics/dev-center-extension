@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Stack, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Box, Chip, Stack, Typography } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import { EventModel, EventType } from '@src/shared/models/eventModel';
@@ -23,8 +23,6 @@ const TagActivity = () => {
   useEffect(() => {
     const fetchData = async () => {
       const result = await tagActivityStore.get();
-
-      // loop results and JSON parse before updating activity state
       const parsedResults = result.map(item => {
         return JSON.parse(item);
       });
@@ -35,8 +33,16 @@ const TagActivity = () => {
     fetchData();
   }, []);
 
+  const clearActivity = () => {
+    tagActivityStore.clear();
+    setTagActivity([]);
+  };
+
   return (
     <Box fontSize={12}>
+      <Box>
+        <Button onClick={clearActivity}>Reset Activity</Button>
+      </Box>
       {tagActivity.length === 0 ? (
         <Box mt={6}>
           <EmptyState

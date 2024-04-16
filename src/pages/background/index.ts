@@ -1,14 +1,15 @@
-import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import entityStore from '@src/shared/storages/entityStorage';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
+import domainStore from '@src/shared/storages/extensionDomainStorage';
 import { EventModel } from '@src/shared/models/eventModel';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import { EmitLog } from '@root/src/shared/components/EmitLog';
 import 'webextension-polyfill';
 
-reloadOnUpdate('pages/background');
-
+// --------------------------------------------------------
+// Handle State Management
+// --------------------------------------------------------
 const handleStateChange = () => {
   extensionStateStorage.get().then(state => {
     if (state === true) {
@@ -21,8 +22,6 @@ const handleStateChange = () => {
       });
       EmitLog({ name: 'background', payload: { msg: 'Extension Activated' } });
       clearAllThings();
-      chrome.tabs.onActivated.addListener(handleTabChange);
-      chrome.webNavigation.onBeforeNavigate.addListener(handleDomainChanged);
       chrome.webRequest.onBeforeRequest.addListener(
         handleNetworkTraffic,
         {
@@ -45,8 +44,6 @@ const handleStateChange = () => {
       });
       EmitLog({ name: 'background', payload: { msg: 'Extension Deactivated' } });
       clearAllThings();
-      chrome.tabs.onActivated.removeListener(handleTabChange);
-      chrome.webNavigation.onBeforeNavigate.removeListener(handleDomainChanged);
       chrome.webRequest.onBeforeRequest.removeListener(handleNetworkTraffic);
     }
   });
@@ -60,33 +57,151 @@ const clearAllThings = () => {
   tagConfigStore.clear();
   entityStore.clear();
   tagActivityStore.clear();
+  domainStore.clear();
 };
 
-const handleTabChange = () => {
+// --------------------------------------------------------
+// Handle Navigation
+// --------------------------------------------------------
+// // get the stored sticky domain
+// domainStore.get().then(domain => {
+//   stickyDomain = domain;
+//   EmitLog({ name: 'background', payload: { msg: `Sticky Domain initially loaded as <${stickyDomain}>` } });
+// });
+
+// const checkTabDetailsHelper = details => {
+//   chrome.tabs.get(details.tabId, tab => {
+//     if (chrome.runtime.lastError) {
+//       console.error(chrome.runtime.lastError);
+//       return;
+//     }
+
+//     const tabUrl = tab.url;
+//     if (tabUrl) {
+//       activeDomain = new URL(tabUrl).hostname;
+
+//       if (activeDomain !== stickyDomain) {
+//         chrome.runtime.sendMessage({
+//           action: 'domainMSG',
+//           event: 'disableApp',
+//           stickyDomain: stickyDomain,
+//           activeDomain: activeDomain,
+//         });
+//       } else {
+//         chrome.runtime.sendMessage({
+//           action: 'domainMSG',
+//           event: 'enableApp',
+//           stickyDomain: stickyDomain,
+//           activeDomain: activeDomain,
+//         });
+//       }
+//     }
+//   });
+// };
+
+// --------------------------------------------------------
+// Manage Sticky Domain
+// --------------------------------------------------------
+let stickyDomain = '';
+
+domainStore.get().then(domain => {
+  stickyDomain = domain;
+  EmitLog({ name: 'background', payload: { msg: `Sticky Domain initially loaded as <${stickyDomain}>` } });
+});
+
+const handleStickyDomainSet = () => {
   clearAllThings();
-};
-chrome.tabs.onActivated.addListener(handleTabChange);
-
-let lastDomain: string;
-const handleDomainChanged = details => {
-  chrome.tabs.get(details.tabId, tab => {
-    if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
-      return;
-    }
-    const tabUrl = tab.url;
-    if (tabUrl) {
-      const activeDomain = new URL(tabUrl).hostname;
-
-      if (lastDomain !== activeDomain) {
-        clearAllThings();
-        lastDomain = activeDomain;
-        EmitLog({ name: 'background', payload: { msg: `Domain changed to <${activeDomain}>` } });
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    if (tabs.length > 0) {
+      const tab = tabs[0];
+      const tabUrl = tab.url;
+      if (tabUrl) {
+        stickyDomain = new URL(tabUrl).hostname;
+        domainStore.set(stickyDomain);
+        // chrome.runtime.sendMessage({
+        //   action: 'domainData',
+        //   event: 'domainMSG',
+        //   stickyDomain: stickyDomain,
+        // });
+        EmitLog({ name: 'background', payload: { msg: `Sticky Domain set to <${stickyDomain}>` } });
       }
     }
   });
 };
-chrome.webNavigation.onBeforeNavigate.addListener(handleDomainChanged);
+
+// subscribe to sticky set
+chrome.runtime.onMessage.addListener(request => {
+  if (request.action === 'setStickyDomain') {
+    handleStickyDomainSet();
+  }
+});
+
+// const handleTabChange = details => {
+//   checkTabDetailsHelper(details);
+// };
+// chrome.tabs.onActivated.addListener(handleTabChange);
+
+// const handleDomainChanged = details => {
+//   if (details.frameId !== 0) {
+//     return;
+//   }
+
+//   checkTabDetailsHelper(details);
+// };
+// chrome.webNavigation.onCompleted.addListener(handleDomainChanged);
+
+// if (chrome.runtime.lastError) {
+//   console.error(chrome.runtime.lastError);
+//   return;
+// }
+// const tabUrl = tab.url;
+// if (tabUrl) {
+//   const activeDomain = new URL(tabUrl).hostname;
+
+//   if (lastDomain !== activeDomain) {
+//     chrome.runtime.sendMessage({ action: 'domainData', lastDomain: lastDomain, currentDomain: activeDomain, stickyDomain: stickyDomain });
+//     clearAllThings();
+//     lastDomain = activeDomain;
+//     EmitLog({ name: 'background', payload: { msg: `Domain changed to <${activeDomain}>` } });
+//   }
+// }
+
+// let previousUrl = null;
+
+// const handleMainFrameNavigation = details => {
+// if (details.frameId !== 0) {
+//   // Ignore navigation events for subframes or auxiliary frames
+//   return;
+// }
+
+//   // Process navigation event for the main frame
+//   chrome.tabs.get(details.tabId, tab => {
+//     if (chrome.runtime.lastError) {
+//       console.error(chrome.runtime.lastError);
+//       return;
+//     }
+
+// // Ignore empty new tabs
+// if (tab?.url === 'chrome://newtab/') {
+//   return;
+// }
+
+//     const currentUrl = tab.url;
+//     console.log('Current URL:', currentUrl);
+
+//     // Compare with previous URL
+//     if (previousUrl && currentUrl !== previousUrl) {
+//       console.log('Navigated from:', previousUrl);
+//       console.log('Navigated to:', currentUrl);
+//       // Here you can emit a message or perform any actions you need
+//     }
+
+//     // Update previous URL
+//     previousUrl = currentUrl;
+//   });
+// };
+
+// chrome.webNavigation.onBeforeNavigate.addListener(handleMainFrameNavigation);
 
 // --------------------------------------------------------
 // Handle Listen for Requests to lytics.io
@@ -169,6 +284,21 @@ const parseURL = (url: string, body: any, type: string): EventModel => {
 };
 
 const handleNetworkTraffic = details => {
+  // get the active tab url that generated the request
+  const activeTabUrl = details.initiator;
+  if (!activeTabUrl) {
+    return;
+  }
+
+  // parse the active tab url
+  const activeDomain = new URL(activeTabUrl).hostname;
+
+  // if the active domain matches the sticky domain, then we can proceed
+  if (activeDomain !== stickyDomain) {
+    EmitLog({ name: 'background', payload: { msg: `Request from non-sticky domain <${activeDomain}>` } });
+    return;
+  }
+
   const url = details.url;
   let postData;
   let result: EventModel;

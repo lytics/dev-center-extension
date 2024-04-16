@@ -45,24 +45,26 @@ const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig }) => {
               <>
                 <Cancel style={{ fontSize: 30, color: '#F00' }} />
                 <Typography variant="body1">
-                  You are using a deprecated version of the Lytics SDK <Chip label={`v${tagConfig?.version}`} size="small" sx={{ ml: 0.5 }} />
+                  You are using a deprecated version of the Lytics SDK{' '}
+                  <Chip label={`v${tagConfig?.version}`} size="small" sx={{ ml: 0.5 }} />
                 </Typography>
               </>
             ) : (
               <>
                 <CheckCircle style={{ fontSize: 30, color: '#00D27C' }} />
                 <Typography variant="body1">
-                  Lytics JavaScript SDK Installed <Chip label={`v${tagConfig?.version}`} size="small" sx={{ ml: 0.5 }} />
+                  Lytics JavaScript SDK Installed{' '}
+                  <Chip label={`v${tagConfig?.version}`} size="small" sx={{ ml: 0.5 }} />
                 </Typography>
               </>
-              )}
+            )}
           </Stack>
 
           <Box mt={2}>
             <SimpleTable
               rows={[
-                { label: 'Account ID', value: tagConfig?.cid[0] },
-                { label: 'Stream', value: tagConfig?.stream || "default" },
+                { label: 'Account ID', value: tagConfig?.cid?.[0] },
+                { label: 'Stream', value: tagConfig?.stream || 'default' },
                 { label: 'Cookie Name', value: tagConfig?.cookie },
                 { label: 'Profile Key', value: tagConfig?.entity?.byFieldKey },
                 { label: '3rd Party Cookies', value: tagConfig?.loadid ? 'Enabled' : 'Disabled' },
@@ -96,8 +98,8 @@ const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig }) => {
           </Stack>
           <Box>
             <Typography variant="body2" align={'center'} p={1}>
-              We have not been able to find the Lytics JavaScript SDK on this page. We&apos;ll continue checking but if you
-              haven&apos;t yet installed the tag please refer to our{' '}
+              We have not been able to find the Lytics JavaScript SDK on this page. We&apos;ll continue checking but if
+              you haven&apos;t yet installed the tag please refer to our{' '}
               <a
                 href="https://docs.lytics.com/docs/lytics-javascript-tag#installation"
                 target="_blank"

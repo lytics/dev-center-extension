@@ -22,28 +22,28 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
   };
 
   return (
-    <AppBar
-      position={"static"}
-      elevation={0}
-      sx={{
-        background: 'linear-gradient(to right, #6C31B8, #AB32DE)',
-      }}>
-      <Toolbar>
-        <Box pl={1}>
-          <LyticsLogo />
-        </Box>
-        <Box
-          flexGrow={1}
-        />
-        <FormGroup>
-          <FormControlLabel
-            control={<Toggle checked={isEnabled} />}
-            onChange={handleToggleChange}
-            label={<Box sx={{ pl: 1 }}>{toggleLabel}</Box>}
-          />
-        </FormGroup>
-      </Toolbar>
-    </AppBar>
+    <>
+      <AppBar
+        position={'static'}
+        elevation={0}
+        sx={{
+          background: 'linear-gradient(to right, #6C31B8, #AB32DE)',
+        }}>
+        <Toolbar>
+          <Box pl={1}>
+            <LyticsLogo />
+          </Box>
+          <Box flexGrow={1} />
+          <FormGroup>
+            <FormControlLabel
+              control={<Toggle checked={isEnabled} />}
+              onChange={handleToggleChange}
+              label={<Box sx={{ pl: 1 }}>{toggleLabel}</Box>}
+            />
+          </FormGroup>
+        </Toolbar>
+      </AppBar>
+    </>
   );
 };
 

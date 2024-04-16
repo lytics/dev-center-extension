@@ -139,7 +139,8 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
     }
 
     // populate scores
-    let updatedScores = appendScore(scores, profile.data, 'score_consistency', 'Consistency');
+    let updatedScores = [];
+    updatedScores = appendScore(updatedScores, profile.data, 'score_consistency', 'Consistency');
     updatedScores = appendScore(updatedScores, profile.data, 'score_frequency', 'Frequency');
     updatedScores = appendScore(updatedScores, profile.data, 'score_intensity', 'Intensity');
     updatedScores = appendScore(updatedScores, profile.data, 'score_maturity', 'Maturity');
