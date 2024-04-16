@@ -142,9 +142,9 @@ chrome.runtime.onMessage.addListener(request => {
 // chrome.tabs.onActivated.addListener(handleTabChange);
 
 // const handleDomainChanged = details => {
-//   if (details.frameId !== 0) {
-//     return;
-//   }
+// if (details.frameId !== 0) {
+//   return;
+// }
 
 //   checkTabDetailsHelper(details);
 // };

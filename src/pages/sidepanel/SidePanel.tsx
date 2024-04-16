@@ -26,12 +26,9 @@ import TopNavigation from '@pages/popup/components/TopNavigation';
 import { EmitLog } from '@src/shared/components/EmitLog';
 
 const evaluateDomain = (url: string, allowDomainURL: string) => {
-  console.log(`Evaluating domain: ${url} with allowDomainURL: ${allowDomainURL}`);
-
   if (allowDomainURL && url.includes(allowDomainURL)) {
     return true;
   }
-
   return false;
 };
 
@@ -75,7 +72,6 @@ const SidePanel = () => {
   });
 
   useEffect(() => {
-    console.log('use effect');
     if (allowDomainURL) {
       getCurrentTabURL()
         .then((url: string) => {
@@ -103,7 +99,6 @@ const SidePanel = () => {
   useEffect(() => {
     domainStore.get().then(domain => {
       if (typeof domain === 'string' && domain.trim() !== '') {
-        console.log('setting allowdomain on load', domain);
         setAllowDomainURL(domain);
       }
     });
@@ -112,7 +107,6 @@ const SidePanel = () => {
   const handleDomainStore = () => {
     domainStore.get().then((domain: string) => {
       if (domain !== '') {
-        console.log('handle allowdomain setting', domain);
         setAllowDomainURL(domain);
       }
     });
@@ -129,14 +123,14 @@ const SidePanel = () => {
     chrome.runtime.sendMessage({ action: 'setStickyDomain' }, () => {
       if (chrome.runtime.lastError) {
         // console.error('Error:', chrome.runtime.lastError.message);
-      } else {
-        chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-          if (tabs.length > 0) {
-            const tab = tabs[0];
-            chrome.tabs.reload(tab.id);
-          }
-        });
       }
+
+      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+        if (tabs.length > 0) {
+          const tab = tabs[0];
+          chrome.tabs.reload(tab.id);
+        }
+      });
     });
   };
 
@@ -192,7 +186,6 @@ const SidePanel = () => {
         const data = await tagConfigStore.get();
         setIsLoading(false);
         if (Object.keys(data).length === 0) {
-          console.log('fetching new data');
           chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             chrome.tabs.sendMessage(tabs[0].id, { action: 'getConfig' }, response => {
               if (chrome.runtime.lastError) {
@@ -205,7 +198,6 @@ const SidePanel = () => {
           setTimeout(fetchData, 1000);
         } else {
           const pendingConfig = JSON.parse(data) as TagConfigModel;
-          console.log('setting existing data', pendingConfig);
           setTagConfig(pendingConfig);
           setTagIsInstalled(Object.keys(pendingConfig).length > 0);
         }
@@ -261,10 +253,6 @@ const SidePanel = () => {
     setIsEnabled(isActive);
     extensionStateStorage.set(isActive);
   };
-
-  // useEffect(() => {
-  //   navigate('/debugger');
-  // }, []);
 
   const handleNavigation = path => {
     setActivePath(path);
