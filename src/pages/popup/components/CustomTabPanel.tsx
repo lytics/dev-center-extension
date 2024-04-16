@@ -12,17 +12,13 @@ const CustomTabPanel = (props: TabPanelProps) => {
   return (
     <Box
       p={1}
-      role={"tabpanel"}
+      role={'tabpanel'}
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
-    >
-      {value === index && (
-        <Box>
-          {children}
-        </Box>
-      )}
+      sx={{ height: 'calc(100vh - 175px)', overflow: 'auto' }}>
+      {value === index && <Box>{children}</Box>}
     </Box>
   );
 };

@@ -16,12 +16,12 @@ const SimpleTable: React.FC<SimpleTableProps> = ({ rows }) => {
     <Grid container spacing={1}>
       {rows.map((row, index) => (
         <React.Fragment key={index}>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <Typography variant="subtitle2" pr={1} align={'right'} sx={{ fontWeight: 600 }}>
               {row.label}
             </Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={9}>
             {row.fancyValue ? (
               row.fancyValue
             ) : (

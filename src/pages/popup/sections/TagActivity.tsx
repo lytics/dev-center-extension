@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Button, Box, Chip, Stack, Typography } from '@mui/material';
-import { ExpandMore } from '@mui/icons-material';
+import { ExpandMore, Delete } from '@mui/icons-material';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import { EventModel, EventType } from '@src/shared/models/eventModel';
 import TreeDisplay from '@root/src/pages/popup/components/TreeDisplay';
@@ -40,8 +40,10 @@ const TagActivity = () => {
 
   return (
     <Box fontSize={12}>
-      <Box>
-        <Button onClick={clearActivity}>Reset Activity</Button>
+      <Box textAlign={'right'} m={1}>
+        <Button size={'small'} variant={'text'} color={'secondary'} onClick={clearActivity} startIcon={<Delete />}>
+          Clear Logs
+        </Button>
       </Box>
       {tagActivity.length === 0 ? (
         <Box mt={6}>

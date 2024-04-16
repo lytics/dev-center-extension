@@ -124,7 +124,6 @@ const SidePanel = () => {
       if (chrome.runtime.lastError) {
         // console.error('Error:', chrome.runtime.lastError.message);
       }
-
       chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
         if (tabs.length > 0) {
           const tab = tabs[0];
@@ -264,7 +263,7 @@ const SidePanel = () => {
       width="100%"
       height="100vh"
       display="flex"
-      overflow={'hidden'}
+      // overflow={'hidden'}
       flexDirection="column"
       sx={{
         background: '#E9E8EE',

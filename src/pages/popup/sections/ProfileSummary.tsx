@@ -68,9 +68,11 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({ data, color1, color2 }:
         <Stack key={index} spacing={1} direction={'row'}>
           <Box
             sx={{
-              width: '150px',
+              width: '125px',
+              borderRadius: '2px',
+              background: 'linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #D8D8E5 100%)',
             }}>
-            <Typography variant="body2" sx={{ fontSize: 12, textAlign: 'right' }}>
+            <Typography variant="body2" sx={{ fontSize: 12, textAlign: 'center' }}>
               {truncateString(item.label, 20)}
             </Typography>
           </Box>
@@ -242,7 +244,7 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
               ),
             },
             {
-              label: 'Computed Attributes',
+              label: 'Audiences',
               value: computedAttributesValue.split(',').map((attribute, index) => (
                 <Typography key={index} variant="subtitle2" align="left" fontSize={'12px'}>
                   {attribute}

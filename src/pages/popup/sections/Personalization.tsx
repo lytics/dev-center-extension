@@ -46,7 +46,7 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates }) => {
   };
 
   return (
-    <Stack alignItems={'flex-start'} justifyContent={'center'} height={'100%'} width={'100%'} overflow={'hidden'}>
+    <Stack alignItems={'flex-start'} justifyContent={'center'} height={'100%'} width={'100%'}>
       <Box borderBottom={1} borderColor={'divider'} width={'100%'}>
         <Tabs value={activeTab} onChange={handleSetTab} textColor="secondary" indicatorColor="secondary">
           <Tab id="experiences" label="Experiences" />

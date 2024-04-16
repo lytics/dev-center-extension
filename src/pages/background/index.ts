@@ -8,6 +8,52 @@ import { EmitLog } from '@root/src/shared/components/EmitLog';
 import 'webextension-polyfill';
 
 // --------------------------------------------------------
+// Handle Context Menus
+// --------------------------------------------------------
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: 'openSidePanel',
+    title: 'Launch Lytics Dev Tools',
+    contexts: ['all'],
+  });
+  chrome.tabs.create({ url: 'src/pages/sidepanel/index.html' });
+});
+
+chrome.action.onClicked.addListener(() => {
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    const currentTab = tabs[0];
+    chrome.sidePanel.open({ tabId: currentTab.id });
+  });
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  chrome.tabs.create({ url: 'src/pages/sidepanel/index.html' });
+});
+
+chrome.runtime.onMessage.addListener((message, sender) => {
+  // The callback for runtime.onMessage must return falsy if we're not sending a response
+  (async () => {
+    if (message.type === 'open_side_panel') {
+      await chrome.sidePanel.open({ tabId: sender.tab.id });
+      await chrome.sidePanel.setOptions({
+        tabId: sender.tab.id,
+        path: 'src/pages/sidepanel/index.html',
+        enabled: true,
+      });
+    }
+  })();
+});
+
+chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
+  if (!tab.url) return;
+  await chrome.sidePanel.setOptions({
+    tabId,
+    path: 'src/pages/sidepanel/index.html',
+    enabled: true,
+  });
+});
+
+// --------------------------------------------------------
 // Handle State Management
 // --------------------------------------------------------
 const handleStateChange = () => {
