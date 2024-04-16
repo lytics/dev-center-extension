@@ -13,7 +13,6 @@ interface DebuggerProps {
 
 const Debugger: React.FC<DebuggerProps> = ({ tagIsInstalled, tagConfig }) => {
   const [activeTab, setActiveTab] = useState(0);
-
   const handleSetTab = (event, newValue) => {
     setActiveTab(newValue);
   };

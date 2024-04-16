@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import App from '@pages/content/ui/app';
 // import refreshOnUpdate from 'virtual:reload-on-update-in-view';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
-import domainStore from '@root/src/shared/storages/extensionDomainStorage';
+import domainStore from '@src/shared/storages/extensionDomainStorage';
 import { EmitLog } from '@src/shared/components/EmitLog';
 
 const initContentScripts = () => {

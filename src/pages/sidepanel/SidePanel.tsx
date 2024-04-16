@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import BottomNavigation from '@pages/popup/components/BottomNavigation';
 
 // styles
 import { Box, Button, CircularProgress, Stack, Typography } from '@mui/material';
 import { DeveloperCenterIcon } from '@pages/popup/assets/svg/developerCenterIcon';
+import { WrongDomain } from '@pages/popup/assets/svg/wrongDomainIcon';
 import '@pages/popup/Popup.css';
 
 // storage
@@ -22,8 +23,17 @@ import Profile from '@pages/popup/sections/Profile';
 import Personalization from '@pages/popup/sections/Personalization';
 import Configuration from '@pages/popup/sections/Configuration';
 import TopNavigation from '@pages/popup/components/TopNavigation';
-// import BottomNavigation from '@pages/popup/components/BottomNavigation';
 import { EmitLog } from '@src/shared/components/EmitLog';
+
+const evaluateDomain = (url: string, allowDomainURL: string) => {
+  console.log(`Evaluating domain: ${url} with allowDomainURL: ${allowDomainURL}`);
+
+  if (allowDomainURL && url.includes(allowDomainURL)) {
+    return true;
+  }
+
+  return false;
+};
 
 const SidePanel = () => {
   const navigate = useNavigate();
@@ -40,40 +50,43 @@ const SidePanel = () => {
   const [allowDomain, setAllowDomain] = useState(false);
   const [allowDomainURL, setAllowDomainURL] = useState('');
 
-  const evaluateDomain = useCallback(
-    (url: string) => {
-      if (allowDomainURL && url.includes(allowDomainURL)) {
-        setAllowDomain(true);
-      } else {
-        setAllowDomain(false);
-      }
-    },
-    [allowDomainURL],
-  );
-
   const handleChromeNavEvents = (details: any, isURLChange: boolean) => {
+    if (details.frameId !== 0) {
+      return;
+    }
+
     GetActiveTabURL(details, isURLChange)
       .then((url: string) => {
         if (url) {
-          evaluateDomain(url);
+          setAllowDomain(evaluateDomain(url, allowDomainURL));
         }
       })
-      .catch(() => {
+      .catch(error => {
+        console.error('Error getting active tab URL', error);
         // If an error occurs, do nothing
       });
   };
 
+  chrome.webNavigation.onCompleted.addListener(details => {
+    handleChromeNavEvents(details, true);
+  });
+  chrome.tabs.onActivated.addListener(details => {
+    handleChromeNavEvents(details, false);
+  });
+
   useEffect(() => {
+    console.log('use effect');
     if (allowDomainURL) {
       getCurrentTabURL()
         .then((url: string) => {
-          evaluateDomain(url);
+          setAllowDomain(evaluateDomain(url, allowDomainURL));
         })
-        .catch(() => {
+        .catch(error => {
           // If an error occurs, do nothing
+          console.error('Error getting active tab URL', error);
         });
     }
-  }, [allowDomainURL, evaluateDomain]);
+  }, [allowDomainURL]);
 
   const getCurrentTabURL = () => {
     return new Promise((resolve, reject) => {
@@ -87,16 +100,10 @@ const SidePanel = () => {
     });
   };
 
-  chrome.webNavigation.onCompleted.addListener(details => {
-    handleChromeNavEvents(details, true);
-  });
-  chrome.tabs.onActivated.addListener(details => {
-    handleChromeNavEvents(details, false);
-  });
-
   useEffect(() => {
     domainStore.get().then(domain => {
       if (typeof domain === 'string' && domain.trim() !== '') {
+        console.log('setting allowdomain on load', domain);
         setAllowDomainURL(domain);
       }
     });
@@ -105,6 +112,7 @@ const SidePanel = () => {
   const handleDomainStore = () => {
     domainStore.get().then((domain: string) => {
       if (domain !== '') {
+        console.log('handle allowdomain setting', domain);
         setAllowDomainURL(domain);
       }
     });
@@ -112,19 +120,24 @@ const SidePanel = () => {
   domainStore.subscribe(handleDomainStore);
 
   const handleStickyDomainSet = () => {
-    chrome.runtime.sendMessage(
-      {
-        action: 'setStickyDomain',
-      },
-      () => {
+    setTagIsInstalled(false);
+    setProfileIsLoading(true);
+    setTagConfig({} as TagConfigModel);
+    setCurrentProfile({} as any);
+    setCandidates({} as TagConfigPathforaCandidates);
+
+    chrome.runtime.sendMessage({ action: 'setStickyDomain' }, () => {
+      if (chrome.runtime.lastError) {
+        // console.error('Error:', chrome.runtime.lastError.message);
+      } else {
         chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
           if (tabs.length > 0) {
             const tab = tabs[0];
             chrome.tabs.reload(tab.id);
           }
         });
-      },
-    );
+      }
+    });
   };
 
   // Define a callback function to handle storage changes
@@ -249,9 +262,9 @@ const SidePanel = () => {
     extensionStateStorage.set(isActive);
   };
 
-  useEffect(() => {
-    navigate('/debugger');
-  }, []);
+  // useEffect(() => {
+  //   navigate('/debugger');
+  // }, []);
 
   const handleNavigation = path => {
     setActivePath(path);
@@ -306,12 +319,12 @@ const SidePanel = () => {
             </>
           ) : (
             <Stack display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} p={5} spacing={1}>
-              <DeveloperCenterIcon />
+              <WrongDomain />
               <Typography variant={'body1'} align={'center'} pb={2} maxWidth={'450px'}>
                 {allowDomainURL ? (
                   <>
-                    Wait a minute! You are currently analyzing {allowDomainURL}. If you&apos;d like to analyze this
-                    domain instead simple pin it below.
+                    Wait a minute! You are currently analyzing <strong>{allowDomainURL}</strong>. If you&apos;d like to
+                    analyze this domain instead simple pin it below.
                   </>
                 ) : (
                   <>
@@ -340,17 +353,3 @@ const SidePanel = () => {
 };
 
 export default SidePanel;
-
-// Do i get a message when no domain is pinned.
-// Do i get a message when a domain is pinned.
-// Do i get a message when i visit the pinned domain for the first time.
-// Do i get a message when i browse around on the pinned domain.
-// Do i get a message when i leave the pinned domain and come back.
-// Do i get a message when i switch tabs away from the pinned domain and come back.
-// const payload = (event as any).detail.data;
-// entityStore.set(payload).then(() => {
-//   EmitLog({ name: 'storage', payload: { msg: 'Entity saved.' } });
-// });
-// {
-//   domain: "test.com",
-// }
