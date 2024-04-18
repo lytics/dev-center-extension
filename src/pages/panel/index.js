@@ -1,1 +1,31 @@
-import{r as s,j as e,c as i}from"../../../assets/js/client.WVs9LN-p.js";import{E as a}from"../../../assets/js/EmitLog.VaGcFWYO.js";import{B as r,T as l,a as d}from"../../../assets/js/Button.22WOgOfo.js";import"../../../assets/js/_commonjsHelpers.4gQjN7DL.js";const m=()=>{const[n,o]=s.useState(null);return s.useEffect(()=>{const t=chrome.runtime.connect({name:"devtools-panel"});return a({name:"panel",payload:{msg:"Devtools panel connected."}}),t.onMessage.addListener(c=>{o(c.message)}),()=>{a({name:"panel",payload:{msg:"Devtools panel disconnected."}}),t.disconnect()}},[]),e.jsxs(r,{className:"container",children:[e.jsx(l,{variant:"h1",children:"Dev Tools Panel"}),e.jsx(d,{children:"test"}),e.jsx(r,{children:n?e.jsx("div",{children:n}):e.jsx("div",{children:"No message received yet."})})]})};function p(){const n=document.querySelector("#app-container");if(!n)throw new Error("Can not find #app-container");i(n).render(e.jsx(m,{}))}p();
+import { r as reactExports, j as jsxRuntimeExports, c as createRoot } from "../../../assets/js/client.js";
+import { B as Box, T as Typography, a as Button } from "../../../assets/js/Button.js";
+import "../../../assets/js/_commonjsHelpers.js";
+const Panel = () => {
+  const [message, setMessage] = reactExports.useState(null);
+  reactExports.useEffect(() => {
+    const backgroundConnection = chrome.runtime.connect({
+      name: "devtools-panel"
+    });
+    backgroundConnection.onMessage.addListener((receivedMessage) => {
+      setMessage(receivedMessage.message);
+    });
+    return () => {
+      backgroundConnection.disconnect();
+    };
+  }, []);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(Box, { className: "container", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Typography, { variant: "h1", children: "Dev Tools Panel" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { children: "test" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Box, { children: message ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: message }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: "No message received yet." }) })
+  ] });
+};
+function init() {
+  const appContainer = document.querySelector("#app-container");
+  if (!appContainer) {
+    throw new Error("Can not find #app-container");
+  }
+  const root = createRoot(appContainer);
+  root.render(/* @__PURE__ */ jsxRuntimeExports.jsx(Panel, {}));
+}
+init();

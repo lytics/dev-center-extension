@@ -1,0 +1,1 @@
+import{c as r,S as c}from"./base.zwil0R1V.js";const e="tagActivityStorage",t=r(e,[],{storageType:c.Local,liveUpdate:!0}),s={...t,clear:()=>{chrome.storage.local.remove(e,()=>{})},add:a=>{t.get().then(o=>{t.set([...o,a])})}};export{s as t};
