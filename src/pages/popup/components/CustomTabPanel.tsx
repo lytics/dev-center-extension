@@ -17,7 +17,7 @@ const CustomTabPanel = (props: TabPanelProps) => {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
-      sx={{ height: 'calc(100vh - 175px)', overflow: 'auto' }}>
+      sx={{ height: 'calc(100vh - 185px)', overflow: 'auto' }}>
       {value === index && <Box>{children}</Box>}
     </Box>
   );

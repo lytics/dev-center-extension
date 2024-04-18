@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Divider, LinearProgress, Stack, Typography } from '@mui/material';
+import { Box, Button, Chip, Divider, LinearProgress, Stack, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import SimpleTable from '@pages/popup/components/SimpleTable';
 
@@ -65,20 +65,20 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({ data, color1, color2 }:
   return (
     <Stack spacing={0.5}>
       {data.map((item, index) => (
-        <Stack key={index} spacing={1} direction={'row'}>
+        <Stack key={index} spacing={1} direction={'row'} ml={1} mr={1}>
           <Box
             sx={{
-              width: '125px',
+              width: '200px',
               borderRadius: '2px',
-              background: 'linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #D8D8E5 100%)',
+              // background: 'linear-gradient(90deg, rgba(255, 255, 255, 0) 80%, #D8D8E5 100%)',
             }}>
-            <Typography variant="body2" sx={{ fontSize: 12, textAlign: 'center' }}>
+            <Typography variant="body2" sx={{ fontSize: 12, textAlign: 'right' }}>
               {truncateString(item.label, 20)}
             </Typography>
           </Box>
           <LinearProgress
             variant="determinate"
-            value={Math.round(item.value * 100)} // Scale the value to 0-100
+            value={Math.round(item.value * 100)}
             sx={{
               width: '100%',
               height: '1rem',
@@ -214,10 +214,28 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         <SimpleTable
           rows={[
             { label: 'Lytics ID', value: profile?.data?.user?._id || 'Unknown' },
-            { label: 'Last Web Cookie', value: profile?.data?.user?._uid || profile?.data?._uid || 'Unknown' },
+            { label: 'Last _UID (Cookie)', value: profile?.data?.user?._uid || profile?.data?._uid || 'Unknown' },
+            {
+              label: 'Audiences',
+              position: 'top',
+              fancyValue: (
+                <Box pl={1} pr={1} display="flex" justifyContent="center">
+                  {computedAttributesValue.split(',').map((attribute, index) => (
+                    <Chip
+                      size={'small'}
+                      variant={'outlined'}
+                      key={index}
+                      label={attribute}
+                      sx={{ borderRadius: 1, mr: 1 }}
+                    />
+                  ))}
+                </Box>
+              ),
+            },
             {
               label: 'Behavior',
-              value: (
+              position: 'top',
+              fancyValue: (
                 <Box>
                   {hasScores ? (
                     <CustomBarChart data={scores} color1={'#00BAE3'} color2={'#85DB83'} />
@@ -231,7 +249,8 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
             },
             {
               label: 'Interests',
-              value: (
+              position: 'top',
+              fancyValue: (
                 <Box>
                   {hasContent ? (
                     <CustomBarChart data={sortedData} color1={'#9D70FD'} color2={'#D36FDE'} />
@@ -242,14 +261,6 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
                   )}
                 </Box>
               ),
-            },
-            {
-              label: 'Audiences',
-              value: computedAttributesValue.split(',').map((attribute, index) => (
-                <Typography key={index} variant="subtitle2" align="left" fontSize={'12px'}>
-                  {attribute}
-                </Typography>
-              )),
             },
           ]}
         />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Stack, Tab, Tabs, Typography } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
 import { TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
@@ -8,6 +8,8 @@ import EmptyState from '@src/pages/popup/components/EmptyState';
 
 interface PersonalizationProps {
   candidates: TagConfigPathforaCandidates;
+  getter: number;
+  setter: Dispatch<SetStateAction<number>>;
 }
 
 const TabDetails = ({ items }: { items: any[] }) => {
@@ -38,23 +40,21 @@ const TabDetails = ({ items }: { items: any[] }) => {
   );
 };
 
-const Personalization: React.FC<PersonalizationProps> = ({ candidates }) => {
-  const [activeTab, setActiveTab] = useState(0);
-
+const Personalization: React.FC<PersonalizationProps> = ({ candidates, getter, setter }) => {
   const handleSetTab = (event, newValue) => {
-    setActiveTab(newValue);
+    setter(newValue);
   };
 
   return (
     <Stack alignItems={'flex-start'} justifyContent={'center'} height={'100%'} width={'100%'}>
       <Box borderBottom={1} borderColor={'divider'} width={'100%'}>
-        <Tabs value={activeTab} onChange={handleSetTab} textColor="secondary" indicatorColor="secondary">
+        <Tabs value={getter} onChange={handleSetTab} textColor="secondary" indicatorColor="secondary">
           <Tab id="experiences" label="Experiences" />
           <Tab id="legacy" disabled={false} label="Legacy Campaigns" />
         </Tabs>
       </Box>
       <Box flexGrow={1} width={'100%'} overflow={'auto'}>
-        <CustomTabPanel value={activeTab} index={0}>
+        <CustomTabPanel value={getter} index={0}>
           {candidates?.experiences.length > 0 ? (
             <TabDetails items={candidates?.experiences} />
           ) : (
@@ -66,7 +66,7 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates }) => {
             </Box>
           )}
         </CustomTabPanel>
-        <CustomTabPanel value={activeTab} index={1}>
+        <CustomTabPanel value={getter} index={1}>
           {candidates.variations?.length > 0 || candidates.legacyABTests?.length > 0 ? (
             <>
               {candidates.variations?.length > 0 && <TabDetails items={candidates.variations} />}

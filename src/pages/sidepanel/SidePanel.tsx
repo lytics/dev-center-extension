@@ -47,6 +47,11 @@ const SidePanel = () => {
   const [allowDomain, setAllowDomain] = useState(false);
   const [allowDomainURL, setAllowDomainURL] = useState('');
 
+  // Tab state
+  const [debugTab, setDebugTab] = useState(0);
+  const [profileTab, setProfileTab] = useState(0);
+  const [personalizationTab, setPersonalizationTab] = useState(0);
+
   const handleChromeNavEvents = (details: any, isURLChange: boolean) => {
     if (details.frameId !== 0) {
       return;
@@ -263,7 +268,7 @@ const SidePanel = () => {
       width="100%"
       height="100vh"
       display="flex"
-      // overflow={'hidden'}
+      overflow={'hidden'}
       flexDirection="column"
       sx={{
         background: '#E9E8EE',
@@ -290,10 +295,36 @@ const SidePanel = () => {
                       <Route path="/settings" element={<Configuration />} />
                       <Route
                         path="/profile"
-                        element={<Profile profileIsLoading={profileIsLoading} profile={currentProfile} />}
+                        element={
+                          <Profile
+                            profileIsLoading={profileIsLoading}
+                            profile={currentProfile}
+                            getter={profileTab}
+                            setter={setProfileTab}
+                          />
+                        }
                       />
-                      <Route path="/personalization" element={<Personalization candidates={candidates} />} />
-                      <Route path="*" element={<Debugger tagIsInstalled={tagIsInstalled} tagConfig={tagConfig} />} />
+                      <Route
+                        path="/personalization"
+                        element={
+                          <Personalization
+                            candidates={candidates}
+                            getter={personalizationTab}
+                            setter={setPersonalizationTab}
+                          />
+                        }
+                      />
+                      <Route
+                        path="*"
+                        element={
+                          <Debugger
+                            tagIsInstalled={tagIsInstalled}
+                            tagConfig={tagConfig}
+                            getter={debugTab}
+                            setter={setDebugTab}
+                          />
+                        }
+                      />
                     </Routes>
                   </Box>
                   <BottomNavigation

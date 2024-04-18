@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Box, Stack, Tab, Tabs, CircularProgress } from '@mui/material';
 import CustomTabPanel from '@src/pages/popup/components/CustomTabPanel';
 import ProfileDetail from '@src/pages/popup/sections/ProfileDetail';
@@ -7,25 +7,25 @@ import ProfileSummary from '@src/pages/popup/sections/ProfileSummary';
 interface ProfileTabProps {
   profile: any;
   profileIsLoading: boolean;
+  getter: number;
+  setter: Dispatch<SetStateAction<number>>;
 }
 
-const Profile: React.FC<ProfileTabProps> = ({ profileIsLoading, profile }) => {
-  const [activeTab, setActiveTab] = useState(0);
-
+const Profile: React.FC<ProfileTabProps> = ({ profileIsLoading, profile, getter, setter }) => {
   const handleSetTab = (event, newValue) => {
-    setActiveTab(newValue);
+    setter(newValue);
   };
 
   return (
     <Stack alignItems={'flex-start'} justifyContent={'center'} height={'100vh'} width={'100%'} overflow={'hidden'}>
       <Box borderBottom={1} borderColor={'divider'} width={'100%'}>
-        <Tabs value={activeTab} onChange={handleSetTab} textColor="secondary" indicatorColor="secondary">
+        <Tabs value={getter} onChange={handleSetTab} textColor="secondary" indicatorColor="secondary">
           <Tab id="summary" label="Summary" />
           <Tab id="raw" disabled={profileIsLoading} label="Details" />
         </Tabs>
       </Box>
       <Box flexGrow={1} width={'100%'} overflow={'auto'}>
-        <CustomTabPanel value={activeTab} index={0}>
+        <CustomTabPanel value={getter} index={0}>
           {profileIsLoading ? (
             <Box m={2}>
               <CircularProgress color="secondary" />
@@ -34,7 +34,7 @@ const Profile: React.FC<ProfileTabProps> = ({ profileIsLoading, profile }) => {
             <ProfileSummary profile={profile} />
           )}
         </CustomTabPanel>
-        <CustomTabPanel value={activeTab} index={1}>
+        <CustomTabPanel value={getter} index={1}>
           <ProfileDetail profile={profile} />
         </CustomTabPanel>
       </Box>
