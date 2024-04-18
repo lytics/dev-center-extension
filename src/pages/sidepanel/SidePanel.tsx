@@ -46,11 +46,22 @@ const SidePanel = () => {
   const [candidates, setCandidates] = useState<TagConfigPathforaCandidates>({} as TagConfigPathforaCandidates);
   const [allowDomain, setAllowDomain] = useState(false);
   const [allowDomainURL, setAllowDomainURL] = useState('');
+  const [refreshTimestamp, setRefreshTimestamp] = useState(Date.now());
 
   // Tab state
   const [debugTab, setDebugTab] = useState(0);
   const [profileTab, setProfileTab] = useState(0);
   const [personalizationTab, setPersonalizationTab] = useState(0);
+
+  const safeJSON = (jsonString: string, details: string): any | null => {
+    try {
+      const parsedJSON = JSON.parse(jsonString);
+      return parsedJSON;
+    } catch (error) {
+      console.error('Error parsing JSON:', details, error);
+      return null;
+    }
+  };
 
   const handleChromeNavEvents = (details: any, isURLChange: boolean) => {
     if (details.frameId !== 0) {
@@ -124,6 +135,11 @@ const SidePanel = () => {
     setTagConfig({} as TagConfigModel);
     setCurrentProfile({} as any);
     setCandidates({} as TagConfigPathforaCandidates);
+    setRefreshTimestamp(Date.now());
+    navigate('/');
+    setDebugTab(0);
+    setProfileTab(0);
+    setPersonalizationTab(0);
 
     chrome.runtime.sendMessage({ action: 'setStickyDomain' }, () => {
       if (chrome.runtime.lastError) {
@@ -143,24 +159,34 @@ const SidePanel = () => {
     if (areaName === 'local') {
       for (const key in changes) {
         if (key === 'tagConfigStorage') {
-          const pendingConfig = changes[key].newValue;
-          // console.log('tagconfig storage change stuff', pendingConfig);
-          setTagConfig(JSON.parse(pendingConfig) as TagConfigModel);
-          setTagIsInstalled(Object.keys(pendingConfig).length > 0);
-          EmitLog({ name: 'sidepanel', payload: { msg: 'Tag config storage changed', value: pendingConfig } });
-          try {
-            const data = JSON.parse(pendingConfig);
-            setTagConfig(data);
-            setTagIsInstalled(Object.keys(data).length > 0);
-            EmitLog({ name: 'sidepanel', payload: { msg: 'Tag config storage changed', value: pendingConfig } });
-          } catch (error) {
-            EmitLog({ name: 'sidepanel', payload: { msg: 'Error parsing tag config.', error: error } });
+          if (changes[key].newValue === undefined || changes[key].newValue === null) {
+            // setRefreshTimestamp(Date.now());
+            return;
           }
+
+          const safeConfig = safeJSON(changes[key].newValue, 'tag config storage change');
+          if (!safeConfig) {
+            EmitLog({ name: 'sidepanel', payload: { msg: 'Error parsing tag config.', error: 'Invalid JSON' } });
+            return;
+          }
+          setTagConfig(safeConfig);
+          setTagIsInstalled(Object.keys(safeConfig).length > 0);
+          EmitLog({ name: 'sidepanel', payload: { msg: 'Tag config storage changed', value: safeConfig } });
         }
+
         if (key === 'entityStorage') {
-          const newValue = changes[key].newValue;
-          EmitLog({ name: 'sidepanel', payload: { msg: 'Entity storage changed', value: newValue } });
-          setCurrentProfile(JSON.parse(newValue) as any);
+          if (changes[key].newValue === undefined || changes[key].newValue === null) {
+            // setRefreshTimestamp(Date.now());
+            return;
+          }
+
+          const safeProfile = safeJSON(changes[key].newValue, 'entity storage change');
+          if (!safeProfile) {
+            EmitLog({ name: 'sidepanel', payload: { msg: 'Error parsing tag config.', error: 'Invalid JSON' } });
+            return;
+          }
+          setCurrentProfile(safeProfile);
+          EmitLog({ name: 'sidepanel', payload: { msg: 'Entity storage changed', value: safeProfile } });
         }
       }
     }
@@ -201,7 +227,14 @@ const SidePanel = () => {
           });
           setTimeout(fetchData, 1000);
         } else {
-          const pendingConfig = JSON.parse(data) as TagConfigModel;
+          const pendingConfig = safeJSON(data, 'tag config fetch');
+          if (!pendingConfig) {
+            EmitLog({
+              name: 'sidepanel',
+              payload: { msg: 'Error parsing pending tag config.', error: 'Invalid JSON' },
+            });
+            return;
+          }
           setTagConfig(pendingConfig);
           setTagIsInstalled(Object.keys(pendingConfig).length > 0);
         }
@@ -211,7 +244,7 @@ const SidePanel = () => {
     };
 
     fetchData();
-  }, [isEnabled]);
+  }, [isEnabled, refreshTimestamp]);
 
   useEffect(() => {
     if (!isEnabled) {
@@ -234,7 +267,15 @@ const SidePanel = () => {
           });
           setTimeout(fetchData, 1000);
         } else {
-          setCurrentProfile(JSON.parse(data) as any);
+          const safeData = safeJSON(data, 'profile fetch');
+          if (!safeData) {
+            EmitLog({
+              name: 'sidepanel',
+              payload: { msg: 'Error parsing pending entity.', error: 'Invalid JSON' },
+            });
+            return;
+          }
+          setCurrentProfile(safeData);
           setProfileIsLoading(false);
         }
       } catch (error) {
@@ -243,7 +284,7 @@ const SidePanel = () => {
     };
 
     fetchData();
-  }, [isEnabled]);
+  }, [isEnabled, refreshTimestamp]);
 
   useEffect(() => {
     if (location.pathname === '/src/pages/sidepanel/index.html') {

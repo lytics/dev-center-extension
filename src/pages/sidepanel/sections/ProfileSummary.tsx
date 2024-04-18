@@ -219,14 +219,14 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
               label: 'Audiences',
               position: 'top',
               fancyValue: (
-                <Box pl={1} pr={1} display="flex" justifyContent="center">
+                <Box pl={1} pr={1} display="flex" justifyContent="center" flexDirection="row" flexWrap="wrap">
                   {computedAttributesValue.split(',').map((attribute, index) => (
                     <Chip
                       size={'small'}
                       variant={'outlined'}
                       key={index}
                       label={attribute}
-                      sx={{ borderRadius: 1, mr: 1 }}
+                      sx={{ borderRadius: 1, mr: 1, mb: 1 }}
                     />
                   ))}
                 </Box>
