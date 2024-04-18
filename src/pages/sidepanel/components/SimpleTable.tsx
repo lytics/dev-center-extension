@@ -3,7 +3,8 @@ import { Grid, Divider, Typography } from '@mui/material';
 
 interface TableRow {
   label: string;
-  value: string;
+  position?: string;
+  value?: string;
   fancyValue?: React.ReactNode;
 }
 
@@ -13,15 +14,15 @@ interface SimpleTableProps {
 
 const SimpleTable: React.FC<SimpleTableProps> = ({ rows }) => {
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={1} pl={1} pr={1}>
       {rows.map((row, index) => (
         <React.Fragment key={index}>
-          <Grid item xs={4}>
-            <Typography variant="subtitle2" pr={1} align={'right'} sx={{ fontWeight: 600 }}>
+          <Grid item xs={row.position === 'top' ? 12 : 3.5}>
+            <Typography variant="subtitle2" pr={1} align={'left'} sx={{ fontWeight: 600 }}>
               {row.label}
             </Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={row.position === 'top' ? 12 : 8.5}>
             {row.fancyValue ? (
               row.fancyValue
             ) : (

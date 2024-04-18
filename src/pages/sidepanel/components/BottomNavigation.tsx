@@ -4,7 +4,6 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Plumbing from '@mui/icons-material/Plumbing';
 import Person from '@mui/icons-material/Person';
 import Brush from '@mui/icons-material/Brush';
-// import Settings from '@mui/icons-material/Settings';
 
 interface BottomNavProps {
   value: string;
@@ -14,16 +13,15 @@ interface BottomNavProps {
 
 const BottomNav: React.FC<BottomNavProps> = ({ value, tagIsInstalled, onChange }) => {
   return (
-    <BottomNavigation 
-      showLabels 
-      value={value} 
+    <BottomNavigation
+      showLabels
+      value={value}
       onChange={(_, newValue) => onChange(newValue)}
       sx={{
         position: 'fixed',
         bottom: 0,
         width: '100%',
-      }}
-    >
+      }}>
       <BottomNavigationAction
         label="Debugger"
         value="/"
@@ -56,16 +54,6 @@ const BottomNav: React.FC<BottomNavProps> = ({ value, tagIsInstalled, onChange }
           },
         }}
       />
-      {/* <BottomNavigationAction
-        label="Settings"
-        value="/settings"
-        icon={<Settings />}
-        sx={{
-          '&.Mui-selected': {
-            color: 'secondary.main',
-          },
-        }}
-      /> */}
     </BottomNavigation>
   );
 };

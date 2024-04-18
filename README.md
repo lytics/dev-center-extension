@@ -10,22 +10,24 @@ Lytics Developer Tools is a Chrome extension designed to empower developers, mar
 - Check the overall health and status of your Lytics installation.
 - Verify if your Lytics instance is up-to-date and running smoothly.
 
-### 2. Visitor Profile Overview
+### 2. Collecting Activity Logging & Debugging
+- Check the overall health and status of your Lytics installation.
+- Verify if your Lytics instance is up-to-date and running smoothly.
+
+### 3. Visitor Profile Overview
 - Gain full access to the Lytics profile for the current visitor.
 - Explore key insights and all available attributes of individual visitors.
 - Use this feature to better understand your audience and tailor experiences accordingly.
 
-### 3. Personalization Experience Overview
+### 4. Personalization Experience Overview
 - Get an overview of existing personalization experiences within Lytics.
 - Access a summary of each available experience and its corresponding configuration.
 - Streamline the management of personalization strategies for your content.
 
 ## Installation
 
-<!-- ### Install via Chrome Web Store (coming soon)
-
-1. Go to the [Chrome Web Store](https://chrome.google.com/webstore/detail/lytics-developer-tools) page for Lytics Developer Tools.
-2. Click the "Add to Chrome" button to install the extension. -->
+1. Go to the [Chrome Web Store](https://chromewebstore.google.com/detail/lytics-dev-tools/jhdkpndomcenhmbkcnfjmdccfmlmjfgl) page for Lytics Developer Tools.
+2. Click the "Add to Chrome" button to install the extension.
 
 ### Manual Installation
 
@@ -62,7 +64,7 @@ To run Lytics Developer Tools locally for development purposes, follow these ste
     yarn && yarn build
     ```
 
-4. Start the development server:
+4. Start the development server (if you want to listen for updates):
 
     ```bash
     yarn dev

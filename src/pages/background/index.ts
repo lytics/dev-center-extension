@@ -1,14 +1,61 @@
-import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import entityStore from '@src/shared/storages/entityStorage';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
+import domainStore from '@src/shared/storages/extensionDomainStorage';
 import { EventModel } from '@src/shared/models/eventModel';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import { EmitLog } from '@root/src/shared/components/EmitLog';
 import 'webextension-polyfill';
 
-reloadOnUpdate('pages/background');
+// --------------------------------------------------------
+// Handle Context Menus
+// --------------------------------------------------------
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: 'openSidePanel',
+    title: 'Launch Lytics Dev Tools',
+    contexts: ['all'],
+  });
+  chrome.tabs.create({ url: 'src/pages/sidepanel/index.html' });
+});
 
+chrome.action.onClicked.addListener(() => {
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    const currentTab = tabs[0];
+    chrome.sidePanel.open({ tabId: currentTab.id });
+  });
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  chrome.tabs.create({ url: 'src/pages/sidepanel/index.html' });
+});
+
+chrome.runtime.onMessage.addListener((message, sender) => {
+  // The callback for runtime.onMessage must return falsy if we're not sending a response
+  (async () => {
+    if (message.type === 'open_side_panel') {
+      await chrome.sidePanel.open({ tabId: sender.tab.id });
+      await chrome.sidePanel.setOptions({
+        tabId: sender.tab.id,
+        path: 'src/pages/sidepanel/index.html',
+        enabled: true,
+      });
+    }
+  })();
+});
+
+chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
+  if (!tab.url) return;
+  await chrome.sidePanel.setOptions({
+    tabId,
+    path: 'src/pages/sidepanel/index.html',
+    enabled: true,
+  });
+});
+
+// --------------------------------------------------------
+// Handle State Management
+// --------------------------------------------------------
 const handleStateChange = () => {
   extensionStateStorage.get().then(state => {
     if (state === true) {
@@ -21,8 +68,6 @@ const handleStateChange = () => {
       });
       EmitLog({ name: 'background', payload: { msg: 'Extension Activated' } });
       clearAllThings();
-      chrome.tabs.onActivated.addListener(handleTabChange);
-      chrome.webNavigation.onBeforeNavigate.addListener(handleDomainChanged);
       chrome.webRequest.onBeforeRequest.addListener(
         handleNetworkTraffic,
         {
@@ -45,8 +90,6 @@ const handleStateChange = () => {
       });
       EmitLog({ name: 'background', payload: { msg: 'Extension Deactivated' } });
       clearAllThings();
-      chrome.tabs.onActivated.removeListener(handleTabChange);
-      chrome.webNavigation.onBeforeNavigate.removeListener(handleDomainChanged);
       chrome.webRequest.onBeforeRequest.removeListener(handleNetworkTraffic);
     }
   });
@@ -60,33 +103,45 @@ const clearAllThings = () => {
   tagConfigStore.clear();
   entityStore.clear();
   tagActivityStore.clear();
+  domainStore.clear();
 };
 
-const handleTabChange = () => {
+// --------------------------------------------------------
+// Manage Sticky Domain
+// --------------------------------------------------------
+let stickyDomain = '';
+
+domainStore.get().then(domain => {
+  stickyDomain = domain;
+  EmitLog({ name: 'background', payload: { msg: `Sticky Domain initially loaded as <${stickyDomain}>` } });
+});
+
+const handleStickyDomainSet = () => {
   clearAllThings();
-};
-chrome.tabs.onActivated.addListener(handleTabChange);
-
-let lastDomain: string;
-const handleDomainChanged = details => {
-  chrome.tabs.get(details.tabId, tab => {
-    if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
-      return;
-    }
-    const tabUrl = tab.url;
-    if (tabUrl) {
-      const activeDomain = new URL(tabUrl).hostname;
-
-      if (lastDomain !== activeDomain) {
-        clearAllThings();
-        lastDomain = activeDomain;
-        EmitLog({ name: 'background', payload: { msg: `Domain changed to <${activeDomain}>` } });
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    if (tabs.length > 0) {
+      const tab = tabs[0];
+      const tabUrl = tab.url;
+      if (tabUrl) {
+        stickyDomain = new URL(tabUrl).hostname;
+        domainStore.set(stickyDomain);
+        // chrome.runtime.sendMessage({
+        //   action: 'domainData',
+        //   event: 'domainMSG',
+        //   stickyDomain: stickyDomain,
+        // });
+        EmitLog({ name: 'background', payload: { msg: `Sticky Domain set to <${stickyDomain}>` } });
       }
     }
   });
 };
-chrome.webNavigation.onBeforeNavigate.addListener(handleDomainChanged);
+
+// subscribe to sticky set
+chrome.runtime.onMessage.addListener(request => {
+  if (request.action === 'setStickyDomain') {
+    handleStickyDomainSet();
+  }
+});
 
 // --------------------------------------------------------
 // Handle Listen for Requests to lytics.io
@@ -169,6 +224,21 @@ const parseURL = (url: string, body: any, type: string): EventModel => {
 };
 
 const handleNetworkTraffic = details => {
+  // get the active tab url that generated the request
+  const activeTabUrl = details.initiator;
+  if (!activeTabUrl) {
+    return;
+  }
+
+  // parse the active tab url
+  const activeDomain = new URL(activeTabUrl).hostname;
+
+  // if the active domain matches the sticky domain, then we can proceed
+  if (activeDomain !== stickyDomain) {
+    EmitLog({ name: 'background', payload: { msg: `Request from non-sticky domain <${activeDomain}>` } });
+    return;
+  }
+
   const url = details.url;
   let postData;
   let result: EventModel;

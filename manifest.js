@@ -13,6 +13,8 @@ const manifest = {
     'webNavigation',
     'declarativeNetRequest',
     'declarativeNetRequestFeedback',
+    'sidePanel',
+    'contextMenus',
   ],
   host_permissions: ['<all_urls>'],
   declarative_net_request: {
@@ -24,21 +26,19 @@ const manifest = {
       },
     ],
   },
-  // side_panel: {
-  //   default_path: 'src/pages/sidepanel/index.html',
-  // },
+  side_panel: {
+    default_path: 'src/pages/sidepanel/index.html',
+  },
   options_page: 'src/pages/options/index.html',
   background: {
     service_worker: 'src/pages/background/index.js',
     type: 'module',
   },
   action: {
-    default_popup: 'src/pages/popup/index.html',
+    default_title: 'Click to open panel',
+    default_panel: 'src/pages/sidepanel/index.html',
     default_icon: 'icon-34.png',
   },
-  // chrome_url_overrides: {
-  //   newtab: 'src/pages/newtab/index.html',
-  // },
   icons: {
     128: 'icon-128.png',
   },
@@ -46,11 +46,8 @@ const manifest = {
     {
       matches: ['http://*/*', 'https://*/*', '<all_urls>'],
       js: ['src/pages/content/index.js'],
-      // KEY for cache invalidation
-      // css: ['assets/css/contentStyle<KEY>.chunk.css'],
     },
   ],
-  // devtools_page: 'src/pages/devtools/index.html',
   web_accessible_resources: [
     {
       resources: [

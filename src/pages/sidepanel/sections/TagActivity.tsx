@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Stack, Typography } from '@mui/material';
-import { ExpandMore } from '@mui/icons-material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Box, Chip, Stack, Typography } from '@mui/material';
+import { ExpandMore, Delete } from '@mui/icons-material';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import { EventModel, EventType } from '@src/shared/models/eventModel';
-import TreeDisplay from '@root/src/pages/popup/components/TreeDisplay';
-import EmptyState from '@src/pages/popup/components/EmptyState';
+import TreeDisplay from '@root/src/pages/sidepanel/components/TreeDisplay';
+import EmptyState from '@root/src/pages/sidepanel/components/EmptyState';
 import moment from 'moment';
 
 const TagActivity = () => {
@@ -23,8 +23,6 @@ const TagActivity = () => {
   useEffect(() => {
     const fetchData = async () => {
       const result = await tagActivityStore.get();
-
-      // loop results and JSON parse before updating activity state
       const parsedResults = result.map(item => {
         return JSON.parse(item);
       });
@@ -35,8 +33,18 @@ const TagActivity = () => {
     fetchData();
   }, []);
 
+  const clearActivity = () => {
+    tagActivityStore.clear();
+    setTagActivity([]);
+  };
+
   return (
     <Box fontSize={12}>
+      <Box textAlign={'right'} m={1}>
+        <Button size={'small'} variant={'text'} color={'secondary'} onClick={clearActivity} startIcon={<Delete />}>
+          Clear Logs
+        </Button>
+      </Box>
       {tagActivity.length === 0 ? (
         <Box mt={6}>
           <EmptyState

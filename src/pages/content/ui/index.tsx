@@ -2,6 +2,7 @@ import { createRoot } from 'react-dom/client';
 import App from '@pages/content/ui/app';
 // import refreshOnUpdate from 'virtual:reload-on-update-in-view';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
+import domainStore from '@src/shared/storages/extensionDomainStorage';
 import { EmitLog } from '@src/shared/components/EmitLog';
 
 const initContentScripts = () => {
@@ -27,9 +28,20 @@ const handleStateChange = () => {
   extensionStateStorage.get().then(state => {
     if (state === true) {
       EmitLog({ name: 'content', payload: { msg: 'Extension Activated' } });
-      initContentScripts();
-    } else {
-      // EmitLog({ name: 'content', payload: { msg: 'Extension Deactivated' } });
+
+      // only initialize content scripts if we are on the allowed domain
+      domainStore.get().then(domain => {
+        if (domain !== '') {
+          if (window.location.href.includes(domain)) {
+            EmitLog({ name: 'content', payload: { msg: 'Adding Content Scripts' } });
+            initContentScripts();
+          } else {
+            EmitLog({ name: 'content', payload: { msg: 'Not on configured domain' } });
+          }
+        } else {
+          EmitLog({ name: 'content', payload: { msg: 'No domain set' } });
+        }
+      });
     }
   });
 };
