@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Box, Stack, Tab, Tabs, CircularProgress } from '@mui/material';
-import CustomTabPanel from '@src/pages/popup/components/CustomTabPanel';
-import ProfileDetail from '@src/pages/popup/sections/ProfileDetail';
-import ProfileSummary from '@src/pages/popup/sections/ProfileSummary';
+import CustomTabPanel from '@root/src/pages/sidepanel/components/CustomTabPanel';
+import ProfileDetail from '@root/src/pages/sidepanel/sections/ProfileDetail';
+import ProfileSummary from '@root/src/pages/sidepanel/sections/ProfileSummary';
 
 interface ProfileTabProps {
   profile: any;

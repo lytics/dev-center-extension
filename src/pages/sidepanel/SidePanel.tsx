@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
-import BottomNavigation from '@pages/popup/components/BottomNavigation';
+import BottomNavigation from '@root/src/pages/sidepanel/components/BottomNavigation';
 
 // styles
 import { Box, Button, CircularProgress, Stack, Typography } from '@mui/material';
-import { DeveloperCenterIcon } from '@pages/popup/assets/svg/developerCenterIcon';
-import { WrongDomain } from '@pages/popup/assets/svg/wrongDomainIcon';
-import '@pages/popup/Popup.css';
+import { DeveloperCenterIcon } from '@root/src/pages/sidepanel/assets/svg/developerCenterIcon';
+import { WrongDomain } from '@root/src/pages/sidepanel/assets/svg/wrongDomainIcon';
+import '@pages/sidepanel/SidePanel.css';
 
 // storage
 import useStorage from '@src/shared/hooks/useStorage';
@@ -18,11 +18,11 @@ import domainStore from '@src/shared/storages/extensionDomainStorage';
 import { TagConfigModel, TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
 
 // components
-import Debugger from '@pages/popup/sections/Debugger';
-import Profile from '@pages/popup/sections/Profile';
-import Personalization from '@pages/popup/sections/Personalization';
-import Configuration from '@pages/popup/sections/Configuration';
-import TopNavigation from '@pages/popup/components/TopNavigation';
+import Debugger from '@root/src/pages/sidepanel/sections/Debugger';
+import Profile from '@root/src/pages/sidepanel/sections/Profile';
+import Personalization from '@root/src/pages/sidepanel/sections/Personalization';
+import Configuration from '@root/src/pages/sidepanel/sections/Configuration';
+import TopNavigation from '@root/src/pages/sidepanel/components/TopNavigation';
 import { EmitLog } from '@src/shared/components/EmitLog';
 
 const evaluateDomain = (url: string, allowDomainURL: string) => {

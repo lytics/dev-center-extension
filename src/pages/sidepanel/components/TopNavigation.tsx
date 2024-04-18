@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { FormGroup, FormControlLabel, AppBar, Toolbar, Box } from '@mui/material';
 
 // components
-import Toggle from '@pages/popup/components/Toggle';
-import { LyticsLogo } from '@pages/popup/assets/svg/logo';
+import Toggle from '@root/src/pages/sidepanel/components/Toggle';
+import { LyticsLogo } from '@root/src/pages/sidepanel/assets/svg/logo';
 
 interface TopNavProps {
   isEnabled: boolean;

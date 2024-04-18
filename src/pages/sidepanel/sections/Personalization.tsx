@@ -2,9 +2,9 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Stack, Tab, Tabs, Typography } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
 import { TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
-import TreeDisplay from '@root/src/pages/popup/components/TreeDisplay';
-import CustomTabPanel from '@src/pages/popup/components/CustomTabPanel';
-import EmptyState from '@src/pages/popup/components/EmptyState';
+import TreeDisplay from '@root/src/pages/sidepanel/components/TreeDisplay';
+import CustomTabPanel from '@root/src/pages/sidepanel/components/CustomTabPanel';
+import EmptyState from '@root/src/pages/sidepanel/components/EmptyState';
 
 interface PersonalizationProps {
   candidates: TagConfigPathforaCandidates;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
-import TreeDisplay from '@root/src/pages/popup/components/TreeDisplay';
+import TreeDisplay from '@root/src/pages/sidepanel/components/TreeDisplay';
 
 interface ConfigTabProps {
   tagConfig: TagConfigModel;

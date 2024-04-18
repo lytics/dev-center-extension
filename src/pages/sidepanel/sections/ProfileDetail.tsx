@@ -1,5 +1,5 @@
 import React from 'react';
-import TreeDisplay from '@root/src/pages/popup/components/TreeDisplay';
+import TreeDisplay from '@root/src/pages/sidepanel/components/TreeDisplay';
 
 interface ProfileDetailTabProps {
   profile: any;

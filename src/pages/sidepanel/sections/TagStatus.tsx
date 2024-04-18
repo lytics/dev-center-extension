@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Chip, CircularProgress, Stack, Typography } from '@mui/material';
 import { Cancel, CheckCircle, Error } from '@mui/icons-material';
 import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
-import SimpleTable from '@pages/popup/components/SimpleTable';
+import SimpleTable from '@root/src/pages/sidepanel/components/SimpleTable';
 
 interface TagStatusProps {
   tagIsInstalled: boolean;

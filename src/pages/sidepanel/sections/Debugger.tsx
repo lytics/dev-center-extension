@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Box, Stack, Tab, Tabs } from '@mui/material';
-import TagStatus from '@pages/popup/sections/TagStatus';
-import TagConfig from '@pages/popup/sections/TagConfig';
-import TagActivity from '@pages/popup/sections/TagActivity';
+import TagStatus from '@root/src/pages/sidepanel/sections/TagStatus';
+import TagConfig from '@root/src/pages/sidepanel/sections/TagConfig';
+import TagActivity from '@root/src/pages/sidepanel/sections/TagActivity';
 import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
-import CustomTabPanel from '@src/pages/popup/components/CustomTabPanel';
+import CustomTabPanel from '@root/src/pages/sidepanel/components/CustomTabPanel';
 
 interface DebuggerProps {
   tagIsInstalled: boolean;

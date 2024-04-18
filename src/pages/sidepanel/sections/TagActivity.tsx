@@ -3,8 +3,8 @@ import { Accordion, AccordionDetails, AccordionSummary, Button, Box, Chip, Stack
 import { ExpandMore, Delete } from '@mui/icons-material';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import { EventModel, EventType } from '@src/shared/models/eventModel';
-import TreeDisplay from '@root/src/pages/popup/components/TreeDisplay';
-import EmptyState from '@src/pages/popup/components/EmptyState';
+import TreeDisplay from '@root/src/pages/sidepanel/components/TreeDisplay';
+import EmptyState from '@root/src/pages/sidepanel/components/EmptyState';
 import moment from 'moment';
 
 const TagActivity = () => {

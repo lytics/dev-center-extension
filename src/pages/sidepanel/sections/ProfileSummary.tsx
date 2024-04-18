@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Chip, Divider, LinearProgress, Stack, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import SimpleTable from '@pages/popup/components/SimpleTable';
+import SimpleTable from '@root/src/pages/sidepanel/components/SimpleTable';
 
 interface BarStylesProps {
   backgroundGradient: string;

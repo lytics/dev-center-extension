@@ -1,6 +1,9 @@
 import React from 'react';
-import { BottomNavigation, BottomNavigationAction } from '@mui/material';
-import { Brush, Person, Plumbing } from '@mui/icons-material';
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import Plumbing from '@mui/icons-material/Plumbing';
+import Person from '@mui/icons-material/Person';
+import Brush from '@mui/icons-material/Brush';
 
 interface BottomNavProps {
   value: string;

@@ -107,45 +107,6 @@ const clearAllThings = () => {
 };
 
 // --------------------------------------------------------
-// Handle Navigation
-// --------------------------------------------------------
-// // get the stored sticky domain
-// domainStore.get().then(domain => {
-//   stickyDomain = domain;
-//   EmitLog({ name: 'background', payload: { msg: `Sticky Domain initially loaded as <${stickyDomain}>` } });
-// });
-
-// const checkTabDetailsHelper = details => {
-//   chrome.tabs.get(details.tabId, tab => {
-//     if (chrome.runtime.lastError) {
-//       console.error(chrome.runtime.lastError);
-//       return;
-//     }
-
-//     const tabUrl = tab.url;
-//     if (tabUrl) {
-//       activeDomain = new URL(tabUrl).hostname;
-
-//       if (activeDomain !== stickyDomain) {
-//         chrome.runtime.sendMessage({
-//           action: 'domainMSG',
-//           event: 'disableApp',
-//           stickyDomain: stickyDomain,
-//           activeDomain: activeDomain,
-//         });
-//       } else {
-//         chrome.runtime.sendMessage({
-//           action: 'domainMSG',
-//           event: 'enableApp',
-//           stickyDomain: stickyDomain,
-//           activeDomain: activeDomain,
-//         });
-//       }
-//     }
-//   });
-// };
-
-// --------------------------------------------------------
 // Manage Sticky Domain
 // --------------------------------------------------------
 let stickyDomain = '';
@@ -181,73 +142,6 @@ chrome.runtime.onMessage.addListener(request => {
     handleStickyDomainSet();
   }
 });
-
-// const handleTabChange = details => {
-//   checkTabDetailsHelper(details);
-// };
-// chrome.tabs.onActivated.addListener(handleTabChange);
-
-// const handleDomainChanged = details => {
-// if (details.frameId !== 0) {
-//   return;
-// }
-
-//   checkTabDetailsHelper(details);
-// };
-// chrome.webNavigation.onCompleted.addListener(handleDomainChanged);
-
-// if (chrome.runtime.lastError) {
-//   console.error(chrome.runtime.lastError);
-//   return;
-// }
-// const tabUrl = tab.url;
-// if (tabUrl) {
-//   const activeDomain = new URL(tabUrl).hostname;
-
-//   if (lastDomain !== activeDomain) {
-//     chrome.runtime.sendMessage({ action: 'domainData', lastDomain: lastDomain, currentDomain: activeDomain, stickyDomain: stickyDomain });
-//     clearAllThings();
-//     lastDomain = activeDomain;
-//     EmitLog({ name: 'background', payload: { msg: `Domain changed to <${activeDomain}>` } });
-//   }
-// }
-
-// let previousUrl = null;
-
-// const handleMainFrameNavigation = details => {
-// if (details.frameId !== 0) {
-//   // Ignore navigation events for subframes or auxiliary frames
-//   return;
-// }
-
-//   // Process navigation event for the main frame
-//   chrome.tabs.get(details.tabId, tab => {
-//     if (chrome.runtime.lastError) {
-//       console.error(chrome.runtime.lastError);
-//       return;
-//     }
-
-// // Ignore empty new tabs
-// if (tab?.url === 'chrome://newtab/') {
-//   return;
-// }
-
-//     const currentUrl = tab.url;
-//     console.log('Current URL:', currentUrl);
-
-//     // Compare with previous URL
-//     if (previousUrl && currentUrl !== previousUrl) {
-//       console.log('Navigated from:', previousUrl);
-//       console.log('Navigated to:', currentUrl);
-//       // Here you can emit a message or perform any actions you need
-//     }
-
-//     // Update previous URL
-//     previousUrl = currentUrl;
-//   });
-// };
-
-// chrome.webNavigation.onBeforeNavigate.addListener(handleMainFrameNavigation);
 
 // --------------------------------------------------------
 // Handle Listen for Requests to lytics.io
