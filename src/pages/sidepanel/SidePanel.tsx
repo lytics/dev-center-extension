@@ -3,18 +3,12 @@ import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import BottomNavigation from '@root/src/pages/sidepanel/components/BottomNavigation';
 
 // styles
-import { Box, Button, CircularProgress, Stack, Typography } from '@mui/material';
-import { DeveloperCenterIcon } from '@root/src/pages/sidepanel/assets/svg/developerCenterIcon';
-import { WrongDomain } from '@root/src/pages/sidepanel/assets/svg/wrongDomainIcon';
+import { Box, CircularProgress } from '@mui/material';
 import '@pages/sidepanel/SidePanel.css';
 
 // storage
-import useStorage from '@src/shared/hooks/useStorage';
-import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import entityStorage from '@src/shared/storages/entityStorage';
-import { GetActiveTabURL } from '@src/shared/components/Browser';
-import domainStore from '@src/shared/storages/extensionDomainStorage';
 import { TagConfigModel, TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
 
 // components
@@ -22,31 +16,22 @@ import Debugger from '@root/src/pages/sidepanel/sections/Debugger';
 import Profile from '@root/src/pages/sidepanel/sections/Profile';
 import Personalization from '@root/src/pages/sidepanel/sections/Personalization';
 import Configuration from '@root/src/pages/sidepanel/sections/Configuration';
-import TopNavigation from '@root/src/pages/sidepanel/components/TopNavigation';
 import { EmitLog } from '@src/shared/components/EmitLog';
 
-const evaluateDomain = (url: string, allowDomainURL: string) => {
-  if (allowDomainURL && url.includes(allowDomainURL)) {
-    return true;
-  }
-  return false;
-};
+interface SidePanelProps {
+  isEnabled: boolean;
+}
 
-const SidePanel = () => {
+const SidePanel: React.FC<SidePanelProps> = ({ isEnabled }) => {
   const navigate = useNavigate();
   const [activePath, setActivePath] = useState('/');
   const [tagIsInstalled, setTagIsInstalled] = useState(false);
   const location = useLocation();
-  const extensionState = useStorage(extensionStateStorage);
-  const [isEnabled, setIsEnabled] = useState(extensionState);
   const [isLoading, setIsLoading] = useState(true);
   const [profileIsLoading, setProfileIsLoading] = useState(true);
   const [tagConfig, setTagConfig] = useState<TagConfigModel>({} as TagConfigModel);
   const [currentProfile, setCurrentProfile] = useState<any>({} as any);
   const [candidates, setCandidates] = useState<TagConfigPathforaCandidates>({} as TagConfigPathforaCandidates);
-  const [allowDomain, setAllowDomain] = useState(false);
-  const [allowDomainURL, setAllowDomainURL] = useState('');
-  const [refreshTimestamp, setRefreshTimestamp] = useState(Date.now());
 
   // Tab state
   const [debugTab, setDebugTab] = useState(0);
@@ -61,97 +46,6 @@ const SidePanel = () => {
       console.error('Error parsing JSON:', details, error);
       return null;
     }
-  };
-
-  const handleChromeNavEvents = (details: any, isURLChange: boolean) => {
-    if (details.frameId !== 0) {
-      return;
-    }
-
-    GetActiveTabURL(details, isURLChange)
-      .then((url: string) => {
-        if (url) {
-          setAllowDomain(evaluateDomain(url, allowDomainURL));
-        }
-      })
-      .catch(error => {
-        console.error('Error getting active tab URL', error);
-        // If an error occurs, do nothing
-      });
-  };
-
-  chrome.webNavigation.onCompleted.addListener(details => {
-    handleChromeNavEvents(details, true);
-  });
-  chrome.tabs.onActivated.addListener(details => {
-    handleChromeNavEvents(details, false);
-  });
-
-  useEffect(() => {
-    if (allowDomainURL) {
-      getCurrentTabURL()
-        .then((url: string) => {
-          setAllowDomain(evaluateDomain(url, allowDomainURL));
-        })
-        .catch(error => {
-          // If an error occurs, do nothing
-          console.error('Error getting active tab URL', error);
-        });
-    }
-  }, [allowDomainURL]);
-
-  const getCurrentTabURL = () => {
-    return new Promise((resolve, reject) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-        if (tabs && tabs[0] && tabs[0].url) {
-          resolve(tabs[0].url);
-        } else {
-          reject(new Error("Unable to get the current tab's URL"));
-        }
-      });
-    });
-  };
-
-  useEffect(() => {
-    domainStore.get().then(domain => {
-      if (typeof domain === 'string' && domain.trim() !== '') {
-        setAllowDomainURL(domain);
-      }
-    });
-  }, []);
-
-  const handleDomainStore = () => {
-    domainStore.get().then((domain: string) => {
-      if (domain !== '') {
-        setAllowDomainURL(domain);
-      }
-    });
-  };
-  domainStore.subscribe(handleDomainStore);
-
-  const handleStickyDomainSet = () => {
-    setTagIsInstalled(false);
-    setProfileIsLoading(true);
-    setTagConfig({} as TagConfigModel);
-    setCurrentProfile({} as any);
-    setCandidates({} as TagConfigPathforaCandidates);
-    setRefreshTimestamp(Date.now());
-    navigate('/');
-    setDebugTab(0);
-    setProfileTab(0);
-    setPersonalizationTab(0);
-
-    chrome.runtime.sendMessage({ action: 'setStickyDomain' }, () => {
-      if (chrome.runtime.lastError) {
-        // console.error('Error:', chrome.runtime.lastError.message);
-      }
-      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-        if (tabs.length > 0) {
-          const tab = tabs[0];
-          chrome.tabs.reload(tab.id);
-        }
-      });
-    });
   };
 
   // Define a callback function to handle storage changes
@@ -191,7 +85,6 @@ const SidePanel = () => {
       }
     }
   }
-
   chrome.storage.onChanged.addListener(handleStorageChange);
 
   useEffect(() => {
@@ -244,7 +137,7 @@ const SidePanel = () => {
     };
 
     fetchData();
-  }, [isEnabled, refreshTimestamp]);
+  }, [isEnabled]);
 
   useEffect(() => {
     if (!isEnabled) {
@@ -284,7 +177,7 @@ const SidePanel = () => {
     };
 
     fetchData();
-  }, [isEnabled, refreshTimestamp]);
+  }, [isEnabled]);
 
   useEffect(() => {
     if (location.pathname === '/src/pages/sidepanel/index.html') {
@@ -294,120 +187,65 @@ const SidePanel = () => {
     setActivePath(location.pathname);
   }, [location.pathname]);
 
-  const handleStateToggle = isActive => {
-    setIsEnabled(isActive);
-    extensionStateStorage.set(isActive);
-  };
-
   const handleNavigation = path => {
     setActivePath(path);
     navigate(path);
   };
 
   return (
-    <Box
-      width="100%"
-      height="100vh"
-      display="flex"
-      overflow={'hidden'}
-      flexDirection="column"
-      sx={{
-        background: '#E9E8EE',
-      }}>
-      <TopNavigation isEnabled={isEnabled} onChange={handleStateToggle} />
-
-      {isEnabled ? (
-        <>
-          {allowDomain ? (
-            <>
-              {isLoading ? (
-                <Box width={'100%'} justifyContent={'center'} alignItems={'center'}>
-                  <CircularProgress color="secondary" />
-                </Box>
-              ) : (
-                <>
-                  <Box
-                    minHeight={`calc(100vh - 56px)`}
-                    justifyContent={'center'}
-                    alignItems={'flex-start'}
-                    display="flex"
-                    flexDirection="column">
-                    <Routes>
-                      <Route path="/settings" element={<Configuration />} />
-                      <Route
-                        path="/profile"
-                        element={
-                          <Profile
-                            profileIsLoading={profileIsLoading}
-                            profile={currentProfile}
-                            getter={profileTab}
-                            setter={setProfileTab}
-                          />
-                        }
-                      />
-                      <Route
-                        path="/personalization"
-                        element={
-                          <Personalization
-                            candidates={candidates}
-                            getter={personalizationTab}
-                            setter={setPersonalizationTab}
-                          />
-                        }
-                      />
-                      <Route
-                        path="*"
-                        element={
-                          <Debugger
-                            tagIsInstalled={tagIsInstalled}
-                            tagConfig={tagConfig}
-                            getter={debugTab}
-                            setter={setDebugTab}
-                          />
-                        }
-                      />
-                    </Routes>
-                  </Box>
-                  <BottomNavigation
-                    value={activePath}
-                    tagIsInstalled={tagIsInstalled}
-                    onChange={newValue => handleNavigation(newValue)}
-                  />
-                </>
-              )}
-            </>
-          ) : (
-            <Stack display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} p={5} spacing={1}>
-              <WrongDomain />
-              <Typography variant={'body1'} align={'center'} pb={2} maxWidth={'450px'}>
-                {allowDomainURL ? (
-                  <>
-                    Wait a minute! You are currently analyzing <strong>{allowDomainURL}</strong>. If you&apos;d like to
-                    analyze this domain instead simple pin it below.
-                  </>
-                ) : (
-                  <>
-                    You are not currently analyzing a domain. To get started, navigate to your preferred domain and pin
-                    it below.
-                  </>
-                )}
-              </Typography>
-              <Button size={'small'} color={'secondary'} variant="outlined" onClick={handleStickyDomainSet}>
-                Pin Domain
-              </Button>
-            </Stack>
-          )}
-        </>
+    <>
+      {isLoading ? (
+        <Box width={'100%'} display="flex" justifyContent={'center'} alignItems={'center'} pt={5}>
+          <CircularProgress color="secondary" />
+        </Box>
       ) : (
-        <Stack display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} p={5} spacing={1}>
-          <DeveloperCenterIcon />
-          <Typography variant={'body1'} align={'center'}>
-            To get started <b>activate the Lytics Developer Center extension</b> using the toggle at the top right. Upon
-            doing so the current page will reload and you&apos;ll instantly gain access to the full developer toolkit.
-          </Typography>
-        </Stack>
+        <>
+          <Box
+            minHeight={`calc(100vh - 56px)`}
+            justifyContent={'center'}
+            alignItems={'flex-start'}
+            display="flex"
+            flexDirection="column">
+            <Routes>
+              <Route path="/settings" element={<Configuration />} />
+              <Route
+                path="/profile"
+                element={
+                  <Profile
+                    profileIsLoading={profileIsLoading}
+                    profile={currentProfile}
+                    getter={profileTab}
+                    setter={setProfileTab}
+                  />
+                }
+              />
+              <Route
+                path="/personalization"
+                element={
+                  <Personalization candidates={candidates} getter={personalizationTab} setter={setPersonalizationTab} />
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <Debugger
+                    tagIsInstalled={tagIsInstalled}
+                    tagConfig={tagConfig}
+                    getter={debugTab}
+                    setter={setDebugTab}
+                  />
+                }
+              />
+            </Routes>
+          </Box>
+          <BottomNavigation
+            value={activePath}
+            tagIsInstalled={tagIsInstalled}
+            onChange={newValue => handleNavigation(newValue)}
+          />
+        </>
       )}
-    </Box>
+    </>
   );
 };
 

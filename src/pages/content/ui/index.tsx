@@ -1,14 +1,11 @@
 import { createRoot } from 'react-dom/client';
 import App from '@pages/content/ui/app';
-// import refreshOnUpdate from 'virtual:reload-on-update-in-view';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
-import domainStore from '@src/shared/storages/extensionDomainStorage';
+import { domainStore } from '@src/shared/storages/extensionDomainStorage';
 import { EmitLog } from '@src/shared/components/EmitLog';
 
 const initContentScripts = () => {
   extensionStateStorage.subscribe(handleStateChange);
-
-  // refreshOnUpdate('pages/content');
 
   const root = document.createElement('div');
   root.id = 'lytics-dev-tools';
@@ -31,8 +28,10 @@ const handleStateChange = () => {
 
       // only initialize content scripts if we are on the allowed domain
       domainStore.get().then(domain => {
-        if (domain !== '') {
-          if (window.location.href.includes(domain)) {
+        const translated = domainStore.translate(domain);
+
+        if (translated.pinnedURL !== '') {
+          if (window.location.href.includes(translated.pinnedURL)) {
             EmitLog({ name: 'content', payload: { msg: 'Adding Content Scripts' } });
             initContentScripts();
           } else {

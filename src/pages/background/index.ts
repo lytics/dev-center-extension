@@ -1,48 +1,13 @@
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import entityStore from '@src/shared/storages/entityStorage';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
-import domainStore from '@src/shared/storages/extensionDomainStorage';
+import { domainStore } from '@src/shared/storages/extensionDomainStorage';
 import { EventModel } from '@src/shared/models/eventModel';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import { EmitLog } from '@root/src/shared/components/EmitLog';
 import 'webextension-polyfill';
 
-// --------------------------------------------------------
-// Handle Context Menus
-// --------------------------------------------------------
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: 'openSidePanel',
-    title: 'Launch Lytics Dev Tools',
-    contexts: ['all'],
-  });
-  chrome.tabs.create({ url: 'src/pages/sidepanel/index.html' });
-});
-
-chrome.action.onClicked.addListener(() => {
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    const currentTab = tabs[0];
-    chrome.sidePanel.open({ tabId: currentTab.id });
-  });
-});
-
-chrome.runtime.onStartup.addListener(() => {
-  chrome.tabs.create({ url: 'src/pages/sidepanel/index.html' });
-});
-
-chrome.runtime.onMessage.addListener((message, sender) => {
-  // The callback for runtime.onMessage must return falsy if we're not sending a response
-  (async () => {
-    if (message.type === 'open_side_panel') {
-      await chrome.sidePanel.open({ tabId: sender.tab.id });
-      await chrome.sidePanel.setOptions({
-        tabId: sender.tab.id,
-        path: 'src/pages/sidepanel/index.html',
-        enabled: true,
-      });
-    }
-  })();
-});
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(error => console.error(error));
 
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
   if (!tab.url) return;
@@ -112,35 +77,17 @@ const clearAllThings = () => {
 let stickyDomain = '';
 
 domainStore.get().then(domain => {
-  stickyDomain = domain;
+  const translated = domainStore.translate(domain);
+  stickyDomain = translated.pinnedURL;
   EmitLog({ name: 'background', payload: { msg: `Sticky Domain initially loaded as <${stickyDomain}>` } });
 });
 
-const handleStickyDomainSet = () => {
-  clearAllThings();
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    if (tabs.length > 0) {
-      const tab = tabs[0];
-      const tabUrl = tab.url;
-      if (tabUrl) {
-        stickyDomain = new URL(tabUrl).hostname;
-        domainStore.set(stickyDomain);
-        // chrome.runtime.sendMessage({
-        //   action: 'domainData',
-        //   event: 'domainMSG',
-        //   stickyDomain: stickyDomain,
-        // });
-        EmitLog({ name: 'background', payload: { msg: `Sticky Domain set to <${stickyDomain}>` } });
-      }
-    }
+domainStore.subscribe(() => {
+  domainStore.get().then(domain => {
+    const translated = domainStore.translate(domain);
+    stickyDomain = translated.pinnedURL;
+    EmitLog({ name: 'background', payload: { msg: `Sticky Domain updated to <${stickyDomain}>` } });
   });
-};
-
-// subscribe to sticky set
-chrome.runtime.onMessage.addListener(request => {
-  if (request.action === 'setStickyDomain') {
-    handleStickyDomainSet();
-  }
 });
 
 // --------------------------------------------------------

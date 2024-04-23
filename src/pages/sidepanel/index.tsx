@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
-import SidePanel from '@pages/sidepanel/SidePanel';
+import State from '@pages/sidepanel/State';
 
 function init() {
   const appContainer = document.querySelector('#app-container');
@@ -15,7 +15,7 @@ function init() {
   root.render(
     <React.StrictMode>
       <Router>
-        <SidePanel />
+        <State />
       </Router>
     </React.StrictMode>,
   );
