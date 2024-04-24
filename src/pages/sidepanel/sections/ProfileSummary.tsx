@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Chip, Divider, LinearProgress, Stack, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import { Lock } from '@mui/icons-material';
 import SimpleTable from '@root/src/pages/sidepanel/components/SimpleTable';
 
 interface BarStylesProps {
@@ -226,7 +227,7 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
                       variant={'outlined'}
                       key={index}
                       label={attribute}
-                      sx={{ borderRadius: 1, mr: 1, mb: 1 }}
+                      sx={{ borderRadius: 1, mr: 1, mb: 1, backgroundColor: '#FFF' }}
                     />
                   ))}
                 </Box>
@@ -240,9 +241,28 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
                   {hasScores ? (
                     <CustomBarChart data={scores} color1={'#00BAE3'} color2={'#85DB83'} />
                   ) : (
-                    <Typography variant="subtitle2" align="left">
-                      No scores available (ensure they are turned on)
-                    </Typography>
+                    <Stack
+                      direction={'row'}
+                      p={1}
+                      border={1}
+                      bgcolor={'#FFF'}
+                      borderRadius={1}
+                      borderColor={'#F3F3F3'}
+                      alignItems="center">
+                      <Box mr={1} color={'#C8C8D6'}>
+                        <Lock />
+                      </Box>
+                      <Typography variant="subtitle2" align="left" color={'#A5A5B1'}>
+                        Scores are not currently shared for this account. You can share them{' '}
+                        <a
+                          href="https://docs.lytics.com/docs/personalization-api#allowlist-fields-for-public-api"
+                          target="_blank"
+                          rel="noreferrer">
+                          here
+                        </a>
+                        .
+                      </Typography>
+                    </Stack>
                   )}
                 </Box>
               ),
@@ -255,9 +275,28 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
                   {hasContent ? (
                     <CustomBarChart data={sortedData} color1={'#9D70FD'} color2={'#D36FDE'} />
                   ) : (
-                    <Typography variant="subtitle2" align="left">
-                      No interests available (ensure they are turned on)
-                    </Typography>
+                    <Stack
+                      direction={'row'}
+                      p={1}
+                      border={1}
+                      bgcolor={'#FFF'}
+                      borderRadius={1}
+                      borderColor={'#F3F3F3'}
+                      alignItems="center">
+                      <Box mr={1} color={'#C8C8D6'}>
+                        <Lock />
+                      </Box>
+                      <Typography variant="subtitle2" align="left" color={'#A5A5B1'}>
+                        Interests are not currently shared for this account. You can share them{' '}
+                        <a
+                          href="https://docs.lytics.com/docs/personalization-api#allowlist-fields-for-public-api"
+                          target="_blank"
+                          rel="noreferrer">
+                          here
+                        </a>
+                        .
+                      </Typography>
+                    </Stack>
                   )}
                 </Box>
               ),

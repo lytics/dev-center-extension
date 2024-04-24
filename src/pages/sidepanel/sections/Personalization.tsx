@@ -67,10 +67,10 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates, getter, s
           )}
         </CustomTabPanel>
         <CustomTabPanel value={getter} index={1}>
-          {candidates.variations?.length > 0 || candidates.legacyABTests?.length > 0 ? (
+          {candidates?.variations?.length > 0 || candidates?.legacyABTests?.length > 0 ? (
             <>
-              {candidates.variations?.length > 0 && <TabDetails items={candidates.variations} />}
-              {candidates.legacyABTests?.length > 0 && <TabDetails items={candidates.legacyABTests} />}
+              {candidates?.variations?.length > 0 && <TabDetails items={candidates?.variations} />}
+              {candidates?.legacyABTests?.length > 0 && <TabDetails items={candidates?.legacyABTests} />}
             </>
           ) : (
             <Box mt={8}>

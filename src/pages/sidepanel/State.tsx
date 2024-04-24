@@ -12,6 +12,7 @@ interface StateProps {}
 
 const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
   const extensionState = useStorage(extensionStateStorage);
+  const [resetSidePanel, setResetSidePanel] = useState(Date.now());
   const [isEnabled, setIsEnabled] = useState(extensionState);
   const [tabValid, setTabValid] = useState(false);
   const [urlValid, setURLValid] = useState(false);
@@ -72,6 +73,7 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
   // Action Handlers
   // ************************************************************************************
   const handlePin = () => {
+    setResetSidePanel(Date.now());
     domainStore.pin().then(() => {
       domainStore.evaluate().then((state: ExtensionState) => {
         setDomainState(state);
@@ -85,6 +87,7 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
   };
 
   const handleStateToggle = isActive => {
+    setResetSidePanel(Date.now());
     setIsEnabled(isActive);
     extensionStateStorage.set(isActive);
     if (!isActive) {
@@ -126,7 +129,7 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
 
           {tabValid && urlValid ? (
             <>
-              <SidePanel isEnabled={isEnabled} />
+              <SidePanel key={resetSidePanel} isEnabled={isEnabled} />
             </>
           ) : (
             <Stack display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} p={5} spacing={1}>

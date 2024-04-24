@@ -19,10 +19,11 @@ import Configuration from '@root/src/pages/sidepanel/sections/Configuration';
 import { EmitLog } from '@src/shared/components/EmitLog';
 
 interface SidePanelProps {
+  key: any;
   isEnabled: boolean;
 }
 
-const SidePanel: React.FC<SidePanelProps> = ({ isEnabled }) => {
+const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
   const navigate = useNavigate();
   const [activePath, setActivePath] = useState('/');
   const [tagIsInstalled, setTagIsInstalled] = useState(false);
@@ -87,6 +88,9 @@ const SidePanel: React.FC<SidePanelProps> = ({ isEnabled }) => {
   }
   chrome.storage.onChanged.addListener(handleStorageChange);
 
+  useEffect(() => {
+    EmitLog({ name: 'sidepanel', payload: { msg: 'SidePanel reset.' } });
+  }, [key]);
   useEffect(() => {
     const fetchData = async () => {
       setCurrentProfile({ test: 'test' });
