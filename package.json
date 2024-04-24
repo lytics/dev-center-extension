@@ -1,6 +1,6 @@
 {
   "name": "lytics-dev-tools",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "title": "Lytics Dev Tools",
   "description": "Chrome extension for exploring and debugging the Lytics web SDK and APIs.",
   "license": "MIT",
