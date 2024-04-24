@@ -1,14 +1,1 @@
-import { j as jsxRuntimeExports, c as createRoot } from "../../../assets/js/client.js";
-import "../../../assets/js/_commonjsHelpers.js";
-const Options = () => {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "container", children: "Options" });
-};
-function init() {
-  const appContainer = document.querySelector("#app-container");
-  if (!appContainer) {
-    throw new Error("Can not find #app-container");
-  }
-  const root = createRoot(appContainer);
-  root.render(/* @__PURE__ */ jsxRuntimeExports.jsx(Options, {}));
-}
-init();
+import{j as o,c as t}from"../../../assets/js/client.8cCDl9J8.js";import"../../../assets/js/_commonjsHelpers.1J56E-h6.js";const r=()=>o.jsx("div",{className:"container",children:"Options"});function e(){const n=document.querySelector("#app-container");if(!n)throw new Error("Can not find #app-container");t(n).render(o.jsx(r,{}))}e();
