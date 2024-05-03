@@ -16,6 +16,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
     path: 'src/pages/sidepanel/index.html',
     enabled: true,
   });
+  chrome.runtime.sendMessage({ source: 'runtime', action: 'tabUpdated', url: tab.url });
 });
 
 // --------------------------------------------------------

@@ -78,6 +78,17 @@ export default function App() {
         EmitLog({ name: 'storage', payload: { msg: 'Entity saved.' } });
       });
     });
+
+    // ------------------------------
+    // Handle Tab Changes
+    // ------------------------------
+    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
+      if (changeInfo.url) {
+        chrome.tabs.sendMessage(tabId, {
+          url: changeInfo.url,
+        });
+      }
+    });
   }, []);
 
   useEffect(() => {}, []);

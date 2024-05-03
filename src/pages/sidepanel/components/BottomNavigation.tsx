@@ -4,6 +4,7 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Plumbing from '@mui/icons-material/Plumbing';
 import Person from '@mui/icons-material/Person';
 import Brush from '@mui/icons-material/Brush';
+import Description from '@mui/icons-material/Description';
 
 interface BottomNavProps {
   value: string;
@@ -48,6 +49,17 @@ const BottomNav: React.FC<BottomNavProps> = ({ value, tagIsInstalled, onChange }
         value="/personalization"
         disabled={!tagIsInstalled}
         icon={<Brush />}
+        sx={{
+          '&.Mui-selected': {
+            color: 'secondary.main',
+          },
+        }}
+      />
+      <BottomNavigationAction
+        label="Content"
+        value="/content"
+        disabled={!tagIsInstalled}
+        icon={<Description />}
         sx={{
           '&.Mui-selected': {
             color: 'secondary.main',
