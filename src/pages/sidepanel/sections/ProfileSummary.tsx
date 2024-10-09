@@ -17,7 +17,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { ExpandCircleDownOutlined, ExpandMore, HelpOutline, Lock } from '@mui/icons-material';
+import { ExpandMore, HelpOutline, Lock } from '@mui/icons-material';
 import SimpleTable from '@root/src/pages/sidepanel/components/SimpleTable';
 import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
 
@@ -126,32 +126,14 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({ data, color1, color2 }:
   );
 };
 
-{
-  /* <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
-                        <Typography variant={'subtitle1'}>{item.url}</Typography>
-                        <Typography variant={'subtitle2'}>{item.description}</Typography>
-                      </Box>
-                      <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
-                        <Typography variant={'body2'}>{item.longDescription}</Typography>
-                        <Typography variant={'body2'}>{item.created}</Typography>
-                      </Box>
-                      <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
-                        <img src={item.primaryImage} alt={item.description} width={'100vw'} />
-                        {Object.keys(item.topics).map((topic, index) => (
-                          <Chip key={index} label={topic} />
-                        ))}
-                      </Box> */
-}
-
 const RecommendationTile = ({ item }: { item: ContentEntity }) => {
   const [open, setOpen] = useState(false);
-  console.log("tile", item);
 
   return (
     <Grid container spacing={1} borderRadius={1} bgcolor={'#FFF'} mb={2}>
       <Grid item xs={12} onClick={() => setOpen(!open)}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Typography variant={'body1'} width={"90%"}>
+          <Typography variant={'body1'} width={'90%'}>
             <a href={item?.url}>{item?.url}</a>
           </Typography>
           <ExpandMore />
@@ -186,9 +168,10 @@ const RecommendationTile = ({ item }: { item: ContentEntity }) => {
                   <Typography variant={'body2'}>Topics</Typography>
                 </TableCell>
                 <TableCell align="right" size="small">
-                  {item.topics && Object.keys(item.topics).map((topic, index) => (
-                    <Chip key={index} label={topic} style={{ marginRight: 1, marginTop: 1 }} />
-                  ))}
+                  {item.topics &&
+                    Object.keys(item.topics).map((topic, index) => (
+                      <Chip key={index} label={topic} style={{ marginRight: 1, marginTop: 1 }} />
+                    ))}
                 </TableCell>
               </TableRow>
               <TableRow key={'image'}>
@@ -196,7 +179,7 @@ const RecommendationTile = ({ item }: { item: ContentEntity }) => {
                   <Typography variant={'body2'}>Image</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <img src={item.primaryImage} alt={"No Image Available"} width={'100vw'} />
+                  <img src={item.primaryImage} alt={'Not Available'} width={'100vw'} />
                 </TableCell>
               </TableRow>
               <TableRow key={'confidence'}>
@@ -235,19 +218,14 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile, tagConfig }
     if (!profile || !tagConfig || !profile.data) {
       return;
     }
-    console.log('recommendAPI -> recommendAPI', profile, tagConfig);
     const accountID = tagConfig?.cid?.[0];
     const uid = profile?.data?._uid as string;
     if (!accountID || !uid) {
       return;
     }
 
-    // console.log("recommendAPI", currentProfile, accountID, currentProfile?.data?._uid);
     const response = await fetch(`https://api.lytics.io/api/content/recommend/${accountID}/user/_uid/${uid}`);
-    console.log('recommendAPI -> response', response);
-    const { status } = response;
     const json = await response.json();
-    console.log('recommendAPI -> json', json, status);
     // for each item in the data array in JSON, convert to a ContentEntity
     const contentEntities = json.data.map(item => {
       const entity: ContentEntity = {
@@ -264,14 +242,13 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile, tagConfig }
       };
       return entity;
     });
-    console.log('recommendAPI -> contentEntities', contentEntities);
     setRecommendations(contentEntities);
     return;
   }, [profile, tagConfig]);
 
   useEffect(() => {
     recommendAPI();
-  }, [profile, tagConfig]);
+  }, [profile, tagConfig, recommendAPI]);
 
   const appendScore = (scoresArray, profileData, propertyName, label) => {
     const propertyValue = profileData?.user?.[propertyName];
@@ -479,7 +456,6 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile, tagConfig }
               position: 'top',
               fancyValue: (
                 <>
-                  {/* show each of the recommended items (ContentEntities) and show each primary image, title, and topics associated with each item */}
                   {recommendations.map((item, index) => (
                     <RecommendationTile key={index} item={item} />
                   ))}

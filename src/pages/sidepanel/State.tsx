@@ -99,8 +99,6 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
     }
   };
 
-  console.log("test")
-
   return (
     <Box
       width="100%"
@@ -144,7 +142,7 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
                   </>
                 ) : (
                   <>
-                    You are not currently analyzing a domain??? To get started, navigate to your preferred domain and pin
+                    You are not currently analyzing a domain. To get started, navigate to your preferred domain and pin
                     it below.
                   </>
                 )}
