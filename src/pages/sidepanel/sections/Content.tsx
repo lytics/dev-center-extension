@@ -126,7 +126,7 @@ const Content: React.FC = () => {
                 label: 'Topics',
                 position: 'top',
                 fancyValue: (
-                  <Box>
+                  <Box height={250}>
                     {entity?.topics ? (
                       <CustomBarChart data={topicMap} color1={'#9D70FD'} color2={'#D36FDE'} />
                     ) : (
