@@ -3,15 +3,17 @@ import { Box, Stack, Tab, Tabs, CircularProgress } from '@mui/material';
 import CustomTabPanel from '@root/src/pages/sidepanel/components/CustomTabPanel';
 import ProfileDetail from '@root/src/pages/sidepanel/sections/ProfileDetail';
 import ProfileSummary from '@root/src/pages/sidepanel/sections/ProfileSummary';
+import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
 
 interface ProfileTabProps {
   profile: any;
   profileIsLoading: boolean;
   getter: number;
   setter: Dispatch<SetStateAction<number>>;
+  tagConfig: TagConfigModel;
 }
 
-const Profile: React.FC<ProfileTabProps> = ({ profileIsLoading, profile, getter, setter }) => {
+const Profile: React.FC<ProfileTabProps> = ({ profileIsLoading, profile, getter, setter, tagConfig }) => {
   const handleSetTab = (event, newValue) => {
     setter(newValue);
   };
@@ -31,7 +33,7 @@ const Profile: React.FC<ProfileTabProps> = ({ profileIsLoading, profile, getter,
               <CircularProgress color="secondary" />
             </Box>
           ) : (
-            <ProfileSummary profile={profile} />
+            <ProfileSummary profile={profile} tagConfig={tagConfig} />
           )}
         </CustomTabPanel>
         <CustomTabPanel value={getter} index={1}>
