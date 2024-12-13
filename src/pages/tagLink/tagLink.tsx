@@ -100,11 +100,24 @@ class TagLinkInternal {
     `);
   }
 
-  // dispatch event to content script
   dispatchEvent(name: string, payload: any) {
+    const safeStringify = (obj: any) => {
+      const seen = new WeakSet();
+
+      return JSON.stringify(obj, (key, value) => {
+        if (value !== null && typeof value === 'object') {
+          if (seen.has(value)) {
+            return undefined;
+          }
+          seen.add(value);
+        }
+        return value;
+      });
+    };
+
     const customEvent = new CustomEvent(name, {
       detail: {
-        data: JSON.stringify(payload),
+        data: safeStringify(payload),
       },
     });
     document.dispatchEvent(customEvent);
