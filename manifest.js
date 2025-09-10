@@ -1,4 +1,5 @@
-import packageJson from './package.json' assert { type: 'json' };
+import { readFileSync } from 'fs';
+const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 const manifest = {
   manifest_version: 3,
