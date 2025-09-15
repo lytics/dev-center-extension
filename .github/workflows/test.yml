@@ -8,22 +8,26 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js with Yarn cache
+        uses: actions/setup-node@v4
         with:
           node-version-file: ".nvmrc"
+          cache: 'yarn'
 
-      - uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-      - uses: pnpm/action-setup@v2
+      - name: Type check
+        run: yarn tsc --noEmit
 
-      - run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: yarn lint
 
-      - run: pnpm test
+      - name: Run tests
+        run: yarn test
