@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import State from '@pages/sidepanel/State';
+import { AppThemeProvider } from '@src/theme/ThemeProvider';
 
 function init() {
   const appContainer = document.querySelector('#app-container');
@@ -14,9 +15,11 @@ function init() {
 
   root.render(
     <React.StrictMode>
-      <Router>
-        <State />
-      </Router>
+      <AppThemeProvider>
+        <Router>
+          <State />
+        </Router>
+      </AppThemeProvider>
     </React.StrictMode>,
   );
 }

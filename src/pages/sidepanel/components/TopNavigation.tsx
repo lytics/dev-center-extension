@@ -1,12 +1,12 @@
 // core
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // mui
-import { FormGroup, FormControlLabel, AppBar, Toolbar, Box } from '@mui/material';
+import { FormGroup, FormControlLabel, AppBar, Toolbar, Box, Typography, useTheme, IconButton } from '@mui/material';
+import { HelpOutline, Settings } from '@mui/icons-material';
 
 // components
 import Toggle from '@root/src/pages/sidepanel/components/Toggle';
-import { LyticsLogo } from '@root/src/pages/sidepanel/assets/svg/logo';
 
 interface TopNavProps {
   isEnabled: boolean;
@@ -14,11 +14,17 @@ interface TopNavProps {
 }
 
 const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
-  const [toggleLabel, setToggleLabel] = useState('Disabled');
+  const [toggleLabel, setToggleLabel] = useState(isEnabled ? 'Disable Extension' : 'Enable Extension');
+  const theme = useTheme();
+
+  // Sync label with isEnabled prop changes
+  useEffect(() => {
+    setToggleLabel(isEnabled ? 'Disable Extension' : 'Enable Extension');
+  }, [isEnabled]);
 
   const handleToggleChange = event => {
     onChange(event.target.checked);
-    setToggleLabel(event.target.checked ? 'Enabled' : 'Disabled');
+    setToggleLabel(event.target.checked ? 'Disable Extension' : 'Enable Extension');
   };
 
   return (
@@ -27,20 +33,74 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
         position={'static'}
         elevation={0}
         sx={{
-          background: 'linear-gradient(to right, #6C31B8, #AB32DE)',
+          backgroundColor: theme.palette.background.default,
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          paddingTop: '10px',
+          paddingBottom: '10px',
         }}>
-        <Toolbar>
-          <Box pl={1}>
-            <LyticsLogo />
+        <Toolbar sx={{ minHeight: '48px !important', px: 2 }}>
+          <Box display="flex" alignItems="center" gap={2}>
+            <FormGroup>
+              <FormControlLabel
+                control={<Toggle checked={isEnabled} />}
+                onChange={handleToggleChange}
+                labelPlacement="start"
+                label={
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      pr: 1.5,
+                      color: theme.palette.text.primary,
+                      fontWeight: 700,
+                      fontSize: '16px',
+                      letterSpacing: '-0.5px',
+                    }}>
+                    {toggleLabel}
+                  </Typography>
+                }
+                sx={{
+                  margin: 0,
+                  '& .MuiFormControlLabel-label': {
+                    fontSize: '14px',
+                  },
+                }}
+              />
+            </FormGroup>
           </Box>
+
           <Box flexGrow={1} />
-          <FormGroup>
-            <FormControlLabel
-              control={<Toggle checked={isEnabled} />}
-              onChange={handleToggleChange}
-              label={<Box sx={{ pl: 1 }}>{toggleLabel}</Box>}
-            />
-          </FormGroup>
+
+          <Box display="flex" alignItems="center" gap={0.5}>
+            <IconButton
+              size="small"
+              sx={{
+                color: theme.palette.text.secondary,
+                '&:hover': {
+                  backgroundColor: theme.palette.action.hover,
+                  color: theme.palette.text.primary,
+                },
+                width: 32,
+                height: 32,
+              }}
+              aria-label="help">
+              <HelpOutline fontSize="small" />
+            </IconButton>
+
+            <IconButton
+              size="small"
+              sx={{
+                color: theme.palette.text.secondary,
+                '&:hover': {
+                  backgroundColor: theme.palette.action.hover,
+                  color: theme.palette.text.primary,
+                },
+                width: 32,
+                height: 32,
+              }}
+              aria-label="settings">
+              <Settings fontSize="small" />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
     </>

@@ -1,7 +1,7 @@
 {
   "name": "lytics-dev-tools",
   "version": "2.0.0",
-  "title": "Lytics Dev Tools(V2)",
+  "title": "Contentstack Data Dev Tools",
   "description": "Advanced Chrome extension v2 for exploring, debugging, and enhancing the Lytics web SDK and APIs with powerful new features.",
   "license": "MIT",
   "repository": {
