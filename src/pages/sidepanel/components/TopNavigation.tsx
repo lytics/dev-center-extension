@@ -75,33 +75,33 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
 
           <Box display="flex" alignItems="center" gap={0.5}>
             <IconButton
-              size="small"
+              size="medium"
               sx={{
                 color: theme.palette.text.secondary,
                 '&:hover': {
                   backgroundColor: theme.palette.action.hover,
                   color: theme.palette.text.primary,
                 },
-                width: 32,
-                height: 32,
+                width: 35,
+                height: 35,
               }}
               aria-label="help">
-              <HelpOutline fontSize="small" />
+              <HelpOutline fontSize="medium" />
             </IconButton>
 
             <IconButton
-              size="small"
+              size="medium"
               sx={{
                 color: theme.palette.text.secondary,
                 '&:hover': {
                   backgroundColor: theme.palette.action.hover,
                   color: theme.palette.text.primary,
                 },
-                width: 32,
-                height: 32,
+                width: 35,
+                height: 35,
               }}
               aria-label="settings">
-              <Settings fontSize="small" />
+              <Settings fontSize="medium" />
             </IconButton>
           </Box>
         </Toolbar>

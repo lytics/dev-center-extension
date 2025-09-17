@@ -1,0 +1,199 @@
+// DisabledState Component Styles - SCSS with nesting and best practices
+
+.disabled-state {
+  &-container {
+    height: 100%;
+    padding: 12px;
+    gap: 24px; // spacing={3} = 24px
+  }
+
+  // Card styles with higher specificity to override MUI naturally
+  &-card {
+    &.MuiCard-root.MuiCard-root {
+      width: 100%;
+      padding: 16px; // p={2} = 16px
+      background-color: #ffffff;
+      border-radius: 8px; // borderRadius={2} = 8px
+      box-shadow: none;
+      border: none;
+      cursor: default;
+      transition: none;
+
+      &:hover {
+        box-shadow: none;
+        transform: none;
+      }
+
+      &.outer-card {
+        padding: 32px 16px 16px 16px;
+      }
+
+      &.doc-card {
+        padding: 20px;
+      }
+    }
+  }
+
+  // Toggle row layout
+  &-toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 16px; // gap={2} = 16px
+  }
+
+  // Arrow pointer styling - target the SVG more specifically
+  &-toggle-row svg{
+    transform: translateY(-10px); // Move up by 10px
+  }
+
+
+  // Toggle card with higher specificity
+  &-toggle-card {
+    &.MuiCard-root.MuiCard-root {
+      width: 219px;
+      height: 42px;
+      background-color: #f5f5f5;
+      border-radius: 90px;
+      box-shadow: none;
+      border: none;
+      padding: 12px 23px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: default;
+      transition: none;
+
+      &:hover {
+        box-shadow: none;
+        transform: none;
+      }
+    }
+  }
+
+  // Toggle text styling with higher specificity
+  &-toggle-text {
+    &.MuiTypography-root.MuiTypography-root {
+      font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 100%;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      margin: 0;
+    }
+  }
+
+  // Switch wrapper - override disabled state to look enabled with higher specificity
+  &-switch-wrapper {
+    .MuiSwitch-root.MuiSwitch-root {
+      width: 27px;
+      height: 18.5px;
+      padding: 0;
+    }
+
+    .MuiSwitch-switchBase.MuiSwitch-switchBase {
+      padding: 0;
+      margin: 2px;
+
+      &.Mui-checked.Mui-checked {
+        transform: translateX(8.5px);
+      }
+
+      &.Mui-disabled.Mui-disabled {
+        color: #fff;
+
+        .MuiSwitch-thumb {
+          background-color: #fff;
+          box-shadow: 0px 0px 8.73px 0px rgba(0, 0, 0, 0.25), -4.36px 0px 8.73px 0px rgba(0, 0, 0, 0.09);
+        }
+
+        + .MuiSwitch-track {
+          background-color: #49D68F;
+          border: 1.5px solid #3BBB7B;
+          opacity: 1;
+        }
+      }
+    }
+
+    .MuiSwitch-thumb.MuiSwitch-thumb {
+      box-sizing: border-box;
+      width: 14.5px;
+      height: 14.5px;
+    }
+
+    .MuiSwitch-track.MuiSwitch-track {
+      border-radius: 9.25px; // 18.5/2 = 9.25px
+    }
+  }
+
+  // Typography customizations with higher specificity
+  &-title {
+    &.MuiTypography-root.MuiTypography-root {
+      font-size: 16px;
+      font-weight: 600; // Make title bold
+    }
+  }
+
+  // Description with custom line-height
+  &-description {
+    &.MuiTypography-root.MuiTypography-root {
+      line-height: 1.3;
+    }
+  }
+
+  // Doc card text with same line-height
+  &-doc-text {
+    &.MuiTypography-root.MuiTypography-root {
+      line-height: 1.3;
+    }
+  }
+
+  &-link {
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: none; // Optional hover effect
+    }
+  }
+}
+
+// Media queries for responsive design (following best practices)
+@media (max-width: 768px) {
+  .disabled-state {
+    &-container {
+      padding: 10px;
+      gap: 16px;
+    }
+
+    &-toggle-card.MuiCard-root {
+      width: 100%;
+      min-width: 200px;
+    }
+  }
+}
+
+// High contrast mode support (accessibility best practice)
+@media (prefers-contrast: high) {
+  .disabled-state {
+    &-card.MuiCard-root {
+      border: 1px solid #000;
+    }
+
+    &-toggle-card.MuiCard-root {
+      border: 1px solid #666;
+    }
+  }
+}
+
+// Reduced motion support (accessibility best practice)
+@media (prefers-reduced-motion: reduce) {
+  .disabled-state {
+    &-card.MuiCard-root,
+    &-toggle-card.MuiCard-root {
+      transition: none;
+    }
+  }
+}
