@@ -1,5 +1,5 @@
 import type { Components, Theme } from '@mui/material/styles';
-import { figmaColors } from './palette';
+import { appColors } from './palette';
 
 // Component style overrides to match Figma design
 export const components: Components<Omit<Theme, 'components'>> = {
@@ -26,10 +26,10 @@ export const components: Components<Omit<Theme, 'components'>> = {
         background: 'transparent',
       },
       '*::-webkit-scrollbar-thumb': {
-        backgroundColor: figmaColors.neutral[300],
+        backgroundColor: appColors.neutral[400],
         borderRadius: '3px',
         '&:hover': {
-          backgroundColor: figmaColors.neutral[400],
+          backgroundColor: appColors.neutral[600],
         },
       },
     },
@@ -207,40 +207,6 @@ export const components: Components<Omit<Theme, 'components'>> = {
       },
     },
   },
-
-  // COMMENTED OUT: Switch customizations (moved to individual Toggle component to avoid conflicts)
-  // MuiSwitch: {
-  //   styleOverrides: {
-  //     root: {
-  //       width: '42px',
-  //       height: '26px',
-  //       padding: 0,
-  //       '& .MuiSwitch-switchBase': {
-  //         padding: 0,
-  //         margin: '2px',
-  //         transitionDuration: '300ms',
-  //         '&.Mui-checked': {
-  //           transform: 'translateX(16px)',
-  //           color: '#fff',
-  //           '& + .MuiSwitch-track': {
-  //             opacity: 1,
-  //             border: 0,
-  //           },
-  //         },
-  //       },
-  //       '& .MuiSwitch-thumb': {
-  //         boxSizing: 'border-box',
-  //         width: '22px',
-  //         height: '22px',
-  //       },
-  //       '& .MuiSwitch-track': {
-  //         borderRadius: '13px',
-  //         opacity: 1,
-  //         transition: 'background-color 300ms ease-in-out',
-  //       },
-  //     },
-  //   },
-  // },
 
   // Accordion customizations
   MuiAccordion: {
