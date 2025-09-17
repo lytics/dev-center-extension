@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { domainStore, ExtensionState } from '@src/shared/storages/extensionDomainStorage';
 import TopNavigation from '@root/src/pages/sidepanel/components/TopNavigation';
+import DisabledState from '@root/src/pages/sidepanel/components/DisabledState';
 import { WrongDomain } from '@root/src/pages/sidepanel/assets/svg/wrongDomainIcon';
-import { DeveloperCenterIcon } from '@root/src/pages/sidepanel/assets/svg/developerCenterIcon';
 import useStorage from '@src/shared/hooks/useStorage';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import SidePanel from '@pages/sidepanel/SidePanel';
@@ -113,20 +113,6 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
 
       {isEnabled ? (
         <Box>
-          {/* <Box p={1} bgcolor={'white'} fontSize={8}>
-              Active Tab: {domainState.activeTab}
-              <br />
-              Active URL: {domainState.activeURL}
-              <br />
-              Pinned Tab: {domainState.pinnedTab}
-              <br />
-              Pinned URL: {domainState.pinnedURL}
-              <br />
-              Tab Valid: {tabValid ? 'true' : 'false'}
-              <br />
-              URL Valid: {urlValid ? 'true' : 'false'}
-            </Box> */}
-
           {tabValid && urlValid ? (
             <>
               <SidePanel key={resetSidePanel} isEnabled={isEnabled} />
@@ -154,13 +140,7 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
           )}
         </Box>
       ) : (
-        <Stack display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} p={5} spacing={1}>
-          <DeveloperCenterIcon />
-          <Typography variant={'body1'} align={'center'}>
-            To get started <b>activate the Lytics Developer Center extension</b> using the toggle at the top right. Upon
-            doing so the current page will reload and you&apos;ll instantly gain access to the full developer toolkit.
-          </Typography>
-        </Stack>
+        <DisabledState />
       )}
     </Box>
   );

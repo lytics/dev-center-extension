@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 
 interface SwitchProps {
   checked?: boolean;
+  disabled?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
 }
 
