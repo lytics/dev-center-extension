@@ -34,11 +34,14 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
         elevation={0}
         sx={{
           backgroundColor: theme.palette.background.default,
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          paddingTop: '10px',
-          paddingBottom: '10px',
+          padding: '10px',
         }}>
-        <Toolbar sx={{ minHeight: '48px !important', px: 2 }}>
+        <Toolbar
+          sx={{
+            minHeight: '48px !important',
+            padding: '10px 10px 20px 10px',
+            borderBottom: `1.5px solid ${theme.palette.divider}`,
+          }}>
           <Box display="flex" alignItems="center" gap={2}>
             <FormGroup>
               <FormControlLabel
