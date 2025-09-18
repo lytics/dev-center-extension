@@ -40,6 +40,22 @@ const appColors = {
     thumb: '#fff', // Toggle thumb color
   },
 
+  // Common Design Tokens
+  common: {
+    white: '#ffffff', // Pure white background
+    fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif',
+    fontSize: {
+      base: '1rem', // Standard font size (16px)
+    },
+    lineHeight: {
+      tight: 1.3, // Tight line height for descriptions
+    },
+    fontWeight: {
+      semiBold: 600, // Semi-bold weight for titles
+      bold: 700, // Bold weight for emphasis
+    },
+  },
+
   warning: {
     main: '#f59e0b',
   },
