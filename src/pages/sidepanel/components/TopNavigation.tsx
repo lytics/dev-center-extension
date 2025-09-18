@@ -2,7 +2,17 @@
 import React from 'react';
 
 // mui
-import { FormGroup, FormControlLabel, AppBar, Toolbar, Box, Typography, useTheme, IconButton } from '@mui/material';
+import {
+  FormGroup,
+  FormControlLabel,
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  useTheme,
+  IconButton,
+  Divider,
+} from '@mui/material';
 import { HelpOutline, Settings } from '@mui/icons-material';
 
 // components
@@ -33,7 +43,6 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
         <Toolbar
           sx={{
             padding: '0.6rem 0.6rem 1.3rem 0.6rem',
-            borderBottom: `0.1rem solid ${theme.palette.divider}`,
           }}>
           <Box display="flex" alignItems="center" gap={2}>
             <FormGroup>
@@ -98,6 +107,12 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
             </IconButton>
           </Box>
         </Toolbar>
+        <Divider
+          sx={{
+            borderBottom: `0.1rem solid ${theme.palette.divider}`,
+            opacity: '13%',
+          }}
+        />
       </AppBar>
     </>
   );
