@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import BottomNavigation from '@root/src/pages/sidepanel/components/BottomNavigation';
 
@@ -220,6 +220,7 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
                     profile={currentProfile}
                     getter={profileTab}
                     setter={setProfileTab}
+                    tagConfig={tagConfig}
                   />
                 }
               />

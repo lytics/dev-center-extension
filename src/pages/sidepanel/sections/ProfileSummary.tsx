@@ -1,8 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Button, Chip, Divider, LinearProgress, Stack, Typography } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Box,
+  Button,
+  Chip,
+  Divider,
+  LinearProgress,
+  Stack,
+  Typography,
+  Grid,
+  Table,
+  TableContainer,
+  TableBody,
+  TableRow,
+  TableCell,
+  Collapse,
+  Tooltip,
+} from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { Lock } from '@mui/icons-material';
+import { ExpandMore, HelpOutline, Lock } from '@mui/icons-material';
 import SimpleTable from '@root/src/pages/sidepanel/components/SimpleTable';
+import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
 
 interface BarStylesProps {
   backgroundGradient: string;
@@ -19,6 +36,23 @@ const barStyles = makeStyles(() => ({
 }));
 interface ProfileSummaryTabProps {
   profile: any;
+  tagConfig: TagConfigModel;
+}
+
+export interface ContentEntity {
+  created?: string;
+  fetched?: string;
+  updated?: string;
+  description?: string;
+  longDescription?: string;
+  httpstatus?: string;
+  language?: string;
+  primaryImage?: string;
+  url?: string;
+  collections?: string[];
+  // topics are a map[string]number
+  topics?: Record<string, number>;
+  confidence?: number;
 }
 
 const HighlightBox: React.FC<{ headline: string; cta?: React.ReactNode; value: React.ReactNode }> = ({
@@ -92,13 +126,129 @@ const CustomBarChart: React.FC<CustomBarChartProps> = ({ data, color1, color2 }:
   );
 };
 
-const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
+const RecommendationTile = ({ item }: { item: ContentEntity }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Grid container spacing={1} borderRadius={1} bgcolor={'#FFF'} mb={2}>
+      <Grid item xs={12} onClick={() => setOpen(!open)}>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Typography variant={'body1'} width={'90%'}>
+            <a href={item?.url}>{item?.url}</a>
+          </Typography>
+          <ExpandMore />
+        </Box>
+      </Grid>
+      <Collapse in={open}>
+        <TableContainer>
+          <Table>
+            <TableBody>
+              <TableRow key={'url'}>
+                <TableCell align="left" size="small">
+                  <Typography variant={'body2'}>URL</Typography>
+                </TableCell>
+                <TableCell align="right" size="small">
+                  <Typography variant={'body2'}>
+                    <a href={item?.url}>{item?.url}</a>
+                  </Typography>
+                </TableCell>
+              </TableRow>
+              <TableRow key={'description'}>
+                <TableCell align="left" size="small">
+                  <Typography variant={'body2'}>Description</Typography>
+                </TableCell>
+                <TableCell align="right" size="small">
+                  <Typography variant={'body2'}>
+                    {item?.description || item?.longDescription || 'No description available'}
+                  </Typography>
+                </TableCell>
+              </TableRow>
+              <TableRow key={'topics'}>
+                <TableCell align="left" size="small">
+                  <Typography variant={'body2'}>Topics</Typography>
+                </TableCell>
+                <TableCell align="right" size="small">
+                  {item.topics &&
+                    Object.keys(item.topics).map((topic, index) => (
+                      <Chip key={index} label={topic} style={{ marginRight: 1, marginTop: 1 }} />
+                    ))}
+                </TableCell>
+              </TableRow>
+              <TableRow key={'image'}>
+                <TableCell align="left">
+                  <Typography variant={'body2'}>Image</Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <img src={item.primaryImage} alt={'Not Available'} width={'100vw'} />
+                </TableCell>
+              </TableRow>
+              <TableRow key={'confidence'}>
+                <TableCell align="left" size="small">
+                  <Box display="flex" alignItems="center">
+                    <Typography variant={'body2'} display="inline">
+                      Confidence
+                    </Typography>
+                    <Tooltip title="The confidence score of the content item to the user">
+                      <HelpOutline fontSize="small" />
+                    </Tooltip>
+                  </Box>
+                </TableCell>
+                <TableCell align="right" size="small">
+                  <Typography variant={'body2'}>{Math.round(item.confidence * 100) || 0}</Typography>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Collapse>
+    </Grid>
+  );
+};
+
+const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile, tagConfig }) => {
   const [hasContent, setHasContent] = useState(false);
   const [hasScores, setHasScores] = useState(false);
   const [totalAttributes, setTotalAttributes] = useState(0);
   const [scores, setScores] = useState([]);
   const [affinities, setAffinities] = useState<{ [key: string]: number }>({});
   const [computedAttributes, setComputedAttributes] = useState<{ [key: string]: string }>({});
+
+  const [recommendations, setRecommendations] = useState<ContentEntity[]>([]);
+  const recommendAPI = useCallback(async () => {
+    if (!profile || !tagConfig || !profile.data) {
+      return;
+    }
+    const accountID = tagConfig?.cid?.[0];
+    const uid = profile?.data?._uid as string;
+    if (!accountID || !uid) {
+      return;
+    }
+
+    const response = await fetch(`https://api.lytics.io/api/content/recommend/${accountID}/user/_uid/${uid}`);
+    const json = await response.json();
+    // for each item in the data array in JSON, convert to a ContentEntity
+    const contentEntities = json.data.map(item => {
+      const entity: ContentEntity = {
+        created: item.created,
+        fetched: item.fetched,
+        updated: item.updated,
+        description: item.description,
+        longDescription: item.long_description,
+        httpstatus: item.httpstatus,
+        primaryImage: item.primary_image,
+        url: item?.url,
+        topics: item?.global,
+        confidence: item.confidence,
+      };
+      return entity;
+    });
+    setRecommendations(contentEntities);
+    return;
+  }, [profile, tagConfig]);
+
+  useEffect(() => {
+    recommendAPI();
+  }, [profile, tagConfig, recommendAPI]);
 
   const appendScore = (scoresArray, profileData, propertyName, label) => {
     const propertyValue = profileData?.user?.[propertyName];
@@ -299,6 +449,17 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
                     </Stack>
                   )}
                 </Box>
+              ),
+            },
+            {
+              label: 'Content Recommendations',
+              position: 'top',
+              fancyValue: (
+                <>
+                  {recommendations.map((item, index) => (
+                    <RecommendationTile key={index} item={item} />
+                  ))}
+                </>
               ),
             },
           ]}
