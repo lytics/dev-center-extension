@@ -24,7 +24,6 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
 
   const handleToggleChange = event => {
     onChange(event.target.checked);
-    setToggleLabel(event.target.checked ? 'Disable Extension' : 'Enable Extension');
   };
 
   return (
@@ -38,7 +37,6 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
         }}>
         <Toolbar
           sx={{
-            minHeight: '48px !important',
             padding: '10px 10px 20px 10px',
             borderBottom: `1.5px solid ${theme.palette.divider}`,
           }}>
