@@ -1,10 +1,18 @@
 import React from 'react';
-import { Box, Card, Stack, Typography } from '@mui/material';
+import { Box, Card, Link, Stack, Typography } from '@mui/material';
 import Toggle from '@root/src/pages/sidepanel/components/Toggle';
 import { ArrowPointer } from '@root/src/pages/sidepanel/assets/svg/ArrowPointer';
 import './DisabledState.scss';
 
-const DisabledState: React.FC = () => {
+interface DisabledStateProps {
+  documentationUrl?: string;
+  onDocLinkClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+}
+
+export const DisabledState = ({
+  documentationUrl = 'https://docs.lytics.com/docs/lytics-javascript-tag#installation',
+  onDocLinkClick,
+}: DisabledStateProps): JSX.Element => {
   return (
     <Stack className="disabled-state-container">
       {/* Main White Card Container */}
@@ -42,15 +50,18 @@ const DisabledState: React.FC = () => {
       {/* Separate White Card - SDK Documentation */}
       <Card className="disabled-state-card doc-card">
         <Typography variant="body2" color="text.secondary" align="center" className="disabled-state-doc-text">
-          If you havent yet installed the Lytics tag, please refer to our Lytics JavaScript SDK{' '}
-          <Typography component="span" variant="body2" className="disabled-state-link">
+          If you haven&apos;t yet installed the Lytics tag, please refer to our Lytics JavaScript SDK{' '}
+          <Link
+            variant="body2"
+            className="disabled-state-link"
+            href={documentationUrl}
+            target="_blank"
+            onClick={onDocLinkClick}>
             documentation
-          </Typography>
+          </Link>
           .
         </Typography>
       </Card>
     </Stack>
   );
 };
-
-export default DisabledState;

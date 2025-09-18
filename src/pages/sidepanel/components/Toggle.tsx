@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { appColors } from '@root/src/theme/palette';
 
 interface SwitchProps {
   checked?: boolean;
@@ -21,14 +22,14 @@ const Toggle = styled((props: SwitchProps) => (
     marginLeft: '0.25rem',
     '&.Mui-checked': {
       transform: 'translateX(0.625rem)',
-      color: '#fff',
+      color: appColors.toggle.thumb,
       '& .MuiSwitch-thumb': {
-        backgroundColor: '#fff',
+        backgroundColor: appColors.toggle.thumb,
         boxShadow: '0 0 0.55rem 0 #00000040, -0.27rem 0 0.55rem 0 #00000017',
       },
       '& + .MuiSwitch-track': {
-        backgroundColor: '#49D68F',
-        border: '0.094rem solid #3BBB7B',
+        backgroundColor: appColors.toggle.active,
+        border: `0.094rem solid ${appColors.toggle.activeBorder}`,
         opacity: 1,
       },
       '&.Mui-disabled + .MuiSwitch-track': {
@@ -36,12 +37,12 @@ const Toggle = styled((props: SwitchProps) => (
       },
     },
     '&.Mui-focusVisible .MuiSwitch-thumb': {
-      color: '#4CAF50',
-      border: '0.375rem solid #fff',
+      color: appColors.toggle.focus,
+      border: `0.375rem solid ${appColors.toggle.thumb}`,
       boxShadow: '0 0 0.55rem 0 #00000040, -0.27rem 0 0.55rem 0 #00000017',
     },
     '&.Mui-disabled .MuiSwitch-thumb': {
-      color: '#fff',
+      color: appColors.toggle.thumb,
     },
     '&.Mui-disabled + .MuiSwitch-track': {
       opacity: 0.5,
@@ -51,15 +52,15 @@ const Toggle = styled((props: SwitchProps) => (
     boxSizing: 'border-box',
     width: '1.03rem',
     height: '1.03rem',
-    backgroundColor: '#D6D3DB',
+    backgroundColor: appColors.toggle.inactive,
     opacity: 1,
     border: '0.068rem solid transparent',
     boxShadow: '0 0.125rem 0.25rem #0000001a',
   },
   '& .MuiSwitch-track': {
     borderRadius: '0.75rem',
-    backgroundColor: '#fff',
-    border: '0.094rem solid #D6D3DB',
+    backgroundColor: appColors.toggle.thumb,
+    border: `0.094rem solid ${appColors.toggle.inactive}`,
     opacity: 1,
     transition: theme.transitions.create(['background-color', 'border-color'], {
       duration: 200,
