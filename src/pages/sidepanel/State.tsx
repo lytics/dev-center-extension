@@ -5,6 +5,7 @@ import TopNavigation from '@root/src/pages/sidepanel/components/TopNavigation';
 import { DisabledState } from '@root/src/pages/sidepanel/components/DisabledState';
 import { WrongDomain } from '@root/src/pages/sidepanel/assets/svg/wrongDomainIcon';
 import useStorage from '@src/shared/hooks/useStorage';
+import { useDisabledState } from '@root/src/pages/sidepanel/hooks/useDisabledState';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import SidePanel from '@pages/sidepanel/SidePanel';
 
@@ -12,6 +13,7 @@ interface StateProps {}
 
 const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
   const extensionState = useStorage(extensionStateStorage);
+  const { documentationUrl, handleDocClick } = useDisabledState();
   const [resetSidePanel, setResetSidePanel] = useState(Date.now());
   const [isEnabled, setIsEnabled] = useState(extensionState);
   const [tabValid, setTabValid] = useState(false);
@@ -140,7 +142,7 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
           )}
         </Box>
       ) : (
-        <DisabledState />
+        <DisabledState documentationUrl={documentationUrl} onDocLinkClick={handleDocClick} />
       )}
     </Box>
   );
