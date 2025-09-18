@@ -6,6 +6,7 @@ import { DisabledState } from '@root/src/pages/sidepanel/components/DisabledStat
 import { WrongDomain } from '@root/src/pages/sidepanel/assets/svg/wrongDomainIcon';
 import useStorage from '@src/shared/hooks/useStorage';
 import { useDisabledState } from '@root/src/pages/sidepanel/hooks/useDisabledState';
+import { appContent } from '@root/src/shared/content/appContent';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import SidePanel from '@pages/sidepanel/SidePanel';
 
@@ -142,7 +143,16 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
           )}
         </Box>
       ) : (
-        <DisabledState documentationUrl={documentationUrl} onDocLinkClick={handleDocClick} />
+        <DisabledState
+          documentationUrl={documentationUrl}
+          onDocLinkClick={handleDocClick}
+          toggleLabel={appContent.disabledState.toggleLabel}
+          title={appContent.disabledState.title}
+          description={appContent.disabledState.description}
+          documentationText={appContent.disabledState.documentationText}
+          documentationLinkText={appContent.disabledState.documentationLinkText}
+          documentationSuffix={appContent.disabledState.documentationSuffix}
+        />
       )}
     </Box>
   );

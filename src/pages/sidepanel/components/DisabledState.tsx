@@ -4,11 +4,16 @@ import { styled } from '@mui/material/styles';
 import Toggle from '@root/src/pages/sidepanel/components/Toggle';
 import { ArrowPointer } from '@root/src/pages/sidepanel/assets/svg/ArrowPointer';
 import { appColors } from '@root/src/theme/palette';
-import { appContent } from '@root/src/shared/content/appContent';
 
 interface DisabledStateProps {
   documentationUrl: string;
   onDocLinkClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  toggleLabel: string;
+  title: string;
+  description: string;
+  documentationText: string;
+  documentationLinkText: string;
+  documentationSuffix: string;
 }
 
 const Container = styled(Stack)(({ theme }) => ({
@@ -136,7 +141,16 @@ const StyledLink = styled(Link)(() => ({
   },
 }));
 
-export const DisabledState = ({ documentationUrl, onDocLinkClick }: DisabledStateProps): JSX.Element => {
+export const DisabledState = ({
+  documentationUrl,
+  onDocLinkClick,
+  toggleLabel,
+  title,
+  description,
+  documentationText,
+  documentationLinkText,
+  documentationSuffix,
+}: DisabledStateProps): JSX.Element => {
   return (
     <Container>
       <OuterCard>
@@ -145,7 +159,7 @@ export const DisabledState = ({ documentationUrl, onDocLinkClick }: DisabledStat
             <ArrowPointer aria-hidden="true" />
 
             <ToggleCard>
-              <ToggleText>{appContent.disabledState.toggleLabel}</ToggleText>
+              <ToggleText>{toggleLabel}</ToggleText>
               <SwitchWrapper>
                 <Toggle checked disabled />
               </SwitchWrapper>
@@ -155,10 +169,10 @@ export const DisabledState = ({ documentationUrl, onDocLinkClick }: DisabledStat
           <StyledCard>
             <Stack spacing={1} alignItems="center" textAlign="center">
               <Title variant="h6" align="center">
-                {appContent.disabledState.title}
+                {title}
               </Title>
               <Description variant="body2" color="text.secondary" align="center">
-                {appContent.disabledState.description}
+                {description}
               </Description>
             </Stack>
           </StyledCard>
@@ -167,11 +181,11 @@ export const DisabledState = ({ documentationUrl, onDocLinkClick }: DisabledStat
 
       <DocCard>
         <DocText variant="body2" color="text.secondary" align="center">
-          {appContent.disabledState.documentationText}{' '}
+          {documentationText}{' '}
           <StyledLink variant="body2" href={documentationUrl} target="_blank" onClick={onDocLinkClick}>
-            {appContent.disabledState.documentationLinkText}
+            {documentationLinkText}
           </StyledLink>
-          {appContent.disabledState.documentationSuffix}
+          {documentationSuffix}
         </DocText>
       </DocCard>
     </Container>
