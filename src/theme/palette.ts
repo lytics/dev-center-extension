@@ -31,6 +31,15 @@ const appColors = {
     main: '#22c55e',
   },
 
+  // Toggle/Switch Colors
+  toggle: {
+    active: '#49D68F', // Active toggle background
+    activeBorder: '#3BBB7B', // Active toggle border
+    focus: '#4CAF50', // Focus state color
+    inactive: '#D6D3DB', // Inactive toggle color
+    thumb: '#fff', // Toggle thumb color
+  },
+
   warning: {
     main: '#f59e0b',
   },

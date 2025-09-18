@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { domainStore, ExtensionState } from '@src/shared/storages/extensionDomainStorage';
 import TopNavigation from '@root/src/pages/sidepanel/components/TopNavigation';
-import DisabledState from '@root/src/pages/sidepanel/components/DisabledState';
+import { DisabledState } from '@root/src/pages/sidepanel/components/DisabledState';
 import { WrongDomain } from '@root/src/pages/sidepanel/assets/svg/wrongDomainIcon';
 import useStorage from '@src/shared/hooks/useStorage';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';

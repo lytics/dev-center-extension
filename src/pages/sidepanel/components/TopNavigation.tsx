@@ -1,5 +1,5 @@
 // core
-import { useState, useEffect } from 'react';
+import React from 'react';
 
 // mui
 import { FormGroup, FormControlLabel, AppBar, Toolbar, Box, Typography, useTheme, IconButton } from '@mui/material';
@@ -14,15 +14,10 @@ interface TopNavProps {
 }
 
 const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
-  const [toggleLabel, setToggleLabel] = useState(isEnabled ? 'Disable Extension' : 'Enable Extension');
+  const toggleLabel = isEnabled ? 'Disable Extension' : 'Enable Extension';
   const theme = useTheme();
 
-  // Sync label with isEnabled prop changes
-  useEffect(() => {
-    setToggleLabel(isEnabled ? 'Disable Extension' : 'Enable Extension');
-  }, [isEnabled]);
-
-  const handleToggleChange = event => {
+  const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
   };
 
@@ -33,12 +28,12 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
         elevation={0}
         sx={{
           backgroundColor: theme.palette.background.default,
-          padding: '10px',
+          padding: '0.6rem',
         }}>
         <Toolbar
           sx={{
-            padding: '10px 10px 20px 10px',
-            borderBottom: `1.5px solid ${theme.palette.divider}`,
+            padding: '0.6rem 0.6rem 1.3rem 0.6rem',
+            borderBottom: `0.1rem solid ${theme.palette.divider}`,
           }}>
           <Box display="flex" alignItems="center" gap={2}>
             <FormGroup>
@@ -53,8 +48,8 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
                       pr: 1.5,
                       color: theme.palette.text.primary,
                       fontWeight: 700,
-                      fontSize: '16px',
-                      letterSpacing: '-0.5px',
+                      fontSize: '1rem',
+                      letterSpacing: '-0.03rem',
                     }}>
                     {toggleLabel}
                   </Typography>
@@ -62,7 +57,7 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
                 sx={{
                   margin: 0,
                   '& .MuiFormControlLabel-label': {
-                    fontSize: '14px',
+                    fontSize: '0.875rem',
                   },
                 }}
               />
