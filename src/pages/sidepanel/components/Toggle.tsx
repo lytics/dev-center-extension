@@ -11,24 +11,24 @@ interface SwitchProps {
 const Toggle = styled((props: SwitchProps) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
 ))(({ theme }) => ({
-  width: 35,
-  height: 24,
+  width: '2.19rem',
+  height: '1.5rem',
   padding: 0,
   '& .MuiSwitch-switchBase': {
     padding: 0,
-    margin: 3.75, // Adjusted margin to center the 16.5px thumb properly
+    margin: '0.2343rem',
     transitionDuration: '200ms',
-    marginLeft: 4,
+    marginLeft: '0.25rem',
     '&.Mui-checked': {
-      transform: 'translateX(10.0px)', // Adjusted for 16.5px thumb
+      transform: 'translateX(0.625rem)',
       color: '#fff',
       '& .MuiSwitch-thumb': {
-        backgroundColor: '#fff !important', // White circle when enabled
-        boxShadow: '0px 0px 8.73px 0px rgba(0, 0, 0, 0.25), -4.36px 0px 8.73px 0px rgba(0, 0, 0, 0.09) !important', // Figma spec box-shadow for enabled state
+        backgroundColor: '#fff',
+        boxShadow: '0 0 0.55rem 0 #00000040, -0.27rem 0 0.55rem 0 #00000017',
       },
       '& + .MuiSwitch-track': {
-        backgroundColor: '#49D68F !important', // Green color for enabled state (Figma spec)
-        border: '1.5px solid #3BBB7B !important', // Border color for enabled state (Figma spec)
+        backgroundColor: '#49D68F',
+        border: '0.094rem solid #3BBB7B',
         opacity: 1,
       },
       '&.Mui-disabled + .MuiSwitch-track': {
@@ -37,8 +37,8 @@ const Toggle = styled((props: SwitchProps) => (
     },
     '&.Mui-focusVisible .MuiSwitch-thumb': {
       color: '#4CAF50',
-      border: '6px solid #fff',
-      boxShadow: '0px 0px 8.73px 0px rgba(0, 0, 0, 0.25), -4.36px 0px 8.73px 0px rgba(0, 0, 0, 0.09) !important',
+      border: '0.375rem solid #fff',
+      boxShadow: '0 0 0.55rem 0 #00000040, -0.27rem 0 0.55rem 0 #00000017',
     },
     '&.Mui-disabled .MuiSwitch-thumb': {
       color: '#fff',
@@ -49,17 +49,17 @@ const Toggle = styled((props: SwitchProps) => (
   },
   '& .MuiSwitch-thumb': {
     boxSizing: 'border-box',
-    width: 16.5,
-    height: 16.5,
-    backgroundColor: '#D6D3DB', // Dark gray for disabled state
+    width: '1.03rem',
+    height: '1.03rem',
+    backgroundColor: '#D6D3DB',
     opacity: 1,
-    border: '1.09px solid transparent',
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+    border: '0.068rem solid transparent',
+    boxShadow: '0 0.125rem 0.25rem #0000001a',
   },
   '& .MuiSwitch-track': {
-    borderRadius: 24 / 2,
-    backgroundColor: '#fff', // White background for disabled state
-    border: '1.5px solid #D6D3DB', // Border for disabled state
+    borderRadius: '0.75rem',
+    backgroundColor: '#fff',
+    border: '0.094rem solid #D6D3DB',
     opacity: 1,
     transition: theme.transitions.create(['background-color', 'border-color'], {
       duration: 200,

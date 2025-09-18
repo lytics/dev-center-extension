@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Card, Stack, Typography } from '@mui/material';
 import Toggle from '@root/src/pages/sidepanel/components/Toggle';
-import { ArrowPointer } from '@root/src/pages/sidepanel/assets/svg/arrowPointer';
+import { ArrowPointer } from '@root/src/pages/sidepanel/assets/svg/ArrowPointer';
 import './DisabledState.scss';
 
 const DisabledState: React.FC = () => {

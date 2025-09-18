@@ -19,15 +19,15 @@ export const components: Components<Omit<Theme, 'components'>> = {
       },
       // Custom scrollbar styling
       '*::-webkit-scrollbar': {
-        width: '6px',
-        height: '6px',
+        width: '0.375rem',
+        height: '0.375rem',
       },
       '*::-webkit-scrollbar-track': {
         background: 'transparent',
       },
       '*::-webkit-scrollbar-thumb': {
         backgroundColor: appColors.neutral[400],
-        borderRadius: '3px',
+        borderRadius: '0.1875rem',
         '&:hover': {
           backgroundColor: appColors.neutral[600],
         },
@@ -39,14 +39,14 @@ export const components: Components<Omit<Theme, 'components'>> = {
   MuiButton: {
     styleOverrides: {
       root: {
-        borderRadius: '8px',
+        borderRadius: '0.5rem',
         textTransform: 'none',
         fontWeight: 500,
         boxShadow: 'none',
         transition: 'all 0.2s ease-in-out',
         '&:hover': {
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
-          transform: 'translateY(-1px)',
+          boxShadow: '0 0.125rem 0.5rem #0000001f',
+          transform: 'translateY(-0.0625rem)',
         },
         '&:active': {
           transform: 'translateY(0)',
@@ -54,13 +54,13 @@ export const components: Components<Omit<Theme, 'components'>> = {
       },
       contained: {
         '&:hover': {
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          boxShadow: '0 0.25rem 0.75rem #00000026',
         },
       },
       outlined: {
-        borderWidth: '1.5px',
+        borderWidth: '0.09375rem',
         '&:hover': {
-          borderWidth: '1.5px',
+          borderWidth: '0.09375rem',
         },
       },
     },
@@ -70,28 +70,13 @@ export const components: Components<Omit<Theme, 'components'>> = {
   MuiCard: {
     styleOverrides: {
       root: {
-        borderRadius: '12px',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
+        borderRadius: '0.75rem',
+        boxShadow: '0 0.0625rem 0.1875rem #0000001f, 0 0.0625rem 0.125rem #0000003d',
         transition: 'all 0.2s ease-in-out',
         '&:hover': {
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24)',
-          transform: 'translateY(-2px)',
+          boxShadow: '0 0.25rem 0.5rem #0000001f, 0 0.125rem 0.25rem #0000003d',
+          transform: 'translateY(-0.125rem)',
         },
-      },
-    },
-  },
-
-  // Paper customizations
-  MuiPaper: {
-    styleOverrides: {
-      root: {
-        borderRadius: '8px',
-      },
-      elevation1: {
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
-      },
-      elevation2: {
-        boxShadow: '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)',
       },
     },
   },
@@ -102,12 +87,12 @@ export const components: Components<Omit<Theme, 'components'>> = {
       root: {
         textTransform: 'none',
         fontWeight: 500,
-        borderRadius: '6px',
-        margin: '0 2px',
-        minHeight: '40px',
+        borderRadius: '0.375rem',
+        margin: '0 0.125rem',
+        minHeight: '2.5rem',
         transition: 'all 0.2s ease-in-out',
         '&:hover': {
-          backgroundColor: 'rgba(0, 0, 0, 0.04)',
+          backgroundColor: '#0000000a',
         },
         '&.Mui-selected': {
           fontWeight: 600,
@@ -120,33 +105,11 @@ export const components: Components<Omit<Theme, 'components'>> = {
   MuiTabs: {
     styleOverrides: {
       root: {
-        minHeight: '48px',
+        minHeight: '3rem',
       },
       indicator: {
-        height: '3px',
-        borderRadius: '2px',
-      },
-    },
-  },
-
-  // TextField/Input customizations
-  MuiTextField: {
-    styleOverrides: {
-      root: {
-        '& .MuiOutlinedInput-root': {
-          borderRadius: '8px',
-          transition: 'all 0.2s ease-in-out',
-          '&:hover': {
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderWidth: '2px',
-            },
-          },
-          '&.Mui-focused': {
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderWidth: '2px',
-            },
-          },
-        },
+        height: '0.1875rem',
+        borderRadius: '0.125rem',
       },
     },
   },
@@ -155,71 +118,8 @@ export const components: Components<Omit<Theme, 'components'>> = {
   MuiChip: {
     styleOverrides: {
       root: {
-        borderRadius: '6px',
+        borderRadius: '0.375rem',
         fontWeight: 500,
-      },
-    },
-  },
-
-  // Dialog customizations
-  MuiDialog: {
-    styleOverrides: {
-      paper: {
-        borderRadius: '12px',
-        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.16)',
-      },
-    },
-  },
-
-  // Menu customizations
-  MuiMenu: {
-    styleOverrides: {
-      paper: {
-        borderRadius: '8px',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-        marginTop: '4px',
-      },
-    },
-  },
-
-  // MenuItem customizations
-  MuiMenuItem: {
-    styleOverrides: {
-      root: {
-        borderRadius: '4px',
-        margin: '2px 4px',
-        transition: 'all 0.2s ease-in-out',
-        '&:hover': {
-          transform: 'translateX(2px)',
-        },
-      },
-    },
-  },
-
-  // Tooltip customizations
-  MuiTooltip: {
-    styleOverrides: {
-      tooltip: {
-        borderRadius: '6px',
-        fontSize: '0.75rem',
-        fontWeight: 500,
-        padding: '8px 12px',
-      },
-    },
-  },
-
-  // Accordion customizations
-  MuiAccordion: {
-    styleOverrides: {
-      root: {
-        borderRadius: '8px !important',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12)',
-        '&:before': {
-          display: 'none',
-        },
-        '&.Mui-expanded': {
-          margin: '8px 0',
-        },
       },
     },
   },
@@ -237,7 +137,7 @@ export const components: Components<Omit<Theme, 'components'>> = {
   MuiDivider: {
     styleOverrides: {
       root: {
-        borderColor: 'rgba(0, 0, 0, 0.08)',
+        borderColor: '#00000014',
       },
     },
   },

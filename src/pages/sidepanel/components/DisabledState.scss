@@ -3,17 +3,17 @@
 .disabled-state {
   &-container {
     height: 100%;
-    padding: 12px;
-    gap: 24px; // spacing={3} = 24px
+    padding: 0.75rem;
+    gap: 1.5rem;
   }
 
   // Card styles with higher specificity to override MUI naturally
   &-card {
     &.MuiCard-root.MuiCard-root {
       width: 100%;
-      padding: 16px; // p={2} = 16px
+      padding: 1rem;
       background-color: #ffffff;
-      border-radius: 8px; // borderRadius={2} = 8px
+      border-radius: 0.5rem;
       box-shadow: none;
       border: none;
       cursor: default;
@@ -25,11 +25,11 @@
       }
 
       &.outer-card {
-        padding: 32px 16px 16px 16px;
+        padding: 2rem 1rem 1rem 1rem;
       }
 
       &.doc-card {
-        padding: 20px;
+        padding: 1.25rem;
       }
     }
   }
@@ -38,29 +38,29 @@
   &-toggle-row {
     display: flex;
     align-items: center;
-    gap: 16px; // gap={2} = 16px
+    gap: 1rem;
   }
 
   // Arrow pointer styling - target the SVG more specifically
   &-toggle-row svg{
-    transform: translateY(-10px); // Move up by 10px
+    transform: translateY(-0.625rem);
   }
 
 
   // Toggle card with higher specificity
   &-toggle-card {
     &.MuiCard-root.MuiCard-root {
-      width: 219px;
-      height: 42px;
+      width: 13.69rem;
+      height: 2.625rem;
       background-color: #f5f5f5;
-      border-radius: 90px;
+      border-radius: 5.625rem;
       box-shadow: none;
       border: none;
-      padding: 12px 23px;
+      padding: 0.75rem 1.44rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 0.625rem;
       cursor: default;
       transition: none;
 
@@ -76,9 +76,9 @@
     &.MuiTypography-root.MuiTypography-root {
       font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, sans-serif;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 1rem;
       line-height: 100%;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.031rem;
       display: flex;
       align-items: center;
       margin: 0;
@@ -88,17 +88,17 @@
   // Switch wrapper - override disabled state to look enabled with higher specificity
   &-switch-wrapper {
     .MuiSwitch-root.MuiSwitch-root {
-      width: 27px;
-      height: 18.5px;
+      width: 1.69rem;
+      height: 1.16rem;
       padding: 0;
     }
 
     .MuiSwitch-switchBase.MuiSwitch-switchBase {
       padding: 0;
-      margin: 2px;
+      margin: 0.125rem;
 
       &.Mui-checked.Mui-checked {
-        transform: translateX(8.5px);
+        transform: translateX(0.53rem);
       }
 
       &.Mui-disabled.Mui-disabled {
@@ -106,12 +106,12 @@
 
         .MuiSwitch-thumb {
           background-color: #fff;
-          box-shadow: 0px 0px 8.73px 0px rgba(0, 0, 0, 0.25), -4.36px 0px 8.73px 0px rgba(0, 0, 0, 0.09);
+          box-shadow: 0 0 0.55rem 0 #00000040, -0.27rem 0 0.55rem 0 #00000017;
         }
 
         + .MuiSwitch-track {
           background-color: #49D68F;
-          border: 1.5px solid #3BBB7B;
+          border: 0.094rem solid #3BBB7B;
           opacity: 1;
         }
       }
@@ -119,20 +119,20 @@
 
     .MuiSwitch-thumb.MuiSwitch-thumb {
       box-sizing: border-box;
-      width: 14.5px;
-      height: 14.5px;
+      width: 0.91rem;
+      height: 0.91rem;
     }
 
     .MuiSwitch-track.MuiSwitch-track {
-      border-radius: 9.25px; // 18.5/2 = 9.25px
+      border-radius: 0.58rem;
     }
   }
 
   // Typography customizations with higher specificity
   &-title {
     &.MuiTypography-root.MuiTypography-root {
-      font-size: 16px;
-      font-weight: 600; // Make title bold
+      font-size: 1rem;
+      font-weight: 600;
     }
   }
 
@@ -161,16 +161,16 @@
 }
 
 // Media queries for responsive design (following best practices)
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .disabled-state {
     &-container {
-      padding: 10px;
-      gap: 16px;
+      padding: 0.625rem;
+      gap: 1rem;
     }
 
     &-toggle-card.MuiCard-root {
       width: 100%;
-      min-width: 200px;
+      min-width: 12.5rem;
     }
   }
 }
@@ -179,11 +179,11 @@
 @media (prefers-contrast: high) {
   .disabled-state {
     &-card.MuiCard-root {
-      border: 1px solid #000;
+      border: 0.063rem solid #000;
     }
 
     &-toggle-card.MuiCard-root {
-      border: 1px solid #666;
+      border: 0.063rem solid #666;
     }
   }
 }
