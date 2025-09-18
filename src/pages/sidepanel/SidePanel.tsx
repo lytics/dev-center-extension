@@ -15,6 +15,7 @@ import { TagConfigModel, TagConfigPathforaCandidates } from '@root/src/shared/mo
 import Debugger from '@root/src/pages/sidepanel/sections/Debugger';
 import Profile from '@root/src/pages/sidepanel/sections/Profile';
 import Personalization from '@root/src/pages/sidepanel/sections/Personalization';
+import Content from '@root/src/pages/sidepanel/sections/Content';
 import Configuration from '@root/src/pages/sidepanel/sections/Configuration';
 import { EmitLog } from '@src/shared/components/EmitLog';
 
@@ -229,6 +230,7 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
                   <Personalization candidates={candidates} getter={personalizationTab} setter={setPersonalizationTab} />
                 }
               />
+              <Route path="/content" element={<Content />} />
               <Route
                 path="*"
                 element={

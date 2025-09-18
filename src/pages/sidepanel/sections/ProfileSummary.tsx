@@ -1,22 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Chip, Divider, LinearProgress, Stack, Typography } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { Box, Button, Chip, Divider, Stack, Typography } from '@mui/material';
+
 import { Lock } from '@mui/icons-material';
 import SimpleTable from '@root/src/pages/sidepanel/components/SimpleTable';
 
-interface BarStylesProps {
-  backgroundGradient: string;
-}
+import CustomBarChart from '@root/src/pages/sidepanel/components/BarChart';
 
-const barStyles = makeStyles(() => ({
-  linearProgress: ({ backgroundGradient }: BarStylesProps) => ({
-    background: '#DCDCEA',
-    borderRadius: '2px',
-    '& .MuiLinearProgress-bar': {
-      background: backgroundGradient,
-    },
-  }),
-}));
+import { ExtractScores, ExtractSortedMap, ExtractSegments } from '@root/src/models/entity';
+
 interface ProfileSummaryTabProps {
   profile: any;
 }
@@ -45,76 +36,13 @@ const HighlightBox: React.FC<{ headline: string; cta?: React.ReactNode; value: R
   );
 };
 
-interface CustomBarChartProps {
-  data: any;
-  color1?: string;
-  color2?: string;
-}
-
-const CustomBarChart: React.FC<CustomBarChartProps> = ({ data, color1, color2 }: CustomBarChartProps) => {
-  const classes = barStyles({
-    backgroundGradient: `linear-gradient(75deg, ${color1 || '#6C31B8'} 60%, ${color2 || '#AB32DE'} 100%)`,
-  });
-
-  const truncateString = (str, maxLength) => {
-    if (str.length > maxLength) {
-      return str.substring(0, maxLength) + '...';
-    }
-    return str;
-  };
-
-  return (
-    <Stack spacing={0.5}>
-      {data.map((item, index) => (
-        <Stack key={index} spacing={1} direction={'row'} ml={1} mr={1}>
-          <Box
-            sx={{
-              width: '200px',
-              borderRadius: '2px',
-              // background: 'linear-gradient(90deg, rgba(255, 255, 255, 0) 80%, #D8D8E5 100%)',
-            }}>
-            <Typography variant="body2" sx={{ fontSize: 12, textAlign: 'right' }}>
-              {truncateString(item.label, 20)}
-            </Typography>
-          </Box>
-          <LinearProgress
-            variant="determinate"
-            value={Math.round(item.value * 100)}
-            sx={{
-              width: '100%',
-              height: '1rem',
-            }}
-            className={classes.linearProgress}
-          />
-        </Stack>
-      ))}
-    </Stack>
-  );
-};
-
 const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
   const [hasContent, setHasContent] = useState(false);
   const [hasScores, setHasScores] = useState(false);
   const [totalAttributes, setTotalAttributes] = useState(0);
   const [scores, setScores] = useState([]);
-  const [affinities, setAffinities] = useState<{ [key: string]: number }>({});
+  const [affinities, setAffinities] = useState<{ label: string; value: number }[]>([]);
   const [computedAttributes, setComputedAttributes] = useState<{ [key: string]: string }>({});
-
-  const appendScore = (scoresArray, profileData, propertyName, label) => {
-    const propertyValue = profileData?.user?.[propertyName];
-
-    if (propertyValue) {
-      return [
-        ...scoresArray,
-        {
-          label: label,
-          value: propertyValue / 100,
-        },
-      ];
-    }
-
-    return scoresArray;
-  };
 
   useEffect(() => {
     // total attributes available
@@ -124,34 +52,18 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
 
     // populate content
     if (profile?.data?.user?.lytics_content) {
-      const affinityEntries = Object.entries(profile.data.user.lytics_content);
-      const filteredEntries = affinityEntries.filter(([key]) => key.length > 1);
-      const slicedEntries = filteredEntries.slice(0, 20);
-      const affinityObject = Object.fromEntries(slicedEntries);
-      setAffinities(affinityObject as { [key: string]: number });
+      const sortedData = ExtractSortedMap(profile?.data?.user?.lytics_content || []);
+      setAffinities(sortedData);
       setHasContent(true);
     }
     // populate computed attributes
     if (profile?.data?.user?.segments) {
-      const segmentsArray = profile.data.user.segments;
-      const computedAttributesObject = segmentsArray.reduce((result, segment) => {
-        result[segment] = segment;
-        return result;
-      }, {});
+      const computedAttributesObject = ExtractSegments(profile.data.user, 'segments');
       setComputedAttributes(computedAttributesObject);
     }
 
     // populate scores
-    let updatedScores = [];
-    updatedScores = appendScore(updatedScores, profile.data, 'score_consistency', 'Consistency');
-    updatedScores = appendScore(updatedScores, profile.data, 'score_frequency', 'Frequency');
-    updatedScores = appendScore(updatedScores, profile.data, 'score_intensity', 'Intensity');
-    updatedScores = appendScore(updatedScores, profile.data, 'score_maturity', 'Maturity');
-    updatedScores = appendScore(updatedScores, profile.data, 'score_momentum', 'Momentum');
-    updatedScores = appendScore(updatedScores, profile.data, 'score_propensity', 'Propensity');
-    updatedScores = appendScore(updatedScores, profile.data, 'score_quantity', 'Quantity');
-    updatedScores = appendScore(updatedScores, profile.data, 'score_recency', 'Recency');
-    updatedScores = appendScore(updatedScores, profile.data, 'score_volatility', 'Volatility');
+    const updatedScores = ExtractScores(profile.data?.user);
 
     if (updatedScores.length > 0) {
       setHasScores(true);
@@ -162,10 +74,6 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
   }, [profile]);
 
   const computedAttributesValue = Object.values(computedAttributes).join(', ');
-
-  const sortedData = Object.entries(affinities)
-    .map(([label, value]) => ({ label, value }))
-    .sort((a, b) => b.value - a.value);
 
   const openNewTab = url => {
     window.open(url, '_blank');
@@ -273,7 +181,7 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
               fancyValue: (
                 <Box>
                   {hasContent ? (
-                    <CustomBarChart data={sortedData} color1={'#9D70FD'} color2={'#D36FDE'} />
+                    <CustomBarChart data={affinities} color1={'#9D70FD'} color2={'#D36FDE'} />
                   ) : (
                     <Stack
                       direction={'row'}

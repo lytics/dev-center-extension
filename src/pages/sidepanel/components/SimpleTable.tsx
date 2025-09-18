@@ -4,7 +4,8 @@ import { Grid, Divider, Typography } from '@mui/material';
 interface TableRow {
   label: string;
   position?: string;
-  value?: string;
+  // value is optional and can be a string or a ReactNode
+  value?: string | React.ReactNode;
   fancyValue?: React.ReactNode;
 }
 
