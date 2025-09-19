@@ -5,6 +5,9 @@ import { styled } from '@mui/material/styles';
 import { appColors } from '@root/src/theme/palette';
 import { appContent } from '@root/src/shared/content/appContent';
 
+// Extract the type from appContent for better type safety
+type EnabledStateTextContent = typeof appContent.enabledState;
+
 interface EnabledStateProps {
   domainState: {
     pinnedURL: string;
@@ -12,6 +15,8 @@ interface EnabledStateProps {
   tabValid: boolean;
   onPin: () => void;
   documentationUrl: string;
+  // Optional: allow overriding content (useful for testing/customization)
+  textContent?: EnabledStateTextContent;
 }
 
 const Container = styled(Stack)(({ theme }) => ({
@@ -87,38 +92,42 @@ const StyledLink = styled(Link)(() => ({
   color: appColors.common.colors.textSecondary,
 }));
 
-export const EnabledState = ({ domainState, tabValid, onPin, documentationUrl }: EnabledStateProps): JSX.Element => {
+export const EnabledState = ({
+  domainState,
+  tabValid,
+  onPin,
+  documentationUrl,
+  textContent = appContent.enabledState, // Default to centralized content
+}: EnabledStateProps): JSX.Element => {
   return (
     <Container>
       <OuterCard>
         <ConfigDomain />
         <Title variant="h6" align="center">
-          {appContent.enabledState.title}
+          {textContent.title}
         </Title>
         <Typography variant="body2" color="text.secondary" align="center">
           {domainState.pinnedURL ? (
             <>
-              {appContent.enabledState.pinnedUrlText.prefix}
+              {textContent.pinnedUrlText.prefix}
               <strong>{domainState.pinnedURL}</strong>
-              {tabValid
-                ? appContent.enabledState.pinnedUrlText.suffix
-                : appContent.enabledState.pinnedUrlText.suffixAnotherTab}
+              {tabValid ? textContent.pinnedUrlText.suffix : textContent.pinnedUrlText.suffixAnotherTab}
             </>
           ) : (
             <Description>
-              {appContent.enabledState.noPinnedUrlText}
+              {textContent.noPinnedUrlText}
               <StyledLink variant="body2" href={documentationUrl} target="_blank">
-                {appContent.enabledState.documentationLinkText}.
+                {textContent.documentationLinkText}.
               </StyledLink>
             </Description>
           )}
         </Typography>
         <StyledButton size={'medium'} variant="outlined" onClick={onPin}>
-          {appContent.enabledState.buttonText}
+          {textContent.buttonText}
         </StyledButton>
       </OuterCard>
       <DocCard>
-        <DocText align="center">{appContent.enabledState.adBlockerNotice}</DocText>
+        <DocText align="center">{textContent.adBlockerNotice}</DocText>
       </DocCard>
     </Container>
   );
