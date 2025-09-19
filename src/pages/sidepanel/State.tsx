@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { domainStore, ExtensionState } from '@src/shared/storages/extensionDomainStorage';
 import TopNavigation from '@root/src/pages/sidepanel/components/TopNavigation';
 import { DisabledState } from '@root/src/pages/sidepanel/components/DisabledState';
-import { WrongDomain } from '@root/src/pages/sidepanel/assets/svg/wrongDomainIcon';
+import { EnabledState } from '@root/src/pages/sidepanel/components/EnabledState';
 import useStorage from '@src/shared/hooks/useStorage';
 import { useDisabledState } from '@root/src/pages/sidepanel/hooks/useDisabledState';
 import { appContent } from '@root/src/shared/content/appContent';
@@ -103,15 +103,7 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
   };
 
   return (
-    <Box
-      width="100%"
-      height="100vh"
-      display="flex"
-      overflow={'hidden'}
-      flexDirection="column"
-      sx={{
-        background: '#E9E8EE',
-      }}>
+    <Box width="100%" height="100vh" display="flex" overflow={'hidden'} flexDirection="column">
       <TopNavigation isEnabled={isEnabled} onChange={handleStateToggle} />
 
       {isEnabled ? (
@@ -121,25 +113,12 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
               <SidePanel key={resetSidePanel} isEnabled={isEnabled} />
             </>
           ) : (
-            <Stack display={'flex'} justifyContent={'center'} alignItems={'center'} height={'100%'} p={5} spacing={1}>
-              <WrongDomain />
-              <Typography variant={'body1'} align={'center'} pb={2} maxWidth={'450px'}>
-                {domainState.pinnedURL ? (
-                  <>
-                    Wait a minute! You are currently analyzing <strong>{domainState.pinnedURL}</strong>
-                    {tabValid ? '' : ' in another tab'}. If you&apos;d like to analyze this domain instead pin it below.
-                  </>
-                ) : (
-                  <>
-                    You are not currently analyzing a domain. To get started, navigate to your preferred domain and pin
-                    it below.
-                  </>
-                )}
-              </Typography>
-              <Button size={'small'} color={'secondary'} variant="outlined" onClick={handlePin}>
-                Pin Domain
-              </Button>
-            </Stack>
+            <EnabledState
+              domainState={domainState}
+              tabValid={tabValid}
+              onPin={handlePin}
+              documentationUrl={documentationUrl}
+            />
           )}
         </Box>
       ) : (

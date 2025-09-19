@@ -16,6 +16,21 @@ export const appContent = {
     documentationSuffix: '.',
   },
 
+  // EnabledState Component
+  enabledState: {
+    title: 'Configured domain not detected',
+    buttonText: 'Configure domains',
+    pinnedUrlText: {
+      prefix: 'Wait a minute! You are currently analyzing ',
+      suffix: ". If you'd like to analyze this domain instead pin it below.",
+      suffixAnotherTab: " in another tab. If you'd like to analyze this domain instead pin it below.",
+    },
+    documentationLinkText: 'documentation',
+    noPinnedUrlText:
+      "To analyze this domain, add it to your configured domains list. If you haven't yet installed the Lytics tag, please refer to our Lytics JavaScript SDK ",
+    adBlockerNotice: 'Using an Ad Blocker? You may need to disable it temporarily to use this extension.',
+  },
+
   // TopNavigation Component
   topNavigation: {
     enableLabel: 'Enable Extension',
