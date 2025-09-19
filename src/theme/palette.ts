@@ -22,7 +22,7 @@ const appColors = {
     100: '#f5f5f5',
     200: '#525252',
     400: '#a3a3a3',
-    600: '#525252',
+    600: '#383838',
     900: '#171717',
   },
 
@@ -46,13 +46,20 @@ const appColors = {
     fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif',
     fontSize: {
       base: '1rem', // Standard font size (16px)
+      baseSmall: '0.875rem', // Standard font size (14px)
+      small: '0.8125rem', // Small font size (13px)
     },
     lineHeight: {
       tight: 1.3, // Tight line height for descriptions
     },
     fontWeight: {
+      medium: 500, // Medium weight
       semiBold: 600, // Semi-bold weight for titles
       bold: 700, // Bold weight for emphasis
+    },
+    colors: {
+      textSecondary: '#7D7A7A', // Secondary text color
+      accent: '#8848F9', // Accent color for buttons and links
     },
   },
 

@@ -127,18 +127,15 @@ const Title = styled(Typography)(() => ({
 
 const Description = styled(Typography)(() => ({
   lineHeight: appColors.common.lineHeight.tight,
-}));
-
-const DocText = styled(Typography)(() => ({
-  lineHeight: appColors.common.lineHeight.tight,
+  fontSize: appColors.common.fontSize.small,
+  color: appColors.common.colors.textSecondary,
+  fontWeight: appColors.common.fontWeight.medium,
 }));
 
 const StyledLink = styled(Link)(() => ({
   textDecoration: 'underline',
   cursor: 'pointer',
-  '&:hover': {
-    textDecoration: 'none',
-  },
+  color: appColors.common.colors.textSecondary,
 }));
 
 export const DisabledState = ({
@@ -168,25 +165,21 @@ export const DisabledState = ({
 
           <StyledCard>
             <Stack spacing={1} alignItems="center" textAlign="center">
-              <Title variant="h6" align="center">
-                {title}
-              </Title>
-              <Description variant="body2" color="text.secondary" align="center">
-                {description}
-              </Description>
+              <Title variant="h6">{title}</Title>
+              <Description>{description}</Description>
             </Stack>
           </StyledCard>
         </Stack>
       </OuterCard>
 
       <DocCard>
-        <DocText variant="body2" color="text.secondary" align="center">
+        <Description>
           {documentationText}{' '}
-          <StyledLink variant="body2" href={documentationUrl} target="_blank" onClick={onDocLinkClick}>
+          <StyledLink href={documentationUrl} target="_blank" onClick={onDocLinkClick}>
             {documentationLinkText}
           </StyledLink>
           {documentationSuffix}
-        </DocText>
+        </Description>
       </DocCard>
     </Container>
   );
