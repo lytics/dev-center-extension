@@ -1,0 +1,88 @@
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
+import { EnabledState } from './EnabledState';
+import { appContent } from '@root/src/shared/content/appContent';
+import { ThemeProvider } from '@mui/material/styles';
+import { appTheme } from '@src/theme';
+
+describe('EnabledState', () => {
+  const mockProps = {
+    domainState: { pinnedURL: '' },
+    tabValid: true,
+    onPin: vi.fn(),
+    documentationUrl: 'https://docs.lytics.com/test',
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders correctly with default content', () => {
+    render(
+      <ThemeProvider theme={appTheme}>
+        <EnabledState {...mockProps} />
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByText(appContent.enabledState.title)).toBeInTheDocument();
+    expect(screen.getByText(appContent.enabledState.buttonText)).toBeInTheDocument();
+    expect(screen.getByText(appContent.enabledState.adBlockerNotice)).toBeInTheDocument();
+  });
+
+  it('displays pinned URL message when pinnedURL exists', () => {
+    const propsWithPinnedURL = {
+      ...mockProps,
+      domainState: { pinnedURL: 'example.com' },
+      tabValid: true,
+    };
+
+    render(
+      <ThemeProvider theme={appTheme}>
+        <EnabledState {...propsWithPinnedURL} />
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByText('example.com')).toBeInTheDocument();
+  });
+
+  it('calls onPin when configure domains button is clicked', async () => {
+    render(
+      <ThemeProvider theme={appTheme}>
+        <EnabledState {...mockProps} />
+      </ThemeProvider>,
+    );
+
+    const button = screen.getByRole('button', { name: appContent.enabledState.buttonText });
+    await userEvent.click(button);
+
+    expect(mockProps.onPin).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders with custom textContent', () => {
+    const customContent = {
+      title: 'Custom Title',
+      buttonText: 'Custom Button',
+      pinnedUrlText: {
+        prefix: 'Custom prefix ',
+        suffix: ' custom suffix',
+        suffixAnotherTab: ' custom suffix another tab',
+      },
+      documentationLinkText: 'custom docs',
+      noPinnedUrlText: 'Custom no pinned URL text',
+      adBlockerNotice: 'Custom ad blocker notice',
+    };
+
+    render(
+      <ThemeProvider theme={appTheme}>
+        <EnabledState {...mockProps} textContent={customContent as any} />
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByText('Custom Title')).toBeInTheDocument();
+    expect(screen.getByText('Custom Button')).toBeInTheDocument();
+    expect(screen.getByText('Custom ad blocker notice')).toBeInTheDocument();
+  });
+});

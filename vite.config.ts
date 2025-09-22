@@ -88,12 +88,12 @@ export default defineConfig({
       },
     },
   },
-  // test: {
-  //   globals: true,
-  //   environment: 'jsdom',
-  //   include: ['**/*.test.ts', '**/*.test.tsx'],
-  //   setupFiles: './test-utils/vitest.setup.js',
-  // },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    include: ['**/*.test.ts', '**/*.test.tsx'],
+    setupFiles: './test-utils/vitest.setup.js',
+  },
 });
 
 function getCacheInvalidationKey() {
