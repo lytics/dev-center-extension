@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { EnabledState } from './EnabledState';
-import { appContent } from '@root/src/shared/content/appContent';
+import { appContent } from '@src/shared/content/appContent';
 import { ThemeProvider } from '@mui/material/styles';
 import { appTheme } from '@src/theme';
 
