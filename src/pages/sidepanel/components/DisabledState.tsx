@@ -17,9 +17,6 @@ interface DisabledStateProps {
   documentationSuffix: string;
 }
 
-// Using shared styles from SharedStyles.tsx
-
-// DisabledState-specific OuterCard with different padding
 const OuterCard = styled(StyledCard)(({ theme }) => ({
   padding: `${theme.spacing(4)} ${theme.spacing(2)} ${theme.spacing(2)} ${theme.spacing(2)}`,
 }));
@@ -98,8 +95,6 @@ const SwitchWrapper = styled(Box)(({ theme }) => ({
     borderRadius: '0.6rem',
   },
 }));
-
-// Title, Description, and StyledLink imported from SharedStyles.tsx
 
 export const DisabledState = ({
   documentationUrl,

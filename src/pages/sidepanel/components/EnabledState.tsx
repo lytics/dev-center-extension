@@ -16,11 +16,8 @@ interface EnabledStateProps {
   tabValid: boolean;
   onPin: () => void;
   documentationUrl: string;
-  // Optional: allow overriding content (useful for testing/customization)
   textContent?: EnabledStateTextContent;
 }
-
-// Using shared styles from SharedStyles.tsx
 
 const OuterCard = styled(StyledCard)(({ theme }) => ({
   padding: `${theme.spacing(4)} ${theme.spacing(4)} ${theme.spacing(4)} ${theme.spacing(4)}`,
@@ -31,7 +28,6 @@ const OuterCard = styled(StyledCard)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
 
-// EnabledState-specific DocCard with semiBold font weight
 const EnabledDocCard = styled(StyledCard)(({ theme }) => ({
   padding: theme.spacing(2.5),
   fontWeight: appColors.common.fontWeight.semiBold,
@@ -43,8 +39,6 @@ const DocText = styled(Typography)(() => ({
   color: appColors.common.colors.textSecondary,
   fontWeight: appColors.common.fontWeight.semiBold,
 }));
-
-// Title and Description imported from SharedStyles.tsx
 
 const StyledButton = styled(Button)(() => ({
   color: appColors.common.colors.accent,
@@ -58,8 +52,6 @@ const StyledButton = styled(Button)(() => ({
     borderColor: appColors.common.colors.accent,
   },
 }));
-
-// StyledLink imported from SharedStyles.tsx
 
 export const EnabledState = ({
   domainState,
