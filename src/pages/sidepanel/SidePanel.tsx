@@ -1,22 +1,33 @@
-import { useEffect, useState } from 'react';
-import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
-import BottomNavigation from '@root/src/pages/sidepanel/components/BottomNavigation';
-
-// styles
-import { Box, CircularProgress } from '@mui/material';
 import '@pages/sidepanel/SidePanel.css';
 
-// storage
-import tagConfigStore from '@src/shared/storages/tagConfigStorage';
-import entityStorage from '@src/shared/storages/entityStorage';
-import { TagConfigModel, TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
+import {
+  useEffect,
+  useState,
+} from 'react';
 
-// components
-import Debugger from '@root/src/pages/sidepanel/sections/Debugger';
-import Profile from '@root/src/pages/sidepanel/sections/Profile';
-import Personalization from '@root/src/pages/sidepanel/sections/Personalization';
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
+
+import {
+  Box,
+  CircularProgress,
+} from '@mui/material';
+import BottomNavigation from '@root/src/pages/sidepanel/components/BottomNavigation';
 import Configuration from '@root/src/pages/sidepanel/sections/Configuration';
+import Debugger from '@root/src/pages/sidepanel/sections/Debugger';
+import Personalization from '@root/src/pages/sidepanel/sections/Personalization';
+import Profile from '@root/src/pages/sidepanel/sections/Profile';
+import {
+  TagConfigModel,
+  TagConfigPathforaCandidates,
+} from '@root/src/shared/models/tagConfigModel';
 import { EmitLog } from '@src/shared/components/EmitLog';
+import entityStorage from '@src/shared/storages/entityStorage';
+import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 
 interface SidePanelProps {
   key: any;
@@ -244,7 +255,6 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
           </Box>
           <BottomNavigation
             value={activePath}
-            tagIsInstalled={tagIsInstalled}
             onChange={newValue => handleNavigation(newValue)}
           />
         </>

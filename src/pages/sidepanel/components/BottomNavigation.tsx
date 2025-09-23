@@ -1,60 +1,85 @@
 import React from 'react';
-import BottomNavigation from '@mui/material/BottomNavigation';
-import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import Plumbing from '@mui/icons-material/Plumbing';
-import Person from '@mui/icons-material/Person';
-import Brush from '@mui/icons-material/Brush';
+
+import { AutoFixHighOutlined, Person, PestControlOutlined } from '@mui/icons-material';
+import { BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { appColors } from '@root/src/theme/palette';
 
 interface BottomNavProps {
   value: string;
-  tagIsInstalled: boolean;
   onChange: (newValue: string) => void;
 }
 
-const BottomNav: React.FC<BottomNavProps> = ({ value, tagIsInstalled, onChange }) => {
+interface NavigationSection {
+  route: string;
+  icon: React.ReactElement;
+  ariaLabel: string;
+}
+
+const StyledBottomNavigation = styled(BottomNavigation)(({ theme }) => ({
+  position: 'fixed',
+  bottom: 0,
+  width: '100%',
+  height: 'auto',
+  display: 'flex',
+  justifyContent: 'space-between',
+  padding: theme.spacing(1.5, 2),
+  cursor: 'default',
+  transition: 'none',
+  '&:hover': {
+    boxShadow: 'none',
+    transform: 'none',
+  },
+}));
+
+const StyledBottomNavigationAction = styled(BottomNavigationAction)<{
+  isSelected: boolean;
+}>(({ theme, isSelected }) => ({
+  flex: 'none',
+  minWidth: 0,
+  paddingBlock: theme.spacing(1.5),
+  backgroundColor: isSelected ? appColors.common.colors.accent : 'transparent',
+  borderRadius: theme.spacing(0.5),
+  transition: 'none',
+  '&.Mui-selected': {
+    color: appColors.common.white,
+  },
+}));
+
+const navigationSections: NavigationSection[] = [
+  {
+    route: '/',
+    icon: <PestControlOutlined />,
+    ariaLabel: 'Debug',
+  },
+  {
+    route: '/profile',
+    icon: <Person />,
+    ariaLabel: 'Profile',
+  },
+  {
+    route: '/personalization',
+    icon: <AutoFixHighOutlined />,
+    ariaLabel: 'Personalization',
+  },
+];
+
+export const BottomNav = ({ value, onChange }: BottomNavProps): JSX.Element => {
   return (
-    <BottomNavigation
-      showLabels
-      value={value}
-      onChange={(_, newValue) => onChange(newValue)}
-      sx={{
-        position: 'fixed',
-        bottom: 0,
-        width: '100%',
-      }}>
-      <BottomNavigationAction
-        label="Debugger"
-        value="/"
-        icon={<Plumbing />}
-        sx={{
-          '&.Mui-selected': {
-            color: 'secondary.main',
-          },
-        }}
-      />
-      <BottomNavigationAction
-        label="Profile"
-        value="/profile"
-        disabled={!tagIsInstalled}
-        icon={<Person />}
-        sx={{
-          '&.Mui-selected': {
-            color: 'secondary.main',
-          },
-        }}
-      />
-      <BottomNavigationAction
-        label="Personalization"
-        value="/personalization"
-        disabled={!tagIsInstalled}
-        icon={<Brush />}
-        sx={{
-          '&.Mui-selected': {
-            color: 'secondary.main',
-          },
-        }}
-      />
-    </BottomNavigation>
+    <StyledBottomNavigation value={value} onChange={(_, newValue) => onChange(newValue)}>
+      {navigationSections.map(section => {
+        const isSelected = value === section.route;
+        return (
+          <StyledBottomNavigationAction
+            key={section.route}
+            value={section.route}
+            icon={section.icon}
+            isSelected={isSelected}
+            aria-label={section.ariaLabel}
+          />
+        );
+      })}
+    </StyledBottomNavigation>
   );
 };
 
