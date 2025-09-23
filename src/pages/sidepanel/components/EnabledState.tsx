@@ -1,9 +1,10 @@
 import React from 'react';
-import { Button, Stack, Typography, Card, Link } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { ConfigDomain } from '../assets/svg/ConfigDomain';
 import { styled } from '@mui/material/styles';
 import { appColors } from '@root/src/theme/palette';
 import { appContent } from '@root/src/shared/content/appContent';
+import { Container, StyledCard, Title, Description, StyledLink } from '@src/shared/components/SharedStyles';
 
 // Extract the type from appContent for better type safety
 type EnabledStateTextContent = typeof appContent.enabledState;
@@ -15,30 +16,8 @@ interface EnabledStateProps {
   tabValid: boolean;
   onPin: () => void;
   documentationUrl: string;
-  // Optional: allow overriding content (useful for testing/customization)
   textContent?: EnabledStateTextContent;
 }
-
-const Container = styled(Stack)(({ theme }) => ({
-  height: '100%',
-  padding: theme.spacing(1.5),
-  gap: theme.spacing(3),
-}));
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  width: '100%',
-  padding: theme.spacing(2),
-  backgroundColor: appColors.common.white,
-  borderRadius: theme.spacing(1),
-  boxShadow: 'none',
-  border: 'none',
-  cursor: 'default',
-  transition: 'none',
-  '&:hover': {
-    boxShadow: 'none',
-    transform: 'none',
-  },
-}));
 
 const OuterCard = styled(StyledCard)(({ theme }) => ({
   padding: `${theme.spacing(4)} ${theme.spacing(4)} ${theme.spacing(4)} ${theme.spacing(4)}`,
@@ -49,7 +28,7 @@ const OuterCard = styled(StyledCard)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
 
-const DocCard = styled(StyledCard)(({ theme }) => ({
+const EnabledDocCard = styled(StyledCard)(({ theme }) => ({
   padding: theme.spacing(2.5),
   fontWeight: appColors.common.fontWeight.semiBold,
 }));
@@ -59,18 +38,6 @@ const DocText = styled(Typography)(() => ({
   fontSize: appColors.common.fontSize.small,
   color: appColors.common.colors.textSecondary,
   fontWeight: appColors.common.fontWeight.semiBold,
-}));
-
-const Title = styled(Typography)(() => ({
-  fontSize: appColors.common.fontSize.base,
-  fontWeight: appColors.common.fontWeight.semiBold,
-}));
-
-const Description = styled(Typography)(() => ({
-  lineHeight: appColors.common.lineHeight.tight,
-  fontSize: appColors.common.fontSize.small,
-  color: appColors.common.colors.textSecondary,
-  fontWeight: appColors.common.fontWeight.medium,
 }));
 
 const StyledButton = styled(Button)(() => ({
@@ -84,12 +51,6 @@ const StyledButton = styled(Button)(() => ({
     backgroundColor: 'transparent',
     borderColor: appColors.common.colors.accent,
   },
-}));
-
-const StyledLink = styled(Link)(() => ({
-  textDecoration: 'underline',
-  cursor: 'pointer',
-  color: appColors.common.colors.textSecondary,
 }));
 
 export const EnabledState = ({
@@ -126,9 +87,9 @@ export const EnabledState = ({
           {textContent.buttonText}
         </StyledButton>
       </OuterCard>
-      <DocCard>
+      <EnabledDocCard>
         <DocText align="center">{textContent.adBlockerNotice}</DocText>
-      </DocCard>
+      </EnabledDocCard>
     </Container>
   );
 };

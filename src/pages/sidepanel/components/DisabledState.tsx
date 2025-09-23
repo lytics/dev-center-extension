@@ -1,9 +1,10 @@
 import React from 'react';
-import { Box, Card, Link, Stack, Typography } from '@mui/material';
+import { Box, Card, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Toggle from '@root/src/pages/sidepanel/components/Toggle';
 import { ArrowPointer } from '@root/src/pages/sidepanel/assets/svg/ArrowPointer';
 import { appColors } from '@root/src/theme/palette';
+import { Container, StyledCard, DocCard, Title, Description, StyledLink } from '@src/shared/components/SharedStyles';
 
 interface DisabledStateProps {
   documentationUrl: string;
@@ -16,33 +17,8 @@ interface DisabledStateProps {
   documentationSuffix: string;
 }
 
-const Container = styled(Stack)(({ theme }) => ({
-  height: '100%',
-  padding: theme.spacing(1.5),
-  gap: theme.spacing(3),
-}));
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  width: '100%',
-  padding: theme.spacing(2),
-  backgroundColor: appColors.common.white,
-  borderRadius: theme.spacing(1),
-  boxShadow: 'none',
-  border: 'none',
-  cursor: 'default',
-  transition: 'none',
-  '&:hover': {
-    boxShadow: 'none',
-    transform: 'none',
-  },
-}));
-
 const OuterCard = styled(StyledCard)(({ theme }) => ({
   padding: `${theme.spacing(4)} ${theme.spacing(2)} ${theme.spacing(2)} ${theme.spacing(2)}`,
-}));
-
-const DocCard = styled(StyledCard)(({ theme }) => ({
-  padding: theme.spacing(2.5),
 }));
 
 const ToggleRow = styled(Box)(({ theme }) => ({
@@ -118,24 +94,6 @@ const SwitchWrapper = styled(Box)(({ theme }) => ({
   '& .MuiSwitch-track': {
     borderRadius: '0.6rem',
   },
-}));
-
-const Title = styled(Typography)(() => ({
-  fontSize: appColors.common.fontSize.base,
-  fontWeight: appColors.common.fontWeight.semiBold,
-}));
-
-const Description = styled(Typography)(() => ({
-  lineHeight: appColors.common.lineHeight.tight,
-  fontSize: appColors.common.fontSize.small,
-  color: appColors.common.colors.textSecondary,
-  fontWeight: appColors.common.fontWeight.medium,
-}));
-
-const StyledLink = styled(Link)(() => ({
-  textDecoration: 'underline',
-  cursor: 'pointer',
-  color: appColors.common.colors.textSecondary,
 }));
 
 export const DisabledState = ({

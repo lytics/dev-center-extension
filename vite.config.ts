@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path, { resolve } from 'path';
 import makeManifest from './utils/plugins/make-manifest';
@@ -34,11 +34,11 @@ export default defineConfig({
   plugins: [
     makeManifest({
       getCacheInvalidationKey,
-    }),
+    }) as any,
     react(),
-    customDynamicImport(),
-    addHmr({ background: enableHmrInBackgroundScript, view: true }),
-    isDev && watchRebuild({ afterWriteBundle: regenerateCacheInvalidationKey }),
+    customDynamicImport() as any,
+    addHmr({ background: enableHmrInBackgroundScript, view: true }) as any,
+    (isDev && watchRebuild({ afterWriteBundle: regenerateCacheInvalidationKey })) as any,
     viteStaticCopy({
       targets: [
         {
@@ -88,12 +88,6 @@ export default defineConfig({
       },
     },
   },
-  // test: {
-  //   globals: true,
-  //   environment: 'jsdom',
-  //   include: ['**/*.test.ts', '**/*.test.tsx'],
-  //   setupFiles: './test-utils/vitest.setup.js',
-  // },
 });
 
 function getCacheInvalidationKey() {
