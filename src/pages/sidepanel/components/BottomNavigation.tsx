@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AutoFixHighOutlined, Person, PestControlOutlined } from '@mui/icons-material';
+import { AutoFixHighOutlined, MonitorHeart, Person, PestControlOutlined } from '@mui/icons-material';
 import { BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { appColors } from '@root/src/theme/palette';
@@ -49,6 +49,11 @@ const StyledBottomNavigationAction = styled(BottomNavigationAction)<{
 const navigationSections: NavigationSection[] = [
   {
     route: '/',
+    icon: <MonitorHeart />,
+    ariaLabel: 'Status',
+  },
+  {
+    route: '/debug',
     icon: <PestControlOutlined />,
     ariaLabel: 'Debug',
   },
