@@ -5,6 +5,7 @@ import { domainStore } from '@src/shared/storages/extensionDomainStorage';
 import { EventModel } from '@src/shared/models/eventModel';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import { EmitLog } from '@root/src/shared/components/EmitLog';
+import { currentTabAutoDetector } from '@root/src/pages/background/currentTabAutoDetector';
 import 'webextension-polyfill';
 
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(error => console.error(error));
@@ -40,11 +41,6 @@ const handleStateChange = () => {
         },
         ['requestBody'],
       );
-      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-        if (tabs.length > 0) {
-          // chrome.tabs.reload(tabs[0].id);
-        }
-      });
     } else {
       chrome.action.setIcon({
         path: {
@@ -180,7 +176,7 @@ const handleNetworkTraffic = details => {
   // parse the active tab url
   const activeDomain = new URL(activeTabUrl).hostname;
 
-  // if the active domain matches the sticky domain, then we can proceed
+  // if the active domain matches the sticky domain, then we can proceed with existing logic
   if (activeDomain !== stickyDomain) {
     EmitLog({ name: 'background', payload: { msg: `Request from non-sticky domain <${activeDomain}>` } });
     return;
@@ -234,10 +230,90 @@ const handleNetworkTraffic = details => {
   }
   tagActivityStore.add(JSON.stringify(result));
 };
-chrome.webRequest.onBeforeRequest.addListener(
-  handleNetworkTraffic,
-  {
-    urls: ['*://*.lytics.io/*'],
-  },
-  ['requestBody'],
-);
+
+// --------------------------------------------------------
+// Handle Auto-Detection Messages
+// --------------------------------------------------------
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'autoDetectionSuccess') {
+    EmitLog({
+      name: 'background',
+      payload: {
+        msg: 'Auto-detection success',
+        domain: message.domain,
+        confidence: message.confidence,
+      },
+    });
+    sendResponse({ success: true });
+  }
+
+  if (message.action === 'autoDetectionFailed') {
+    EmitLog({
+      name: 'background',
+      payload: {
+        msg: 'Auto-detection failed',
+        domain: message.domain,
+        retryCount: message.retryCount,
+      },
+    });
+    sendResponse({ success: true });
+  }
+});
+
+// --------------------------------------------------------
+// Handle Extension Lifecycle
+// --------------------------------------------------------
+chrome.runtime.onInstalled.addListener(() => {
+  EmitLog({ name: 'background', payload: { msg: 'Extension installed/updated' } });
+  // Clear cache and re-detect on installation/update
+  currentTabAutoDetector.clearCacheAndRedetect();
+});
+
+chrome.runtime.onSuspend.addListener(() => {
+  EmitLog({ name: 'background', payload: { msg: 'Extension suspending' } });
+  // Cleanup before suspension
+});
+
+// --------------------------------------------------------
+// Current Tab Auto-Detection
+// --------------------------------------------------------
+
+// Current tab auto-detection monitoring
+chrome.tabs.onActivated.addListener(activeInfo => {
+  currentTabAutoDetector.onTabActivated(activeInfo);
+});
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  currentTabAutoDetector.onTabUpdated(tabId, changeInfo, tab);
+});
+
+// Handle extension enable/disable for re-detection
+if (chrome.management && chrome.management.onEnabled) {
+  chrome.management.onEnabled.addListener(() => {
+    EmitLog({ name: 'background', payload: { msg: 'Extension enabled - clearing cache and re-detecting' } });
+    currentTabAutoDetector.clearCacheAndRedetect();
+  });
+
+  chrome.management.onDisabled.addListener(() => {
+    EmitLog({ name: 'background', payload: { msg: 'Extension disabled - stopping detection' } });
+  });
+}
+
+// Handle detection success messages from content scripts
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'autoDetectionSuccess') {
+    const domain = message.domain || (sender.tab ? new URL(sender.tab.url).hostname : null);
+    if (domain) {
+      currentTabAutoDetector.recordDetection(domain, message.confidence || 0.8);
+    }
+    sendResponse({ success: true });
+  }
+
+  if (message.action === 'recordDetection') {
+    const domain = message.domain;
+    if (domain) {
+      currentTabAutoDetector.recordDetection(domain, message.confidence || 0.8);
+    }
+    sendResponse({ success: true });
+  }
+});

@@ -60,6 +60,11 @@ const appColors = {
     colors: {
       textSecondary: '#7D7A7A', // Secondary text color
       accent: '#8848F9', // Accent color for buttons and links
+      autoDetection: {
+        background: '#DDE3FF', // Auto-detection background
+        border: '#516EFF', // Auto-detection border
+        domain: '#0A64FF', // Domain text color
+      },
     },
   },
 

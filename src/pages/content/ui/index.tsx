@@ -4,7 +4,15 @@ import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import { domainStore } from '@src/shared/storages/extensionDomainStorage';
 import { EmitLog } from '@src/shared/components/EmitLog';
 
+let isContentScriptInitialized = false;
+
 const initContentScripts = () => {
+  // Prevent double initialization
+  if (isContentScriptInitialized) {
+    EmitLog({ name: 'content', payload: { msg: 'Content scripts already initialized' } });
+    return;
+  }
+
   extensionStateStorage.subscribe(handleStateChange);
 
   const root = document.createElement('div');
@@ -19,6 +27,9 @@ const initContentScripts = () => {
   shadowRoot.appendChild(rootIntoShadow);
 
   createRoot(rootIntoShadow).render(<App />);
+
+  isContentScriptInitialized = true;
+  EmitLog({ name: 'content', payload: { msg: 'Content scripts initialized successfully' } });
 };
 
 const handleStateChange = () => {
@@ -26,19 +37,22 @@ const handleStateChange = () => {
     if (state === true) {
       EmitLog({ name: 'content', payload: { msg: 'Extension Activated' } });
 
-      // only initialize content scripts if we are on the allowed domain
+      // Initialize content scripts on ALL domains when extension is enabled (for auto-detection)
+      EmitLog({ name: 'content', payload: { msg: 'Adding Content Scripts for auto-detection' } });
+      initContentScripts();
+
+      // Additional logic for pinned domain compatibility
       domainStore.get().then(domain => {
         const translated = domainStore.translate(domain);
 
         if (translated.pinnedURL !== '') {
           if (window.location.href.includes(translated.pinnedURL)) {
-            EmitLog({ name: 'content', payload: { msg: 'Adding Content Scripts' } });
-            initContentScripts();
+            EmitLog({ name: 'content', payload: { msg: 'On configured domain - full features available' } });
           } else {
-            EmitLog({ name: 'content', payload: { msg: 'Not on configured domain' } });
+            EmitLog({ name: 'content', payload: { msg: 'Not on configured domain - auto-detection only' } });
           }
         } else {
-          EmitLog({ name: 'content', payload: { msg: 'No domain set' } });
+          EmitLog({ name: 'content', payload: { msg: 'No domain set - auto-detection active' } });
         }
       });
     }

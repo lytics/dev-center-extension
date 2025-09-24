@@ -16,6 +16,7 @@ const manifest = {
     'declarativeNetRequestFeedback',
     'sidePanel',
     'contextMenus',
+    'management',
   ],
   host_permissions: ['<all_urls>'],
   declarative_net_request: {
