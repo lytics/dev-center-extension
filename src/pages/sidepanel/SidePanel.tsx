@@ -1,33 +1,21 @@
 import '@pages/sidepanel/SidePanel.css';
 
-import {
-  useEffect,
-  useState,
-} from 'react';
+import { useEffect, useState } from 'react';
 
-import {
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
-import {
-  Box,
-  CircularProgress,
-} from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import BottomNavigation from '@root/src/pages/sidepanel/components/BottomNavigation';
 import Configuration from '@root/src/pages/sidepanel/sections/Configuration';
 import Debugger from '@root/src/pages/sidepanel/sections/Debugger';
 import Personalization from '@root/src/pages/sidepanel/sections/Personalization';
 import Profile from '@root/src/pages/sidepanel/sections/Profile';
-import {
-  TagConfigModel,
-  TagConfigPathforaCandidates,
-} from '@root/src/shared/models/tagConfigModel';
+import { TagConfigModel, TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
 import { EmitLog } from '@src/shared/components/EmitLog';
 import entityStorage from '@src/shared/storages/entityStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
+
+import TagStatus from './sections/TagStatus';
 
 interface SidePanelProps {
   key: any;
@@ -215,12 +203,7 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
         </Box>
       ) : (
         <>
-          <Box
-            minHeight={`calc(100vh - 56px)`}
-            justifyContent={'center'}
-            alignItems={'flex-start'}
-            display="flex"
-            flexDirection="column">
+          <Box justifyContent={'center'} alignItems={'flex-start'} display="flex" flexDirection="column">
             <Routes>
               <Route path="/settings" element={<Configuration />} />
               <Route
@@ -241,7 +224,7 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
                 }
               />
               <Route
-                path="*"
+                path="/debug"
                 element={
                   <Debugger
                     tagIsInstalled={tagIsInstalled}
@@ -251,12 +234,10 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
                   />
                 }
               />
+              <Route path="*" element={<TagStatus tagIsInstalled={tagIsInstalled} tagConfig={tagConfig} />} />
             </Routes>
           </Box>
-          <BottomNavigation
-            value={activePath}
-            onChange={newValue => handleNavigation(newValue)}
-          />
+          <BottomNavigation value={activePath} onChange={newValue => handleNavigation(newValue)} />
         </>
       )}
     </>

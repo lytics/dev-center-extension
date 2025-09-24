@@ -28,6 +28,7 @@ describe('BottomNav', () => {
   it('renders all navigation sections', () => {
     renderWithTheme(<BottomNav {...defaultProps} />);
 
+    expect(screen.getByLabelText('Status')).toBeInTheDocument();
     expect(screen.getByLabelText('Debug')).toBeInTheDocument();
     expect(screen.getByLabelText('Profile')).toBeInTheDocument();
     expect(screen.getByLabelText('Personalization')).toBeInTheDocument();
