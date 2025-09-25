@@ -191,14 +191,21 @@ export class CurrentTabAutoDetector {
   }
 
   /**
-   * Get parent domain (example.com from shop.example.com)
+   * Get parent domain - optimized version
    */
   private getParentDomain(domain: string): string | null {
     const parts = domain.split('.');
-    if (parts.length > 2) {
+
+    if (parts.length < 3) return null;
+    if (parts.length <= 4) {
       return parts.slice(-2).join('.');
     }
-    return null;
+    const maxIterations = Math.min(parts.length - 2, 4);
+    for (let i = 1; i <= maxIterations; i++) {
+      const potentialParent = parts.slice(-(i + 1)).join('.');
+      if (potentialParent.length > 4) return potentialParent;
+    }
+    return parts.slice(-2).join('.');
   }
 
   /**

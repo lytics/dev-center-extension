@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   FormGroup,
   FormControlLabel,
@@ -13,7 +13,7 @@ import {
 import { HelpOutline, Settings } from '@mui/icons-material';
 import Toggle from '@root/src/pages/sidepanel/components/Toggle';
 import { AutoDetectionIndicator } from '@root/src/pages/sidepanel/components/AutoDetectionIndicator';
-import autoDetectedDomainsStore, { AutoDetectedDomain } from '@root/src/shared/storages/autoDetectedDomainsStorage';
+import { useAutoDetection } from '@root/src/pages/sidepanel/hooks/useAutoDetection';
 import { ExtensionState } from '@src/shared/storages/extensionDomainStorage';
 
 interface TopNavProps {
@@ -25,47 +25,15 @@ interface TopNavProps {
 const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange, domainState }) => {
   const toggleLabel = isEnabled ? 'Disable Extension' : 'Enable Extension';
   const theme = useTheme();
-  const [currentDomainAutoDetection, setCurrentDomainAutoDetection] = useState<AutoDetectedDomain | null>(null);
 
-  const currentDomain = domainState.activeURL ? new URL(domainState.activeURL).hostname : undefined;
-  const isAutoDetected = currentDomainAutoDetection?.autoEnabled || false;
+  const { isAutoDetected, currentDomain } = useAutoDetection({
+    isEnabled,
+    activeURL: domainState.activeURL,
+  });
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
   };
-
-  useEffect(() => {
-    if (!isEnabled || !domainState.activeURL) {
-      setCurrentDomainAutoDetection(null);
-      return;
-    }
-
-    const loadAutoDetectionData = async () => {
-      try {
-        const currentDomainName = new URL(domainState.activeURL).hostname;
-        const domainInfo = await autoDetectedDomainsStore.getDomain(currentDomainName);
-        setCurrentDomainAutoDetection(domainInfo);
-      } catch (error) {
-        console.error('Error loading auto-detection data:', error);
-        setCurrentDomainAutoDetection(null);
-      }
-    };
-
-    loadAutoDetectionData();
-  }, [isEnabled, domainState.activeURL]);
-
-  useEffect(() => {
-    if (!isEnabled || !domainState.activeURL) return;
-
-    const handleAutoDetectionChange = () => {
-      const currentDomainName = new URL(domainState.activeURL).hostname;
-      autoDetectedDomainsStore.getDomain(currentDomainName).then(domainInfo => {
-        setCurrentDomainAutoDetection(domainInfo);
-      });
-    };
-
-    autoDetectedDomainsStore.subscribe(handleAutoDetectionChange);
-  }, [isEnabled, domainState.activeURL]);
 
   return (
     <>

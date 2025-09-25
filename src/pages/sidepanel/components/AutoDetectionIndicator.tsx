@@ -22,6 +22,15 @@ const StyledIndicatorCard = styled(Stack)(({ theme }) => ({
   },
 }));
 
+const StyledDomainLink = styled(Typography)(() => ({
+  textDecoration: 'underline',
+  cursor: 'pointer',
+  '&:hover': {
+    textDecoration: 'underline',
+    opacity: 0.8,
+  },
+}));
+
 export const AutoDetectionIndicator = ({
   currentDomain = window.location.hostname,
   textContent = appContent.autoDetection,
@@ -33,24 +42,15 @@ export const AutoDetectionIndicator = ({
           {textContent.autoDetectedTitle}
         </Typography>
 
-        <Typography
+        <StyledDomainLink
           variant="body2"
           color={appColors.common.colors.autoDetection.domain}
           fontWeight={appColors.common.fontWeight.bold}
           onClick={() => {
-            // Open the domain in a new tab
             chrome.tabs.create({ url: `https://${currentDomain}` });
-          }}
-          sx={{
-            textDecoration: 'underline',
-            cursor: 'pointer',
-            '&:hover': {
-              textDecoration: 'underline',
-              opacity: 0.8,
-            },
           }}>
           {currentDomain}
-        </Typography>
+        </StyledDomainLink>
       </Stack>
     </StyledIndicatorCard>
   );
