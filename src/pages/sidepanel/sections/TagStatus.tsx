@@ -1,15 +1,107 @@
 import React, { useEffect, useState } from 'react';
+
+import { Cancel, CheckCircle, Error, MonitorHeartOutlined } from '@mui/icons-material';
 import { Box, Chip, CircularProgress, Stack, Typography } from '@mui/material';
-import { Cancel, CheckCircle, Error } from '@mui/icons-material';
-import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
+import { styled } from '@mui/material/styles';
 import SimpleTable from '@root/src/pages/sidepanel/components/SimpleTable';
+import { appContent } from '@root/src/shared/content/appContent';
+import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
+import { appColors } from '@root/src/theme/palette';
 
 interface TagStatusProps {
   tagIsInstalled: boolean;
   tagConfig: TagConfigModel;
+  textContent?: typeof appContent.tagStatus;
 }
 
-const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig }) => {
+const StyledContainer = styled(Box)(({ theme }) => ({
+  paddingInline: theme.spacing(1.25),
+  cursor: 'default',
+  transition: 'none',
+  '&:hover': {
+    boxShadow: 'none',
+    transform: 'none',
+  },
+}));
+
+const StyledHeaderContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1.25),
+  marginLeft: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  marginTop: theme.spacing(2),
+}));
+
+const StyledHeaderTypography = styled(Typography)(() => ({
+  fontSize: '1.125rem',
+  fontWeight: appColors.common.fontWeight.bold,
+}));
+
+const StyledStatusCard = styled(Stack)(({ theme }) => ({
+  background: appColors.common.white,
+  borderRadius: theme.spacing(1.5),
+  border: '4px solid transparent',
+  padding: theme.spacing(1),
+  marginTop: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+}));
+
+const StyledContentContainer = styled(Box)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: '100%',
+}));
+
+const StyledIconContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1.25),
+}));
+
+const StyledSdkTypography = styled(Typography)(() => ({
+  fontSize: appColors.common.fontSize.baseSmall,
+  fontWeight: appColors.common.fontWeight.bold,
+}));
+
+const StyledVersionChip = styled(Chip)(({ theme }) => ({
+  background:
+    'linear-gradient(98.77deg, rgba(118, 28, 208, 0.18) 43.32%, rgba(161, 28, 208, 0.18) 64.54%, rgba(208, 124, 28, 0.18) 87.9%)',
+  borderRadius: '999px',
+  fontWeight: appColors.common.fontWeight.bold,
+  letterSpacing: '-0.5px',
+  paddingInline: theme.spacing(0.5),
+}));
+
+const StyledTableContainer = styled(Box)(({ theme }) => ({
+  background: appColors.common.white,
+  padding: theme.spacing(3, 2),
+  borderRadius: theme.spacing(1.5),
+  marginTop: theme.spacing(2),
+}));
+
+const StyledSearchingCard = styled(Stack)(({ theme }) => ({
+  background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #FCC504, #E80339) border-box',
+  borderRadius: theme.spacing(1),
+  border: '4px solid transparent',
+  padding: theme.spacing(1),
+  marginTop: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+}));
+
+const StyledLoadingContainer = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  marginBottom: 0,
+  textAlign: 'center',
+}));
+
+const StyledDescriptionTypography = styled(Typography)(({ theme }) => ({
+  textAlign: 'center',
+  padding: theme.spacing(1),
+}));
+
+const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig, textContent = appContent.tagStatus }) => {
   const [legacyTag, setLegacyTag] = useState(false);
 
   useEffect(() => {
@@ -22,96 +114,74 @@ const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig }) => {
   }, [tagConfig]);
 
   return (
-    <Box>
+    <StyledContainer>
+      <StyledHeaderContainer>
+        <MonitorHeartOutlined />
+        <StyledHeaderTypography variant="h2">{textContent.title}</StyledHeaderTypography>
+      </StyledHeaderContainer>
       {tagIsInstalled ? (
         <Stack>
-          <Stack
-            direction="row"
-            spacing={2}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            borderRadius={3}
-            p={1}
-            mt={1}
-            mb={1}
-            sx={{
-              background:
-                'linear-gradient(white, white) padding-box, linear-gradient(90deg, #8610D3 39%, #D532CA 72%, #FF9A01 100%) border-box',
-              borderRadius: 2,
-              border: '4px solid transparent',
-            }}>
+          <StyledStatusCard direction="row" spacing={2} display="flex" alignItems="center" justifyContent="center">
             {legacyTag ? (
               <>
-                <Cancel style={{ fontSize: 30, color: '#F00' }} />
+                <Cancel style={{ fontSize: 30, color: appColors.error.main }} />
                 <Typography variant="body1">
-                  You are using a deprecated version of the Lytics SDK{' '}
-                  <Chip label={`v${tagConfig?.version}`} size="small" sx={{ ml: 0.5 }} />
+                  {textContent.deprecatedVersion} <Chip label={`v${tagConfig?.version}`} size="small" />
                 </Typography>
               </>
             ) : (
-              <>
-                <CheckCircle style={{ fontSize: 30, color: '#00D27C' }} />
-                <Typography variant="body1">
-                  Lytics JavaScript SDK Installed{' '}
-                  <Chip label={`v${tagConfig?.version}`} size="small" sx={{ ml: 0.5 }} />
-                </Typography>
-              </>
+              <StyledContentContainer>
+                <StyledIconContainer>
+                  <CheckCircle style={{ fontSize: 24, color: appColors.toggle.active }} />
+                  <StyledSdkTypography variant="body1">{textContent.sdkInstalled} </StyledSdkTypography>
+                </StyledIconContainer>
+                <StyledVersionChip label={`v${tagConfig?.version}`} size="small" />
+              </StyledContentContainer>
             )}
-          </Stack>
+          </StyledStatusCard>
 
-          <Box mt={2}>
+          <StyledTableContainer>
             <SimpleTable
               rows={[
-                { label: 'Account ID', value: tagConfig?.cid?.[0] },
-                { label: 'Stream', value: tagConfig?.stream || 'default' },
-                { label: 'Cookie Name', value: tagConfig?.cookie },
-                { label: 'Profile Key', value: tagConfig?.entity?.byFieldKey },
-                { label: '3rd Party Cookies', value: tagConfig?.loadid ? 'Enabled' : 'Disabled' },
+                { label: textContent.tableLabels.accountId, value: tagConfig?.cid?.[0] },
+                {
+                  label: textContent.tableLabels.stream,
+                  value: tagConfig?.stream || textContent.tableLabels.defaultStream,
+                },
+                { label: textContent.tableLabels.cookieName, value: tagConfig?.cookie },
+                { label: textContent.tableLabels.profileKey, value: tagConfig?.entity?.byFieldKey },
+                {
+                  label: textContent.tableLabels.thirdPartyCookies,
+                  value: tagConfig?.loadid ? textContent.tableLabels.enabled : textContent.tableLabels.disabled,
+                },
               ]}
             />
-          </Box>
+          </StyledTableContainer>
         </Stack>
       ) : (
         <Stack>
-          <Box mt={2} mb={0} textAlign={'center'}>
+          <StyledLoadingContainer>
             <CircularProgress color="secondary" />
-          </Box>
-          <Stack
-            direction="row"
-            spacing={2}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            borderRadius={3}
-            mt={1}
-            mb={1}
-            p={1}
-            sx={{
-              background:
-                'linear-gradient(white, white) padding-box, linear-gradient(to right, #FCC504, #E80339) border-box',
-              borderRadius: 2,
-              border: '4px solid transparent',
-            }}>
-            <Error style={{ fontSize: 26, color: '#FF9A01' }} />
-            <Typography variant="body2">Searching for Lytics JavaScript SDK</Typography>
-          </Stack>
+          </StyledLoadingContainer>
+          <StyledSearchingCard direction="row" spacing={2} display="flex" alignItems="center" justifyContent="center">
+            <Error style={{ fontSize: 26, color: appColors.warning.main }} />
+            <Typography variant="body2">{textContent.searchingForSdk}</Typography>
+          </StyledSearchingCard>
           <Box>
-            <Typography variant="body2" align={'center'} p={1}>
-              We have not been able to find the Lytics JavaScript SDK on this page. We&apos;ll continue checking but if
-              you haven&apos;t yet installed the tag please refer to our{' '}
+            <StyledDescriptionTypography variant="body2">
+              {textContent.notFoundMessage}{' '}
               <a
                 href="https://docs.lytics.com/docs/lytics-javascript-tag#installation"
                 target="_blank"
                 rel="noreferrer">
-                Lytics JavaScript SDK documentation
+                {textContent.documentationLinkText}
               </a>
               .
-            </Typography>
+            </StyledDescriptionTypography>
           </Box>
         </Stack>
       )}
-    </Box>
+    </StyledContainer>
   );
 };
 

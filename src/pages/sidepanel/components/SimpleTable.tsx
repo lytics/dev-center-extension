@@ -1,5 +1,9 @@
 import React from 'react';
-import { Grid, Divider, Typography } from '@mui/material';
+
+import { Circle } from '@mui/icons-material';
+import { Grid, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { appColors } from '@root/src/theme/palette';
 
 interface TableRow {
   label: string;
@@ -12,33 +16,61 @@ interface SimpleTableProps {
   rows: TableRow[];
 }
 
+const StyledContainer = styled(Grid)(() => ({
+  cursor: 'default',
+  transition: 'none',
+  '&:hover': {
+    boxShadow: 'none',
+    transform: 'none',
+  },
+}));
+
+const StyledLabelTypography = styled(Typography)(() => ({
+  fontWeight: appColors.common.fontWeight.semiBold,
+  fontSize: appColors.common.fontSize.baseSmall,
+  lineHeight: 'normal',
+  textAlign: 'left',
+}));
+
+const StyledValueTypography = styled(Typography)(({ theme }) => ({
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  fontSize: appColors.common.fontSize.baseSmall,
+  lineHeight: 'normal',
+  fontWeight: appColors.common.fontWeight.medium,
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(0.75),
+  textAlign: 'left',
+}));
+
+const StyledCircle = styled(Circle)(() => ({
+  fontSize: '0.5rem',
+  color: appColors.toggle.active,
+}));
+
 const SimpleTable: React.FC<SimpleTableProps> = ({ rows }) => {
   return (
-    <Grid container spacing={1} pl={1} pr={1}>
+    <StyledContainer container spacing={2}>
       {rows.map((row, index) => (
         <React.Fragment key={index}>
           <Grid item xs={row.position === 'top' ? 12 : 3.5}>
-            <Typography variant="subtitle2" pr={1} align={'left'} sx={{ fontWeight: 600 }}>
-              {row.label}
-            </Typography>
+            <StyledLabelTypography variant="subtitle2">{row.label}</StyledLabelTypography>
           </Grid>
           <Grid item xs={row.position === 'top' ? 12 : 8.5}>
             {row.fancyValue ? (
               row.fancyValue
             ) : (
-              <Typography variant="body2" align={'left'}>
+              <StyledValueTypography variant="body2">
+                <StyledCircle />
                 {row.value}
-              </Typography>
+              </StyledValueTypography>
             )}
           </Grid>
-          {index !== rows.length - 1 && ( // Add a divider unless it's the last row
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
-          )}
         </React.Fragment>
       ))}
-    </Grid>
+    </StyledContainer>
   );
 };
 

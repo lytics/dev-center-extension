@@ -49,6 +49,26 @@ export const appContent = {
     close: 'Close',
   },
 
+  tagStatus: {
+    title: 'Status',
+    sdkInstalled: 'Lytics JavaScript SDK Installed',
+    deprecatedVersion: 'You are using a deprecated version of the Lytics SDK',
+    searchingForSdk: 'Searching for Lytics JavaScript SDK',
+    notFoundMessage:
+      "We have not been able to find the Lytics JavaScript SDK on this page. We'll continue checking but if you haven't yet installed the tag please refer to our",
+    documentationLinkText: 'Lytics JavaScript SDK documentation',
+    tableLabels: {
+      accountId: 'Account ID',
+      stream: 'Stream',
+      cookieName: 'Cookie Name',
+      profileKey: 'Profile Key',
+      thirdPartyCookies: '3rd Party Cookies',
+      enabled: 'Enabled',
+      disabled: 'Disabled',
+      defaultStream: 'default',
+    },
+  },
+
   // Future components can add their content here
   // Example:
   // emptyState: {
