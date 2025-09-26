@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import entityStore from '@src/shared/storages/entityStorage';
 import { EmitLog } from '@src/shared/components/EmitLog';
 // import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 
 export default function App() {
-  let retries = 0;
+  const retriesRef = useRef(0);
 
   useEffect(() => {
     // ------------------------------
@@ -26,8 +26,8 @@ export default function App() {
 
     const handleMessage = event => {
       if (event.data && event.data.type === 'retry') {
-        retries++;
-        EmitLog({ name: 'retry', payload: { retries } });
+        retriesRef.current++;
+        EmitLog({ name: 'retry', payload: { retries: retriesRef.current } });
         injectScript();
       }
     };
@@ -56,7 +56,26 @@ export default function App() {
         window.postMessage({ action: 'getEntity' }, '*');
       }
 
-      sendResponse();
+      // Handle auto-detection start message from background
+      if (message.action === 'startAutoDetection') {
+        const domain = message.domain || window.location.hostname;
+        EmitLog({ name: 'content', payload: { msg: `Starting auto-detection for domain: ${domain}` } });
+      }
+
+      // Handle detection success notification
+      if (message.action === 'detectionSuccess') {
+        const domain = message.domain || window.location.hostname;
+        EmitLog({ name: 'content', payload: { msg: `Detection successful for domain: ${domain}` } });
+
+        // Notify background script about successful detection
+        chrome.runtime.sendMessage({
+          action: 'recordDetection',
+          domain: domain,
+          confidence: message.confidence || 0.8,
+        });
+      }
+
+      sendResponse({ success: true });
     });
 
     // ------------------------------

@@ -104,7 +104,7 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
 
   return (
     <Box width="100%" height="100vh" display="flex" overflow={'hidden'} flexDirection="column">
-      <TopNavigation isEnabled={isEnabled} onChange={handleStateToggle} />
+      <TopNavigation isEnabled={isEnabled} onChange={handleStateToggle} domainState={domainState} />
 
       {isEnabled ? (
         <Box>

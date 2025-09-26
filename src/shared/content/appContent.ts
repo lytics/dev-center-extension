@@ -75,6 +75,11 @@ export const appContent = {
   //   title: 'No data available',
   //   description: 'There is no data to display at the moment.',
   // },
+
+  // AutoDetectionIndicator Component
+  autoDetection: {
+    autoDetectedTitle: 'Auto-detected',
+  },
 } as const;
 
 // Type for accessing content with autocomplete

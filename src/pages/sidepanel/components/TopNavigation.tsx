@@ -1,7 +1,4 @@
-// core
 import React from 'react';
-
-// mui
 import {
   FormGroup,
   FormControlLabel,
@@ -14,18 +11,25 @@ import {
   Divider,
 } from '@mui/material';
 import { HelpOutline, Settings } from '@mui/icons-material';
-
-// components
 import Toggle from '@root/src/pages/sidepanel/components/Toggle';
+import { AutoDetectionIndicator } from '@root/src/pages/sidepanel/components/AutoDetectionIndicator';
+import { useAutoDetection } from '@root/src/pages/sidepanel/hooks/useAutoDetection';
+import { ExtensionState } from '@src/shared/storages/extensionDomainStorage';
 
 interface TopNavProps {
   isEnabled: boolean;
   onChange: (value: boolean) => void;
+  domainState: ExtensionState;
 }
 
-const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
+const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange, domainState }) => {
   const toggleLabel = isEnabled ? 'Disable Extension' : 'Enable Extension';
   const theme = useTheme();
+
+  const { isAutoDetected, currentDomain } = useAutoDetection({
+    isEnabled,
+    activeURL: domainState.activeURL,
+  });
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
@@ -107,6 +111,13 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange }) => {
             </IconButton>
           </Box>
         </Toolbar>
+
+        {isEnabled && isAutoDetected && (
+          <Box sx={{ padding: '0px 0.6rem 1rem 0' }}>
+            <AutoDetectionIndicator currentDomain={currentDomain} />
+          </Box>
+        )}
+
         <Divider
           sx={{
             borderBottom: `0.1rem solid ${theme.palette.divider}`,
