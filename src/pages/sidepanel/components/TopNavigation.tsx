@@ -15,6 +15,7 @@ import Toggle from '@root/src/pages/sidepanel/components/Toggle';
 import { AutoDetectionIndicator } from '@root/src/pages/sidepanel/components/AutoDetectionIndicator';
 import { useAutoDetection } from '@root/src/pages/sidepanel/hooks/useAutoDetection';
 import { ExtensionState } from '@src/shared/storages/extensionDomainStorage';
+import { appContent } from '@root/src/shared/content/appContent';
 
 interface TopNavProps {
   isEnabled: boolean;
@@ -33,6 +34,10 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange, domainState
 
   const handleToggleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
+  };
+
+  const handleHelpClick = () => {
+    chrome.tabs.create({ url: appContent.externalLinks.chromeExtensionDocs });
   };
 
   return (
@@ -82,6 +87,7 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange, domainState
           <Box display="flex" alignItems="center" gap={0.5}>
             <IconButton
               size="medium"
+              onClick={handleHelpClick}
               sx={{
                 color: theme.palette.text.secondary,
                 '&:hover': {
