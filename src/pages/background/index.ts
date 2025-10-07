@@ -90,8 +90,19 @@ domainStore.subscribe(() => {
 // Handle Listen for Requests to lytics.io
 // --------------------------------------------------------
 const parseURL = (url: string, body: any, type: string): EventModel => {
-  // Parse URL
-  const parsedURL = new URL(url);
+  // Validate URL before parsing
+  if (!url || typeof url !== 'string') {
+    throw new Error(`Invalid URL provided: ${url}`);
+  }
+
+  let parsedURL: URL;
+  try {
+    parsedURL = new URL(url);
+  } catch (error) {
+    console.error('Invalid URL in parseURL:', url, error);
+    throw new Error(`Invalid URL format: ${url}`);
+  }
+
   const parsedBody = new URLSearchParams(body);
 
   // Get URL components
@@ -173,8 +184,14 @@ const handleNetworkTraffic = details => {
     return;
   }
 
-  // parse the active tab url
-  const activeDomain = new URL(activeTabUrl).hostname;
+  // parse the active tab url with validation
+  let activeDomain: string;
+  try {
+    activeDomain = new URL(activeTabUrl).hostname;
+  } catch (error) {
+    console.error('Invalid activeTabUrl in handleNetworkTraffic:', activeTabUrl, error);
+    return;
+  }
 
   // if the active domain matches the sticky domain, then we can proceed with existing logic
   if (activeDomain !== stickyDomain) {
@@ -186,49 +203,64 @@ const handleNetworkTraffic = details => {
   let postData;
   let result: EventModel;
 
-  switch (true) {
-    case url.includes('/api/tag/'):
-      EmitLog({ name: 'background', payload: { msg: 'Called Core Tag', url: url } });
-      result = parseURL(url, {}, 'load-js-tag');
-      break;
-
-    case url.includes('/api/personalize/'):
-      EmitLog({ name: 'background', payload: { msg: 'Called Entity API', url: url } });
-      result = parseURL(url, {}, 'load-profile');
-      break;
-
-    case url.includes('/c/'):
-      EmitLog({ name: 'background', payload: { msg: 'Collection API', url: url } });
-      if (details.requestBody) {
-        postData = details?.requestBody?.formData?._js[0];
-      }
-      result = parseURL(url, postData || {}, 'collect-data');
-      break;
-
-    case url.includes('/static/pathfora.min.js'):
-      EmitLog({ name: 'background', payload: { msg: 'Called Pathfora Tag', url: url } });
-      result = parseURL(url, {}, 'load-pathfora-tag');
-      break;
-
-    case url.includes('static/pathfora.min.css'):
-      EmitLog({ name: 'background', payload: { msg: 'Called Pathfora Styles', url: url } });
-      result = parseURL(url, {}, 'load-pathfora-css');
-      break;
-
-    case url.includes('/experience/candidate'):
-      EmitLog({ name: 'background', payload: { msg: 'Called Experience Config API', url: url } });
-      result = parseURL(url, {}, 'load-experience-config');
-      break;
-
-    case url.includes('/api/program/campaign/config'):
-      EmitLog({ name: 'background', payload: { msg: 'Called Legacy Campaign Config API', url: url } });
-      result = parseURL(url, {}, 'load-campaign-config');
-      break;
-
-    default:
-      EmitLog({ name: 'background', payload: { msg: 'Unhandled API Requset', url: url } });
+  // Validate URL before processing
+  if (!url || typeof url !== 'string') {
+    console.error('Invalid URL in handleNetworkTraffic:', url);
+    return;
   }
-  tagActivityStore.add(JSON.stringify(result));
+
+  try {
+    switch (true) {
+      case url.includes('/api/tag/'):
+        EmitLog({ name: 'background', payload: { msg: 'Called Core Tag', url: url } });
+        result = parseURL(url, {}, 'load-js-tag');
+        break;
+
+      case url.includes('/api/personalize/'):
+        EmitLog({ name: 'background', payload: { msg: 'Called Entity API', url: url } });
+        result = parseURL(url, {}, 'load-profile');
+        break;
+
+      case url.includes('/c/'):
+        EmitLog({ name: 'background', payload: { msg: 'Collection API', url: url } });
+        if (details.requestBody) {
+          postData = details?.requestBody?.formData?._js[0];
+        }
+        result = parseURL(url, postData || {}, 'collect-data');
+        break;
+
+      case url.includes('/static/pathfora.min.js'):
+        EmitLog({ name: 'background', payload: { msg: 'Called Pathfora Tag', url: url } });
+        result = parseURL(url, {}, 'load-pathfora-tag');
+        break;
+
+      case url.includes('static/pathfora.min.css'):
+        EmitLog({ name: 'background', payload: { msg: 'Called Pathfora Styles', url: url } });
+        result = parseURL(url, {}, 'load-pathfora-css');
+        break;
+
+      case url.includes('/experience/candidate'):
+        EmitLog({ name: 'background', payload: { msg: 'Called Experience Config API', url: url } });
+        result = parseURL(url, {}, 'load-experience-config');
+        break;
+
+      case url.includes('/api/program/campaign/config'):
+        EmitLog({ name: 'background', payload: { msg: 'Called Legacy Campaign Config API', url: url } });
+        result = parseURL(url, {}, 'load-campaign-config');
+        break;
+
+      default:
+        EmitLog({ name: 'background', payload: { msg: 'Unhandled API Request', url: url } });
+        return; // Don't process unhandled requests
+    }
+
+    if (result) {
+      tagActivityStore.add(JSON.stringify(result));
+    }
+  } catch (error) {
+    console.error('Error processing network traffic:', error, { url, activeTabUrl });
+    EmitLog({ name: 'background', payload: { msg: 'Error processing request', url: url, error: error.message } });
+  }
 };
 
 // --------------------------------------------------------
