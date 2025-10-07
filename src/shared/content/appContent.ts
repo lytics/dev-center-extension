@@ -80,6 +80,11 @@ export const appContent = {
   autoDetection: {
     autoDetectedTitle: 'Auto-detected',
   },
+
+  // External Links
+  externalLinks: {
+    chromeExtensionDocs: 'https://docs.lytics.com/docs/chrome-extension',
+  },
 } as const;
 
 // Type for accessing content with autocomplete
