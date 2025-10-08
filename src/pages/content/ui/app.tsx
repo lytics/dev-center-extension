@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
-import tagConfigStore from '@src/shared/storages/tagConfigStorage';
-import entityStore from '@src/shared/storages/entityStorage';
+
 import { EmitLog } from '@src/shared/components/EmitLog';
+import entityStore from '@src/shared/storages/entityStorage';
+import tagConfigStore from '@src/shared/storages/tagConfigStorage';
+
 // import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 
 export default function App() {
@@ -14,10 +16,13 @@ export default function App() {
     const injectScript = () => {
       const script = document.createElement('script');
 
-      script.src = chrome.runtime.getURL('/src/pages/tagLink/index.js');
-      script.type = 'module';
+      script.src = chrome.runtime.getURL('/tagLink.js');
       script.onload = () => {
+        EmitLog({ name: 'content', payload: { msg: 'TagLink script loaded successfully' } });
         script.remove();
+      };
+      script.onerror = () => {
+        EmitLog({ name: 'content', payload: { msg: 'Failed to load TagLink script', error: 'Script load error' } });
       };
 
       document.documentElement.appendChild(script);
@@ -84,10 +89,16 @@ export default function App() {
 
     // Listen for and Store JS Tag Config
     document.addEventListener('config', function (event) {
+      EmitLog({ name: 'content', payload: { msg: 'Config event received', data: (event as any).detail } });
       const payload = (event as any).detail.data;
-      tagConfigStore.set(payload).then(() => {
-        EmitLog({ name: 'storage', payload: { msg: 'Tag config saved.' } });
-      });
+      tagConfigStore
+        .set(payload)
+        .then(() => {
+          EmitLog({ name: 'storage', payload: { msg: 'Tag config saved.' } });
+        })
+        .catch(error => {
+          EmitLog({ name: 'storage', payload: { msg: 'Failed to save tag config', error } });
+        });
     });
 
     // Listen for and Store JS Tag Entity
