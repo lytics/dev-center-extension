@@ -33,4 +33,10 @@ export default defineManifest({
   side_panel: {
     default_path: 'src/pages/sidepanel/index.html',
   },
+  web_accessible_resources: [
+    {
+      resources: ['tagLink.js'],
+      matches: ['<all_urls>'],
+    },
+  ],
 });

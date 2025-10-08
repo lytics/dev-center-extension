@@ -26,7 +26,12 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    crx({ manifest }),
+    crx({
+      manifest,
+      contentScripts: {
+        injectCss: true,
+      },
+    }),
     customDynamicImport() as any,
     viteStaticCopy({
       targets: [
@@ -45,6 +50,21 @@ export default defineConfig({
   server: {
     cors: {
       origin: [/chrome-extension:\/\//],
+    },
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        tagLink: resolve(srcDir, 'pages/tagLink/tagLink.js'),
+      },
+      output: {
+        entryFileNames: chunkInfo => {
+          if (chunkInfo.name === 'tagLink') {
+            return 'tagLink.js';
+          }
+          return '[name]-[hash].js';
+        },
+      },
     },
   },
 });
