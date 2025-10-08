@@ -1,8 +1,10 @@
 import { createRoot } from 'react-dom/client';
-import App from '@pages/content/ui/app';
-import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
-import { domainStore } from '@src/shared/storages/extensionDomainStorage';
+
 import { EmitLog } from '@src/shared/components/EmitLog';
+import { domainStore } from '@src/shared/storages/extensionDomainStorage';
+import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
+
+import App from './app';
 
 let isContentScriptInitialized = false;
 

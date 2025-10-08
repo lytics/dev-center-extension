@@ -1,12 +1,13 @@
-import tagConfigStore from '@src/shared/storages/tagConfigStorage';
-import entityStore from '@src/shared/storages/entityStorage';
-import tagActivityStore from '@src/shared/storages/tagActivityStorage';
-import { domainStore } from '@src/shared/storages/extensionDomainStorage';
-import { EventModel } from '@src/shared/models/eventModel';
-import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
-import { EmitLog } from '@root/src/shared/components/EmitLog';
-import { currentTabAutoDetector } from '@root/src/pages/background/currentTabAutoDetector';
 import 'webextension-polyfill';
+
+import { currentTabAutoDetector } from '@root/src/pages/background/currentTabAutoDetector';
+import { EmitLog } from '@root/src/shared/components/EmitLog';
+import { EventModel } from '@src/shared/models/eventModel';
+import entityStore from '@src/shared/storages/entityStorage';
+import { domainStore } from '@src/shared/storages/extensionDomainStorage';
+import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
+import tagActivityStore from '@src/shared/storages/tagActivityStorage';
+import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(error => console.error(error));
 
