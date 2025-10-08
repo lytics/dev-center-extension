@@ -1,2 +1,3 @@
-import { TagLink } from './tagLink';
+import { TagLink } from './tagLink.tsx';
+
 export { TagLink };
