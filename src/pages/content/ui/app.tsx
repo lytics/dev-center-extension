@@ -6,6 +6,66 @@ import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 
 // import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 
+// Auto-detection function
+const startAutoDetection = (domain: string) => {
+  EmitLog({ name: 'content', payload: { msg: `Starting auto-detection for domain: ${domain}` } });
+
+  // Check if jstag is already available
+  if (typeof (window as any).jstag !== 'undefined') {
+    EmitLog({ name: 'content', payload: { msg: 'Lytics jstag found immediately' } });
+    notifyAutoDetectionSuccess(domain);
+    return;
+  }
+
+  // Set up detection with retries
+  let retryCount = 0;
+  const maxRetries = 10;
+  const retryInterval = 1000; // 1 second
+
+  const checkForJstag = () => {
+    retryCount++;
+
+    if (typeof (window as any).jstag !== 'undefined') {
+      EmitLog({ name: 'content', payload: { msg: 'Lytics jstag detected during auto-detection' } });
+      notifyAutoDetectionSuccess(domain);
+      return;
+    }
+
+    if (retryCount < maxRetries) {
+      EmitLog({ name: 'content', payload: { msg: `Auto-detection retry ${retryCount}/${maxRetries}` } });
+      setTimeout(checkForJstag, retryInterval);
+    } else {
+      EmitLog({ name: 'content', payload: { msg: 'Auto-detection failed - no jstag found after max retries' } });
+      notifyAutoDetectionFailed(domain);
+    }
+  };
+
+  // Start checking immediately
+  checkForJstag();
+};
+
+// Notify background script of successful detection
+const notifyAutoDetectionSuccess = (domain: string) => {
+  chrome.runtime.sendMessage({
+    action: 'recordDetection',
+    domain: domain,
+    confidence: 0.9,
+  });
+
+  EmitLog({ name: 'content', payload: { msg: `Notified background of successful detection for: ${domain}` } });
+};
+
+// Notify background script of failed detection
+const notifyAutoDetectionFailed = (domain: string) => {
+  chrome.runtime.sendMessage({
+    action: 'autoDetectionFailed',
+    domain: domain,
+    retryCount: 0,
+  });
+
+  EmitLog({ name: 'content', payload: { msg: `Notified background of failed detection for: ${domain}` } });
+};
+
 export default function App() {
   const retriesRef = useRef(0);
 
@@ -51,7 +111,6 @@ export default function App() {
     // ------------------------------
     // Handle Requests to Tag Link
     // ------------------------------
-    // chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
       if (message.action == 'getConfig') {
         window.postMessage({ action: 'getConfig' }, '*');
@@ -65,6 +124,9 @@ export default function App() {
       if (message.action === 'startAutoDetection') {
         const domain = message.domain || window.location.hostname;
         EmitLog({ name: 'content', payload: { msg: `Starting auto-detection for domain: ${domain}` } });
+
+        // Start auto-detection process
+        startAutoDetection(domain);
       }
 
       // Handle detection success notification
@@ -99,6 +161,19 @@ export default function App() {
         .catch(error => {
           EmitLog({ name: 'storage', payload: { msg: 'Failed to save tag config', error } });
         });
+
+      // Trigger auto-detection when config is received (high confidence)
+      const domain = window.location.hostname;
+      EmitLog({
+        name: 'content',
+        payload: { msg: `Config event received - triggering auto-detection for: ${domain}` },
+      });
+
+      chrome.runtime.sendMessage({
+        action: 'recordDetection',
+        domain: domain,
+        confidence: 0.95, // High confidence since we got config data
+      });
     });
 
     // Listen for and Store JS Tag Entity
