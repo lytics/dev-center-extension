@@ -4,28 +4,21 @@ import { EmitLog } from '@src/shared/components/EmitLog';
 import entityStore from '@src/shared/storages/entityStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 
-// import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
+// Check if jstag is available on window
+const isJstagAvailable = (): boolean => {
+  return typeof (window as any).jstag !== 'undefined';
+};
 
-// Auto-detection function
-const startAutoDetection = (domain: string) => {
-  EmitLog({ name: 'content', payload: { msg: `Starting auto-detection for domain: ${domain}` } });
-
-  // Check if jstag is already available
-  if (typeof (window as any).jstag !== 'undefined') {
-    EmitLog({ name: 'content', payload: { msg: 'Lytics jstag found immediately' } });
-    notifyAutoDetectionSuccess(domain);
-    return;
-  }
-
-  // Set up detection with retries
+// Polling function for jstag detection
+const pollForJstag = (domain: string): void => {
   let retryCount = 0;
-  const maxRetries = 10;
-  const retryInterval = 1000; // 1 second
+  const maxRetries = 5;
+  const retryInterval = 750;
 
   const checkForJstag = () => {
     retryCount++;
 
-    if (typeof (window as any).jstag !== 'undefined') {
+    if (isJstagAvailable()) {
       EmitLog({ name: 'content', payload: { msg: 'Lytics jstag detected during auto-detection' } });
       notifyAutoDetectionSuccess(domain);
       return;
@@ -40,8 +33,22 @@ const startAutoDetection = (domain: string) => {
     }
   };
 
-  // Start checking immediately
   checkForJstag();
+};
+
+// Main auto-detection function - now clean and modular
+const startAutoDetection = (domain: string): void => {
+  EmitLog({ name: 'content', payload: { msg: `Starting auto-detection for domain: ${domain}` } });
+
+  // Immediate check
+  if (isJstagAvailable()) {
+    EmitLog({ name: 'content', payload: { msg: 'Lytics jstag found immediately' } });
+    notifyAutoDetectionSuccess(domain);
+    return;
+  }
+
+  // Start polling if not immediately available
+  pollForJstag(domain);
 };
 
 // Notify background script of successful detection
