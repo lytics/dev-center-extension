@@ -279,13 +279,21 @@ chrome.runtime.onSuspend.addListener(() => {
 // Current Tab Auto-Detection
 // --------------------------------------------------------
 
-// Current tab auto-detection monitoring
+// Current tab auto-detection monitoring - only when extension is enabled
 chrome.tabs.onActivated.addListener(activeInfo => {
-  currentTabAutoDetector.onTabActivated(activeInfo);
+  extensionStateStorage.get().then(state => {
+    if (state === true) {
+      currentTabAutoDetector.onTabActivated(activeInfo);
+    }
+  });
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  currentTabAutoDetector.onTabUpdated(tabId, changeInfo, tab);
+  extensionStateStorage.get().then(state => {
+    if (state === true) {
+      currentTabAutoDetector.onTabUpdated(tabId, changeInfo, tab);
+    }
+  });
 });
 
 // Handle extension enable/disable for re-detection
@@ -301,7 +309,7 @@ if (chrome.management && chrome.management.onEnabled) {
 }
 
 // Handle detection success messages from content scripts
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === 'autoDetectionSuccess') {
     const domain = message.domain || (sender.tab ? new URL(sender.tab.url).hostname : null);
     if (domain) {
