@@ -115,7 +115,7 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
           chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             chrome.tabs.sendMessage(tabs[0].id, { action: 'getConfig' }, response => {
               if (chrome.runtime.lastError) {
-                // console.error('Error:', chrome.runtime.lastError.message);
+                // Error handled silently
               } else if (response) {
                 EmitLog({ name: 'sidepanel', payload: { msg: 'Config response.', data: response } });
               }
@@ -155,7 +155,7 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
           chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             chrome.tabs.sendMessage(tabs[0].id, { action: 'getEntity' }, response => {
               if (chrome.runtime.lastError) {
-                // console.error('Error:', chrome.runtime.lastError.message);
+                // Error handled silently
               } else if (response) {
                 EmitLog({ name: 'sidepanel', payload: { msg: 'Entity response.', data: response } });
               }

@@ -8,6 +8,7 @@ import { domainStore } from '@src/shared/storages/extensionDomainStorage';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
+import { autoDetectedDomainsStore } from '@src/shared/storages/autoDetectedDomainsStorage';
 
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(error => console.error(error));
 
@@ -279,13 +280,21 @@ chrome.runtime.onSuspend.addListener(() => {
 // Current Tab Auto-Detection
 // --------------------------------------------------------
 
-// Current tab auto-detection monitoring
+// Current tab auto-detection monitoring - only when extension is enabled
 chrome.tabs.onActivated.addListener(activeInfo => {
-  currentTabAutoDetector.onTabActivated(activeInfo);
+  extensionStateStorage.get().then(state => {
+    if (state === true) {
+      currentTabAutoDetector.onTabActivated(activeInfo);
+    }
+  });
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  currentTabAutoDetector.onTabUpdated(tabId, changeInfo, tab);
+  extensionStateStorage.get().then(state => {
+    if (state === true) {
+      currentTabAutoDetector.onTabUpdated(tabId, changeInfo, tab);
+    }
+  });
 });
 
 // Handle extension enable/disable for re-detection
@@ -301,7 +310,7 @@ if (chrome.management && chrome.management.onEnabled) {
 }
 
 // Handle detection success messages from content scripts
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.action === 'autoDetectionSuccess') {
     const domain = message.domain || (sender.tab ? new URL(sender.tab.url).hostname : null);
     if (domain) {
@@ -313,7 +322,33 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'recordDetection') {
     const domain = message.domain;
     if (domain) {
+      // Record in both the current tab detector and the persistent storage
       currentTabAutoDetector.recordDetection(domain, message.confidence || 0.8);
+
+      // Also save to persistent storage for UI display
+      const now = Date.now();
+      const currentState = await autoDetectedDomainsStore.get();
+      const state = autoDetectedDomainsStore.translate(currentState);
+      state.domains[domain] = {
+        domain,
+        firstSeen: now,
+        lastSeen: now,
+        tagRequests: [],
+        confidence: message.confidence || 0.8,
+        autoEnabled: true,
+        requestCount: 1,
+      };
+      state.lastCleanup = now;
+      await autoDetectedDomainsStore.set(JSON.stringify(state));
+
+      EmitLog({
+        name: 'background',
+        payload: {
+          msg: 'Auto-detection recorded in persistent storage',
+          domain,
+          confidence: message.confidence,
+        },
+      });
     }
     sendResponse({ success: true });
   }
