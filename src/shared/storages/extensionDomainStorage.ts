@@ -97,7 +97,6 @@ export const domainStore: DomainStorage = {
       state.activeURL = url;
     }
 
-    // domainStore.set(JSON.stringify(state));
     return state;
   },
 

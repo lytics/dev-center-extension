@@ -1,14 +1,44 @@
 import { EmitLog } from '@root/src/shared/components/EmitLog';
 
+/**
+ * Domain Detection Information Structure
+ *
+ * Tracks the detection state and metadata for each domain that has been
+ * checked for Lytics integration. This information is used to:
+ * - Avoid re-detecting domains that have already been checked
+ * - Implement parent domain inheritance for subdomains
+ * - Clean up old detection data
+ * - Display detection results in the UI with confidence scores
+ */
 export interface DomainDetectionInfo {
-  domain: string;
-  detected: boolean;
-  confidence: number;
-  timestamp: number;
-  lastSeen: number;
-  subdomains: string[];
+  domain: string; // The domain that was checked
+  detected: boolean; // Whether Lytics jstag was found
+  confidence: number; // Confidence score (0.0 to 1.0)
+  timestamp: number; // When detection was first performed
+  lastSeen: number; // When domain was last accessed
+  subdomains: string[]; // Subdomains that inherit this detection
 }
 
+/**
+ * Current Tab Auto-Detector
+ *
+ * Manages automatic detection of Lytics JavaScript tags across browser tabs.
+ * This class coordinates between tab events and content script detection,
+ * maintaining a cache of detection results to optimize performance.
+ *
+ * Key Responsibilities:
+ * - Monitor tab activation and navigation events
+ * - Coordinate with content scripts for jstag detection
+ * - Cache detection results to avoid redundant checks
+ * - Implement parent domain inheritance
+ * - Clean up old detection data
+ *
+ * Detection Strategy:
+ * - Immediate detection for known domains (from cache)
+ * - Fresh detection for unknown domains via content script
+ * - Parent domain inheritance (api.example.com inherits from example.com)
+ * - Time-based cache expiration (30 days default)
+ */
 export class CurrentTabAutoDetector {
   private currentTabId: number | null = null;
   private currentDomain: string | null = null;
@@ -21,7 +51,17 @@ export class CurrentTabAutoDetector {
   }
 
   /**
-   * Handle tab activation - start detection for new active tab
+   * Handles browser tab activation events.
+   *
+   * When a user switches to a different tab, this method:
+   * 1. Updates the current tab tracking
+   * 2. Extracts the domain from the tab's URL
+   * 3. Initiates detection for the new domain if needed
+   *
+   * This ensures that detection follows the user's browsing context
+   * and only runs on the currently active tab.
+   *
+   * @param activeInfo - Chrome tab activation information
    */
   async onTabActivated(activeInfo: chrome.tabs.TabActiveInfo): Promise<void> {
     if (!chrome.tabs || !chrome.tabs.get) {
@@ -73,7 +113,20 @@ export class CurrentTabAutoDetector {
   }
 
   /**
-   * Check if domain should be detected
+   * Determines whether a domain should be checked for Lytics integration.
+   *
+   * This method implements intelligent caching to avoid redundant detection:
+   * 1. Check if domain has been detected recently (within maxAge)
+   * 2. If not found, check if parent domain has been detected
+   * 3. Only perform fresh detection if no valid cached results exist
+   *
+   * Parent Domain Inheritance:
+   * - api.example.com inherits detection from example.com
+   * - shop.example.com inherits detection from example.com
+   * - Reduces redundant checks across related subdomains
+   *
+   * @param domain - The domain to check
+   * @returns true if detection should be performed, false if cached result exists
    */
   private shouldDetectDomain(domain: string): boolean {
     // Check exact domain match
@@ -135,7 +188,20 @@ export class CurrentTabAutoDetector {
   }
 
   /**
-   * Record successful detection
+   * Records a successful Lytics detection for a domain.
+   *
+   * This method updates the detection cache with the new result and:
+   * 1. Creates or updates the domain's detection info
+   * 2. Updates parent domain relationships
+   * 3. Saves to persistent storage
+   * 4. Triggers cleanup of old domains
+   *
+   * Parent Domain Updates:
+   * When a subdomain is detected, it's added to the parent domain's
+   * subdomain list, enabling inheritance for future checks.
+   *
+   * @param domain - The domain where Lytics was detected
+   * @param confidence - Confidence score of the detection (0.0 to 1.0)
    */
   async recordDetection(domain: string, confidence: number = 0.8): Promise<void> {
     const now = Date.now();
