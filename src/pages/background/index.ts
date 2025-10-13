@@ -3,17 +3,18 @@ import 'webextension-polyfill';
 import { currentTabAutoDetector } from '@root/src/pages/background/currentTabAutoDetector';
 import { createNetworkTrafficHandler } from '@root/src/pages/background/lyticsNetworkHandler';
 import { EmitLog } from '@root/src/shared/components/EmitLog';
+import { autoDetectedDomainsStore } from '@src/shared/storages/autoDetectedDomainsStorage';
 import entityStore from '@src/shared/storages/entityStorage';
 import { domainStore } from '@src/shared/storages/extensionDomainStorage';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
+import domainStateStore from '@src/shared/storages/tabStateStorage';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
-import { autoDetectedDomainsStore } from '@src/shared/storages/autoDetectedDomainsStorage';
-import domainStateStore from '@src/shared/storages/tabStateStorage';
 
-chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(error => {
-  EmitLog({ name: 'background', payload: { msg: 'Failed to set side panel behavior', error: error.message } });
-});
+import { messageBroker } from '../../shared/message-broker';
+import { IMessage } from '../../shared/message-broker/types';
+
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(error => console.error(error));
 
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
   if (!tab.url) return;
@@ -450,3 +451,10 @@ setInterval(async () => {
     });
   }
 }, 60000);
+messageBroker.handle('GET_CONFIG', async (message: IMessage) => {
+  const tabMessage: IMessage = {
+    key: 'GET_CONFIG',
+  };
+
+  return await messageBroker.sendToTab(message.payload.currentTabId, tabMessage);
+});
