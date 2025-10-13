@@ -96,7 +96,7 @@ export const autoDetectedDomainsStore: AutoDetectedDomainsStorage = {
 
       // Remove domains older than max age
       const domainsToRemove: string[] = [];
-      for (const [domain, domainInfo] of Object.entries(state.domains)) {
+      for (const [domain, domainInfo] of Object.entries(state.domains) as [string, AutoDetectedDomain][]) {
         if (now - domainInfo.lastSeen > maxAgeMs) {
           domainsToRemove.push(domain);
         }
@@ -107,7 +107,7 @@ export const autoDetectedDomainsStore: AutoDetectedDomainsStorage = {
       });
 
       // If still over limit, remove oldest domains
-      const domainEntries = Object.entries(state.domains);
+      const domainEntries = Object.entries(state.domains) as [string, AutoDetectedDomain][];
       if (domainEntries.length > CLEANUP_CONFIG.maxDomains) {
         // Sort by lastSeen (oldest first)
         domainEntries.sort(([, a], [, b]) => a.lastSeen - b.lastSeen);
