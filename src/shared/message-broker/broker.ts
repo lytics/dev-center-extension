@@ -18,4 +18,8 @@ export class MessageBroker {
       }
     });
   }
+
+  async sendToTab<T>(tabId: number, message: IMessage): Promise<T> {
+    return await this.browser.tabs.sendMessage(tabId, message);
+  }
 }
