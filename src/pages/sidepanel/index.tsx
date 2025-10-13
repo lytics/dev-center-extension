@@ -25,7 +25,7 @@ function init() {
           <Router>
             <State />
           </Router>
-          <ReactQueryDevtools />
+          <ReactQueryDevtools buttonPosition="top-right" />
         </QueryClientProvider>
       </AppThemeProvider>
     </React.StrictMode>,

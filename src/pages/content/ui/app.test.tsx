@@ -1,11 +1,12 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+
 import {
   isJstagAvailable,
+  notifyAutoDetectionFailed,
+  notifyAutoDetectionSuccess,
   pollForJstag,
   startAutoDetection,
-  notifyAutoDetectionSuccess,
-  notifyAutoDetectionFailed,
-} from './app';
+} from '../modules/autoDetection';
 
 // Mock EmitLog
 vi.mock('@src/shared/components/EmitLog', () => ({
