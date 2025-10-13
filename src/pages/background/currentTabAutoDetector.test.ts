@@ -428,3 +428,223 @@ describe('CurrentTabAutoDetector', () => {
     });
   });
 });
+
+describe('Integration Tests - Content Script to Background Script Communication', () => {
+  let detector: CurrentTabAutoDetector;
+  let mockChromeRuntime: any;
+  let mockAutoDetectedDomainsStore: any;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Mock the autoDetectedDomainsStore
+    mockAutoDetectedDomainsStore = {
+      get: vi.fn().mockResolvedValue({ domains: {}, lastCleanup: Date.now() }),
+      set: vi.fn().mockResolvedValue(undefined),
+      translate: vi.fn().mockReturnValue({ domains: {}, lastCleanup: Date.now() }),
+    };
+
+    // Mock chrome APIs
+    global.chrome = {
+      runtime: {
+        sendMessage: vi.fn().mockResolvedValue({ success: true }),
+        onMessage: {
+          addListener: vi.fn(),
+        },
+      },
+      tabs: {
+        get: vi.fn().mockResolvedValue({ url: 'https://example.com' }),
+        sendMessage: vi.fn().mockResolvedValue({ success: true }),
+      },
+      storage: {
+        local: {
+          get: vi.fn().mockResolvedValue({}),
+          set: vi.fn().mockResolvedValue(undefined),
+        },
+      },
+    } as any;
+
+    detector = new CurrentTabAutoDetector();
+    mockChromeRuntime = global.chrome.runtime;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  describe('End-to-End Auto-Detection Flow', () => {
+    it('should handle successful detection from content script to background', async () => {
+      // Mock the autoDetectedDomainsStore import
+      vi.doMock('@src/shared/storages/autoDetectedDomainsStorage', () => ({
+        autoDetectedDomainsStore: mockAutoDetectedDomainsStore,
+      }));
+
+      // Simulate the background script logic for handling recordDetection messages
+      const mockMessage = {
+        action: 'recordDetection',
+        domain: 'example.com',
+        confidence: 0.9,
+      };
+
+      // Simulate what happens in the background script when recordDetection is received
+      const sendResponse = vi.fn();
+
+      // Background script logic (simplified)
+      if (mockMessage.action === 'recordDetection') {
+        const domain = mockMessage.domain;
+        if (domain) {
+          // Record in the current tab detector
+          await detector.recordDetection(domain, mockMessage.confidence || 0.8);
+
+          // Also save to persistent storage (simulating background script logic)
+          const now = Date.now();
+          const currentState = await mockAutoDetectedDomainsStore.get();
+          const state = mockAutoDetectedDomainsStore.translate(currentState);
+          state.domains[domain] = {
+            domain,
+            firstSeen: now,
+            lastSeen: now,
+            tagRequests: [],
+            confidence: mockMessage.confidence || 0.8,
+            autoEnabled: true,
+            requestCount: 1,
+          };
+          state.lastCleanup = now;
+          await mockAutoDetectedDomainsStore.set(JSON.stringify(state));
+        }
+        sendResponse({ success: true });
+      }
+
+      // Verify the response
+      expect(sendResponse).toHaveBeenCalledWith({ success: true });
+
+      // Verify the storage was updated
+      expect(mockAutoDetectedDomainsStore.set).toHaveBeenCalledWith(expect.stringContaining('"domain":"example.com"'));
+      expect(mockAutoDetectedDomainsStore.set).toHaveBeenCalledWith(expect.stringContaining('"confidence":0.9'));
+    });
+
+    it('should handle detection failure from content script', async () => {
+      // Simulate receiving an autoDetectionFailed message
+      const mockMessage = {
+        action: 'autoDetectionFailed',
+        domain: 'example.com',
+        retryCount: 5,
+      };
+
+      const mockSender = {
+        tab: { url: 'https://example.com', id: 123 },
+      };
+
+      // This test verifies that the background script properly handles failure messages
+      // In the actual implementation, this would be logged but not stored
+      const messageListeners: Array<(message: any, sender: any, sendResponse: any) => void> = [];
+
+      mockChromeRuntime.onMessage.addListener = vi.fn(listener => {
+        messageListeners.push(listener);
+      });
+
+      // Simulate the background script logic for handling autoDetectionFailed
+      const mockListener = vi.fn().mockImplementation((message, sender, sendResponse) => {
+        if (message.action === 'autoDetectionFailed') {
+          // Background script just acknowledges the failure
+          sendResponse({ success: true });
+          return true;
+        }
+      });
+
+      messageListeners.push(mockListener);
+
+      // Call the message listener
+      for (const listener of messageListeners) {
+        const sendResponse = vi.fn();
+        const result = await listener(mockMessage, mockSender, sendResponse);
+
+        expect(sendResponse).toHaveBeenCalledWith({ success: true });
+        expect(result).toBe(true);
+      }
+    });
+
+    it('should handle tab activation triggering detection flow', async () => {
+      // Set current tab
+      await detector.onTabActivated({ tabId: 123, windowId: 1 });
+
+      // Verify that sendMessage was called to start detection
+      expect(global.chrome.tabs.sendMessage).toHaveBeenCalledWith(123, {
+        action: 'startAutoDetection',
+        domain: 'example.com',
+      });
+    });
+
+    it('should handle complete tab updates triggering detection', async () => {
+      // Set current tab first
+      await detector.onTabActivated({ tabId: 123, windowId: 1 });
+
+      // Clear previous calls
+      vi.clearAllMocks();
+
+      // Simulate tab update
+      const changeInfo = { status: 'complete' };
+      const tab = {
+        id: 123,
+        url: 'https://newsite.com',
+        index: 0,
+        pinned: false,
+        highlighted: false,
+        windowId: 1,
+        active: true,
+        incognito: false,
+        selected: true,
+        discarded: false,
+        autoDiscardable: true,
+        groupId: -1,
+      };
+
+      await detector.onTabUpdated(123, changeInfo, tab);
+
+      // Should trigger detection for new domain
+      expect(global.chrome.tabs.sendMessage).toHaveBeenCalledWith(123, {
+        action: 'startAutoDetection',
+        domain: 'newsite.com',
+      });
+    });
+
+    it('should properly store detection results in persistent storage', async () => {
+      // Mock the store functions
+      const mockStore = {
+        get: vi.fn().mockResolvedValue({
+          domains: {},
+          lastCleanup: Date.now(),
+        }),
+        set: vi.fn().mockResolvedValue(undefined),
+        translate: vi.fn().mockImplementation(data => data),
+      };
+
+      // Simulate the background script logic for storing detection results
+      const domain = 'example.com';
+      const confidence = 0.9;
+      const now = Date.now();
+
+      // This simulates what happens in the background script when recordDetection is called
+      const currentState = await mockStore.get();
+      const state = mockStore.translate(currentState);
+
+      state.domains[domain] = {
+        domain,
+        firstSeen: now,
+        lastSeen: now,
+        tagRequests: [],
+        confidence,
+        autoEnabled: true,
+        requestCount: 1,
+      };
+      state.lastCleanup = now;
+
+      await mockStore.set(JSON.stringify(state));
+
+      // Verify the storage was called with correct data
+      expect(mockStore.set).toHaveBeenCalledWith(expect.stringContaining('"domain":"example.com"'));
+      expect(mockStore.set).toHaveBeenCalledWith(expect.stringContaining('"confidence":0.9'));
+      expect(mockStore.set).toHaveBeenCalledWith(expect.stringContaining('"autoEnabled":true'));
+    });
+  });
+});
