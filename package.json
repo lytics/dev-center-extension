@@ -103,5 +103,9 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@1.22.19",
+  "volta": {
+    "node": "20.19.0",
+    "yarn": "1.22.19"
+  }
 }

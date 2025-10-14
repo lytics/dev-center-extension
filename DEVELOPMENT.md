@@ -169,10 +169,46 @@ export const Component = ({
 - TypeScript 5.2.2
 - Vitest for testing
 - ESLint + Prettier
+- **Volta** for Node.js and Yarn version management
+
+### Version Management with Volta
+
+This project uses [Volta](https://volta.sh/) to pin Node.js and Yarn versions, ensuring consistent development environments across the team and CI/CD pipelines.
+
+**Pinned Versions:**
+- Node.js: `20.19.0`
+- Yarn: `1.22.19`
+
+**Installing Volta:**
+```bash
+curl https://get.volta.sh | bash
+```
+
+**How Volta Works:**
+- Automatically switches to the correct Node.js and Yarn versions when you enter the project directory
+- No manual version management needed (no `nvm use` or switching required)
+- Versions are defined in `package.json` under the `volta` section
+- Eliminates "works on my machine" issues
+
+**Without Volta:**
+If you prefer not to use Volta, ensure you have Node.js 20.19.0 and Yarn 1.22.19 installed manually. You can check with:
+```bash
+node --version  # Should output: v20.19.0
+yarn --version  # Should output: 1.22.19
+```
+
+**Updating Versions:**
+To update pinned versions (requires team consensus):
+```bash
+volta pin node@<new-version>
+volta pin yarn@<new-version>
+```
+This will update the `volta` section in `package.json`.
 
 ## Code Quality
 - ESLint and Prettier configurations
 - TypeScript strict mode
 - Pre-commit hooks with Husky
 - Consistent naming conventions
+- **Volta-managed Node.js and Yarn versions**
 
