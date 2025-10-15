@@ -286,10 +286,18 @@ export default function App() {
     document.addEventListener('config', function (event) {
       EmitLog({ name: 'content', payload: { msg: 'Config event received', data: (event as any).detail } });
       const payload = (event as any).detail.data;
+
+      // Send to background script for per-tab storage
+      chrome.runtime.sendMessage({
+        action: 'saveTagConfig',
+        payload: payload,
+      });
+
+      // Also save to global storage for backwards compatibility
       tagConfigStore
         .set(payload)
         .then(() => {
-          EmitLog({ name: 'storage', payload: { msg: 'Tag config saved.' } });
+          EmitLog({ name: 'storage', payload: { msg: 'Tag config saved to global storage.' } });
         })
         .catch(error => {
           EmitLog({ name: 'storage', payload: { msg: 'Failed to save tag config', error } });
@@ -312,8 +320,16 @@ export default function App() {
     // Listen for and Store JS Tag Entity
     document.addEventListener('entity', function (event) {
       const payload = (event as any).detail.data;
+
+      // Send to background script for per-tab storage
+      chrome.runtime.sendMessage({
+        action: 'saveEntity',
+        payload: payload,
+      });
+
+      // Also save to global storage for backwards compatibility
       entityStore.set(payload).then(() => {
-        EmitLog({ name: 'storage', payload: { msg: 'Entity saved.' } });
+        EmitLog({ name: 'storage', payload: { msg: 'Entity saved to global storage.' } });
       });
     });
   }, []);

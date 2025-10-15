@@ -16,6 +16,7 @@ interface EnabledStateProps {
   tabValid: boolean;
   onPin: () => void;
   documentationUrl: string;
+  hasLyticsSDK?: boolean;
   textContent?: EnabledStateTextContent;
 }
 
@@ -58,8 +59,34 @@ export const EnabledState = ({
   tabValid,
   onPin,
   documentationUrl,
+  hasLyticsSDK = false,
   textContent = appContent.enabledState, // Default to centralized content
 }: EnabledStateProps): JSX.Element => {
+  // If no Lytics SDK is detected, show different content
+  if (!hasLyticsSDK) {
+    return (
+      <Container>
+        <OuterCard>
+          <ConfigDomain />
+          <Title variant="h6" align="center">
+            {textContent.noSdkTitle}
+          </Title>
+          <Description>
+            {textContent.noSdkDescription}{' '}
+            <StyledLink variant="body2" href={documentationUrl} target="_blank">
+              {textContent.noSdkDocumentationText}
+            </StyledLink>
+            {textContent.noSdkSuffix}
+          </Description>
+        </OuterCard>
+        <EnabledDocCard>
+          <DocText align="center">{textContent.adBlockerNotice}</DocText>
+        </EnabledDocCard>
+      </Container>
+    );
+  }
+
+  // SDK is available, show normal configure domain UI
   return (
     <Container>
       <OuterCard>
