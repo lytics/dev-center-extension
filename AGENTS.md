@@ -8,6 +8,13 @@ Chrome extension (Lytics Developer Tools) transitioning from v1→v2. React 18, 
 
 ## Setup Commands
 
+### Prerequisites
+- **Volta** (recommended): Automatically manages Node.js 20.19.0 and Yarn 1.22.19
+  - Install: `curl https://get.volta.sh | bash`
+  - Volta auto-switches versions when entering project directory
+- **Manual**: Ensure Node.js 20.19.0 and Yarn 1.22.19 are installed
+
+### Common Commands
 - Install deps: `yarn install`
 - Build: `yarn build`
 - Dev server: `yarn dev`
@@ -16,6 +23,10 @@ Chrome extension (Lytics Developer Tools) transitioning from v1→v2. React 18, 
 - Lint: `yarn lint`
 - Lint fix: `yarn lint:fix`
 - Format: `yarn prettier`
+
+### Version Management
+- Check versions: `node --version && yarn --version`
+- Update pinned versions: `volta pin node@<version> && volta pin yarn@<version>`
 
 ## Code Standards - v2 Migration (CRITICAL)
 

@@ -44,11 +44,26 @@ Lytics Developer Tools is a Chrome extension designed to empower developers, mar
 
 ## Development
 
+### Prerequisites
+
+This project uses [Volta](https://volta.sh/) to ensure consistent Node.js and Yarn versions across all developers and CI/CD environments.
+
+**Install Volta:**
+```bash
+curl https://get.volta.sh | bash
+```
+
+After installation, Volta will automatically use the correct Node.js (20.19.0) and Yarn (1.22.19) versions when you enter this project directory. No manual version switching needed!
+
+> **Note**: If you don't have Volta installed, you can still use the project, but you'll need to manually ensure you're using Node.js 20.19.0 and Yarn 1.22.19.
+
 ### Quick Start
 1. Clone the repository: `git clone https://github.com/lytics/dev-center-extension.git`
-2. Install dependencies: `yarn && yarn build`
-3. Start development server: `yarn dev`
-4. Load the `dist` directory in Chrome as unpacked extension
+2. Navigate to the project: `cd dev-center-extension` (Volta will auto-switch versions)
+3. Install dependencies: `yarn install`
+4. Build the extension: `yarn build`
+5. Start development server: `yarn dev`
+6. Load the `dist` directory in Chrome as unpacked extension
 
 ### Development Standards
 This project is transitioning from v1 to v2 with strict code quality standards:
