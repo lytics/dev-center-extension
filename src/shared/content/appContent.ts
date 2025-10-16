@@ -81,6 +81,22 @@ export const appContent = {
     autoDetectedTitle: 'Auto-detected',
   },
 
+  // Tab Navigation Content
+  profileTabs: {
+    summary: 'Summary',
+    details: 'Details',
+  },
+
+  debuggerTabs: {
+    configuration: 'Configuration',
+    activity: 'Activity',
+  },
+
+  personalizationTabs: {
+    experiences: 'Experiences',
+    legacyCampaigns: 'Legacy Campaigns',
+  },
+
   // External Links
   externalLinks: {
     chromeExtensionDocs: 'https://docs.lytics.com/docs/chrome-extension',
