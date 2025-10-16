@@ -1,6 +1,6 @@
 import '@pages/sidepanel/SidePanel.css';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
@@ -10,10 +10,10 @@ import Configuration from '@root/src/pages/sidepanel/sections/Configuration';
 import Debugger from '@root/src/pages/sidepanel/sections/Debugger';
 import Personalization from '@root/src/pages/sidepanel/sections/Personalization';
 import Profile from '@root/src/pages/sidepanel/sections/Profile';
-import { TagConfigModel, TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
+import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
 import { EmitLog } from '@src/shared/components/EmitLog';
-import entityStorage from '@src/shared/storages/entityStorage';
-import tagConfigStore from '@src/shared/storages/tagConfigStorage';
+import { useCurrentTabState } from '@root/src/pages/sidepanel/hooks/useCurrentTabState';
+import { hasTagConfig, hasProfile } from '@root/src/pages/sidepanel/utils/domainStateHelpers';
 
 import TagStatus from './sections/TagStatus';
 
@@ -24,174 +24,85 @@ interface SidePanelProps {
 
 const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
   const navigate = useNavigate();
-  const [activePath, setActivePath] = useState('/');
-  const [tagIsInstalled, setTagIsInstalled] = useState(false);
   const location = useLocation();
-  const [isLoading, setIsLoading] = useState(true);
-  const [profileIsLoading, setProfileIsLoading] = useState(true);
-  const [tagConfig, setTagConfig] = useState<TagConfigModel>({} as TagConfigModel);
-  const [currentProfile, setCurrentProfile] = useState<any>({} as any);
-  const [candidates, setCandidates] = useState<TagConfigPathforaCandidates>({} as TagConfigPathforaCandidates);
 
-  // Tab state
+  // Get per-tab state from hook
+  const { tagConfig: currentTabTagConfig, profile: currentTabProfile, domainState } = useCurrentTabState();
+
+  // Local state for component-specific concerns
+  const [isLoading, setIsLoading] = useState(true);
+  const [profileIsLoading, setProfileIsLoading] = useState(false);
   const [debugTab, setDebugTab] = useState(0);
   const [profileTab, setProfileTab] = useState(0);
   const [personalizationTab, setPersonalizationTab] = useState(0);
 
-  const safeJSON = (jsonString: string, details: string): any | null => {
-    try {
-      const parsedJSON = JSON.parse(jsonString);
-      return parsedJSON;
-    } catch (error) {
-      console.error('Error parsing JSON:', details, error);
-      return null;
-    }
-  };
+  // DERIVED STATE - No useEffect needed! Pure computation from props/state
+  const tagConfig = currentTabTagConfig as TagConfigModel;
+  const currentProfile = currentTabProfile;
+  const tagIsInstalled = hasTagConfig(domainState);
+  const candidates = useMemo(() => tagConfig?.pathfora?.publish?.candidates || {}, [tagConfig]);
 
-  // Define a callback function to handle storage changes
-  function handleStorageChange(changes, areaName) {
-    if (areaName === 'local') {
-      for (const key in changes) {
-        if (key === 'tagConfigStorage') {
-          if (changes[key].newValue === undefined || changes[key].newValue === null) {
-            // setRefreshTimestamp(Date.now());
-            return;
-          }
-
-          const safeConfig = safeJSON(changes[key].newValue, 'tag config storage change');
-          if (!safeConfig) {
-            EmitLog({ name: 'sidepanel', payload: { msg: 'Error parsing tag config.', error: 'Invalid JSON' } });
-            return;
-          }
-          setTagConfig(safeConfig);
-          setTagIsInstalled(Object.keys(safeConfig).length > 0);
-          EmitLog({ name: 'sidepanel', payload: { msg: 'Tag config storage changed', value: safeConfig } });
-        }
-
-        if (key === 'entityStorage') {
-          if (changes[key].newValue === undefined || changes[key].newValue === null) {
-            // setRefreshTimestamp(Date.now());
-            return;
-          }
-
-          const safeProfile = safeJSON(changes[key].newValue, 'entity storage change');
-          if (!safeProfile) {
-            EmitLog({ name: 'sidepanel', payload: { msg: 'Error parsing tag config.', error: 'Invalid JSON' } });
-            return;
-          }
-          setCurrentProfile(safeProfile);
-          EmitLog({ name: 'sidepanel', payload: { msg: 'Entity storage changed', value: safeProfile } });
-        }
-      }
-    }
-  }
-  chrome.storage.onChanged.addListener(handleStorageChange);
-
-  useEffect(() => {
-    EmitLog({ name: 'sidepanel', payload: { msg: 'SidePanel reset.' } });
-  }, [key]);
-  useEffect(() => {
-    const fetchData = async () => {
-      setCurrentProfile({ test: 'test' });
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    setCandidates(tagConfig?.pathfora?.publish?.candidates);
-  }, [tagConfig]);
-
-  useEffect(() => {
-    if (!isEnabled) {
-      return;
-    }
-
-    const fetchData = async () => {
-      try {
-        const data = await tagConfigStore.get();
-        setIsLoading(false);
-        if (Object.keys(data).length === 0) {
-          chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, { action: 'getConfig' }, response => {
-              if (chrome.runtime.lastError) {
-                // Error handled silently
-              } else if (response) {
-                EmitLog({ name: 'sidepanel', payload: { msg: 'Config response.', data: response } });
-              }
-            });
-          });
-          setTimeout(fetchData, 1000);
-        } else {
-          const pendingConfig = safeJSON(data, 'tag config fetch');
-          if (!pendingConfig) {
-            EmitLog({
-              name: 'sidepanel',
-              payload: { msg: 'Error parsing pending tag config.', error: 'Invalid JSON' },
-            });
-            return;
-          }
-          setTagConfig(pendingConfig);
-          setTagIsInstalled(Object.keys(pendingConfig).length > 0);
-        }
-      } catch (error) {
-        EmitLog({ name: 'sidepanel', payload: { msg: 'Error fetching data.', error: error } });
-      }
-    };
-
-    fetchData();
-  }, [isEnabled]);
-
-  useEffect(() => {
-    if (!isEnabled) {
-      return;
-    }
-
-    const fetchData = async () => {
-      setProfileIsLoading(true);
-      try {
-        const data = await entityStorage.get();
-        if (!data) {
-          chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, { action: 'getEntity' }, response => {
-              if (chrome.runtime.lastError) {
-                // Error handled silently
-              } else if (response) {
-                EmitLog({ name: 'sidepanel', payload: { msg: 'Entity response.', data: response } });
-              }
-            });
-          });
-          setTimeout(fetchData, 1000);
-        } else {
-          const safeData = safeJSON(data, 'profile fetch');
-          if (!safeData) {
-            EmitLog({
-              name: 'sidepanel',
-              payload: { msg: 'Error parsing pending entity.', error: 'Invalid JSON' },
-            });
-            return;
-          }
-          setCurrentProfile(safeData);
-          setProfileIsLoading(false);
-        }
-      } catch (error) {
-        EmitLog({ name: 'sidepanel', payload: { msg: 'Error fetching data.', data: error } });
-      }
-    };
-
-    fetchData();
-  }, [isEnabled]);
-
-  useEffect(() => {
-    if (location.pathname === '/src/pages/sidepanel/index.html') {
-      setActivePath('/');
-      return;
-    }
-    setActivePath(location.pathname);
+  // Compute active path from location (derived state)
+  const activePath = useMemo(() => {
+    return location.pathname === '/src/pages/sidepanel/index.html' ? '/' : location.pathname;
   }, [location.pathname]);
 
-  const handleNavigation = path => {
-    setActivePath(path);
+  // Single useEffect for data fetching fallback and logging
+  useEffect(() => {
+    // Log reset on key change
+    EmitLog({ name: 'sidepanel', payload: { msg: 'SidePanel reset.' } });
+
+    // Handle tag config loading
+    if (hasTagConfig(domainState)) {
+      setIsLoading(false);
+      EmitLog({
+        name: 'sidepanel',
+        payload: { msg: 'Tag config updated from per-tab storage', config: currentTabTagConfig },
+      });
+    } else if (isEnabled) {
+      // Request config from content script as fallback
+      setIsLoading(true);
+      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+        if (tabs[0]?.id) {
+          chrome.tabs.sendMessage(tabs[0].id, { action: 'getConfig' }, response => {
+            setIsLoading(false);
+            if (chrome.runtime.lastError) {
+              EmitLog({
+                name: 'sidepanel',
+                payload: { msg: 'No response from content script', error: chrome.runtime.lastError.message },
+              });
+            } else if (response) {
+              EmitLog({ name: 'sidepanel', payload: { msg: 'Config response received', data: response } });
+            }
+          });
+        }
+      });
+    }
+
+    // Handle profile loading
+    if (hasProfile(domainState)) {
+      setProfileIsLoading(false);
+      EmitLog({
+        name: 'sidepanel',
+        payload: { msg: 'Profile updated from per-tab storage' },
+      });
+    } else if (isEnabled) {
+      // Request profile from content script as fallback
+      setProfileIsLoading(true);
+      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+        if (tabs[0]?.id) {
+          chrome.tabs.sendMessage(tabs[0].id, { action: 'getEntity' }, response => {
+            setProfileIsLoading(false);
+            if (!chrome.runtime.lastError && response) {
+              EmitLog({ name: 'sidepanel', payload: { msg: 'Entity response received', data: response } });
+            }
+          });
+        }
+      });
+    }
+  }, [key, currentTabTagConfig, currentTabProfile, domainState, isEnabled]);
+
+  const handleNavigation = (path: string) => {
     navigate(path);
   };
 

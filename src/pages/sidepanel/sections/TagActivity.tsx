@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Button, Box, Chip, Stack, Typography } from '@mui/material';
 import { ExpandMore, Delete } from '@mui/icons-material';
-import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import { EventModel, EventType } from '@src/shared/models/eventModel';
 import TreeDisplay from '@root/src/pages/sidepanel/components/TreeDisplay';
 import EmptyState from '@root/src/pages/sidepanel/components/EmptyState';
+import { useCurrentTabState } from '@root/src/pages/sidepanel/hooks/useCurrentTabState';
 import moment from 'moment';
 
 const TagActivity = () => {
+  const { tagActivity: currentTabActivity, clearActivity } = useCurrentTabState();
   const [tagActivity, setTagActivity] = useState<EventModel[]>([] as EventModel[]);
 
   const translateEventType = (type: string) => {
@@ -20,28 +21,31 @@ const TagActivity = () => {
     return timeAgo;
   }
 
+  // Update local state when current tab activity changes
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await tagActivityStore.get();
-      const parsedResults = result.map(item => {
-        return JSON.parse(item);
-      });
-      const reversedResults = parsedResults.reverse();
+    if (currentTabActivity) {
+      // Reverse the array to show most recent first
+      const reversedResults = [...currentTabActivity].reverse();
       setTagActivity(reversedResults);
-    };
-    tagActivityStore.subscribe(fetchData);
-    fetchData();
-  }, []);
+    } else {
+      setTagActivity([]);
+    }
+  }, [currentTabActivity]);
 
-  const clearActivity = () => {
-    tagActivityStore.clear();
+  const handleClearActivity = async () => {
+    await clearActivity();
     setTagActivity([]);
   };
 
   return (
     <Box fontSize={12}>
       <Box textAlign={'right'} m={1}>
-        <Button size={'small'} variant={'text'} color={'secondary'} onClick={clearActivity} startIcon={<Delete />}>
+        <Button
+          size={'small'}
+          variant={'text'}
+          color={'secondary'}
+          onClick={handleClearActivity}
+          startIcon={<Delete />}>
           Clear Logs
         </Button>
       </Box>
