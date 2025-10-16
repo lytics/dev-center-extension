@@ -1,0 +1,122 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import TagConfig from './TagConfig';
+import { ThemeProvider } from '@mui/material/styles';
+import { appTheme } from '@root/src/theme';
+import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
+
+// Mock TreeDisplay component
+vi.mock('@root/src/pages/sidepanel/components/TreeDisplay', () => ({
+  default: ({ data }: { data: any }) => <div data-testid="tree-display">{JSON.stringify(data)}</div>,
+}));
+
+describe('TagConfig', () => {
+  const mockTagConfig: TagConfigModel = {
+    account: 'test-account-123',
+    stream: 'test-stream',
+    cid: 'test-cid-456',
+    apitoken: 'test-api-token',
+    domain: 'https://example.com',
+    version: '3.5.0',
+    loaded: true,
+  };
+
+  const renderWithTheme = (component: React.ReactElement) => {
+    return render(<ThemeProvider theme={appTheme}>{component}</ThemeProvider>);
+  };
+
+  it('should render the TagConfig component', () => {
+    renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
+
+    const treeDisplay = screen.getByTestId('tree-display');
+    expect(treeDisplay).toBeInTheDocument();
+  });
+
+  it('should pass tagConfig data to TreeDisplay', () => {
+    renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
+
+    const treeDisplay = screen.getByTestId('tree-display');
+    expect(treeDisplay).toHaveTextContent(mockTagConfig.account);
+    expect(treeDisplay).toHaveTextContent(mockTagConfig.stream);
+    expect(treeDisplay).toHaveTextContent(mockTagConfig.version);
+  });
+
+  it('should render with dark background styling', () => {
+    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
+
+    const panel = container.querySelector('.MuiBox-root');
+    expect(panel).toBeInTheDocument();
+    expect(panel).toHaveStyle({ backgroundColor: '#272728' });
+  });
+
+  it('should render with rounded corners', () => {
+    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
+
+    const panel = container.querySelector('.MuiBox-root');
+    expect(panel).toHaveStyle({ borderRadius: '8px' });
+  });
+
+  it('should handle empty tagConfig', () => {
+    const emptyConfig = {} as TagConfigModel;
+    renderWithTheme(<TagConfig tagConfig={emptyConfig} />);
+
+    const treeDisplay = screen.getByTestId('tree-display');
+    expect(treeDisplay).toBeInTheDocument();
+  });
+
+  it('should render with full width', () => {
+    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
+
+    const panel = container.querySelector('.MuiBox-root');
+    expect(panel).toHaveStyle({ width: '100%' });
+  });
+
+  it('should have correct padding', () => {
+    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
+
+    const panel = container.querySelector('.MuiBox-root');
+    expect(panel).toHaveStyle({ padding: '10px' });
+  });
+
+  it('should handle different tagConfig versions', () => {
+    const legacyConfig: TagConfigModel = {
+      ...mockTagConfig,
+      version: '2.8.0',
+    };
+
+    renderWithTheme(<TagConfig tagConfig={legacyConfig} />);
+
+    const treeDisplay = screen.getByTestId('tree-display');
+    expect(treeDisplay).toHaveTextContent('2.8.0');
+  });
+
+  it('should handle tagConfig with missing optional fields', () => {
+    const partialConfig = {
+      account: 'test-account',
+      stream: 'test-stream',
+    } as TagConfigModel;
+
+    renderWithTheme(<TagConfig tagConfig={partialConfig} />);
+
+    const treeDisplay = screen.getByTestId('tree-display');
+    expect(treeDisplay).toBeInTheDocument();
+    expect(treeDisplay).toHaveTextContent('test-account');
+  });
+
+  it('should not have hover effects', () => {
+    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
+
+    const panel = container.querySelector('.MuiBox-root');
+    expect(panel).toHaveStyle({ cursor: 'default', transition: 'none' });
+  });
+
+  it('should render TreeDisplay inside styled panel', () => {
+    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
+
+    const panel = container.querySelector('.MuiBox-root');
+    const treeDisplay = screen.getByTestId('tree-display');
+
+    expect(panel).toContainElement(treeDisplay);
+  });
+});
