@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { EmitLog } from '@src/shared/components/EmitLog';
 import entityStore from '@src/shared/storages/entityStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
+import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 
 /**
  * Auto-Detection Flow Documentation
@@ -62,6 +63,13 @@ export const pollForJstag = (domain: string): void => {
   const retryInterval = 750;
 
   const checkForJstag = async () => {
+    // Check extension state before each polling attempt
+    const isEnabled = await extensionStateStorage.get();
+    if (!isEnabled) {
+      EmitLog({ name: 'content', payload: { msg: 'Extension disabled - stopping auto-detection polling' } });
+      return;
+    }
+
     retryCount++;
 
     if (isJstagAvailable()) {
@@ -99,6 +107,13 @@ export const pollForJstag = (domain: string): void => {
  * @param domain - The domain to check for Lytics integration
  */
 export const startAutoDetection = async (domain: string): Promise<void> => {
+  // Check extension state before starting auto-detection
+  const isEnabled = await extensionStateStorage.get();
+  if (!isEnabled) {
+    EmitLog({ name: 'content', payload: { msg: 'Extension disabled - skipping auto-detection', domain } });
+    return;
+  }
+
   EmitLog({ name: 'content', payload: { msg: `Starting auto-detection for domain: ${domain}` } });
 
   // Immediate check
@@ -125,6 +140,13 @@ export const startAutoDetection = async (domain: string): Promise<void> => {
  * @param domain - The domain where jstag was detected
  */
 export const notifyAutoDetectionSuccess = async (domain: string): Promise<void> => {
+  // Check extension state before notifying
+  const isEnabled = await extensionStateStorage.get();
+  if (!isEnabled) {
+    EmitLog({ name: 'content', payload: { msg: 'Extension disabled - not notifying detection success', domain } });
+    return;
+  }
+
   try {
     await chrome.runtime.sendMessage({
       action: 'recordDetection',
@@ -154,6 +176,13 @@ export const notifyAutoDetectionSuccess = async (domain: string): Promise<void> 
  * @param domain - The domain where jstag detection failed
  */
 export const notifyAutoDetectionFailed = async (domain: string): Promise<void> => {
+  // Check extension state before notifying
+  const isEnabled = await extensionStateStorage.get();
+  if (!isEnabled) {
+    EmitLog({ name: 'content', payload: { msg: 'Extension disabled - not notifying detection failure', domain } });
+    return;
+  }
+
   try {
     await chrome.runtime.sendMessage({
       action: 'autoDetectionFailed',
@@ -171,17 +200,66 @@ export const notifyAutoDetectionFailed = async (domain: string): Promise<void> =
 
 export default function App() {
   const retriesRef = useRef(0);
+  const [isExtensionEnabled, setIsExtensionEnabled] = useState<boolean | null>(null);
+  const scriptInjectedRef = useRef(false);
+
+  // Monitor extension state changes
+  useEffect(() => {
+    // Get initial state
+    extensionStateStorage.get().then(state => {
+      setIsExtensionEnabled(state);
+      EmitLog({ name: 'content', payload: { msg: `Extension state loaded: ${state}` } });
+    });
+
+    // Subscribe to state changes
+    const unsubscribe = extensionStateStorage.subscribe(() => {
+      extensionStateStorage.get().then(state => {
+        setIsExtensionEnabled(state);
+        EmitLog({ name: 'content', payload: { msg: `Extension state changed: ${state}` } });
+
+        // Reset script injection flag when state changes to allow re-injection
+        if (state) {
+          scriptInjectedRef.current = false;
+        }
+      });
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
+    // Wait for extension state to be loaded
+    if (isExtensionEnabled === null) {
+      return;
+    }
+
+    // Only proceed if extension is enabled
+    if (!isExtensionEnabled) {
+      EmitLog({
+        name: 'content',
+        payload: { msg: 'Extension disabled - skipping TagLink injection and data collection' },
+      });
+      return;
+    }
+
     // ------------------------------
     // Handle Tag Link Injection
     // ------------------------------
     const injectScript = () => {
+      // Prevent multiple injections
+      if (scriptInjectedRef.current) {
+        EmitLog({ name: 'content', payload: { msg: 'TagLink script already injected, skipping' } });
+        return;
+      }
+
       const script = document.createElement('script');
 
       script.src = chrome.runtime.getURL('/tagLink.js');
       script.onload = () => {
         EmitLog({ name: 'content', payload: { msg: 'TagLink script loaded successfully' } });
+        scriptInjectedRef.current = true;
         script.remove();
       };
       script.onerror = () => {
@@ -225,11 +303,25 @@ export default function App() {
      *
      * The listener returns true to keep the message channel open during
      * async operations, which is required for Chrome extension messaging.
+     *
+     * IMPORTANT: All message handlers respect the extension state and only
+     * process messages when the extension is enabled.
      */
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       // Handle async operations by returning true to keep message channel open
       (async () => {
         try {
+          // Check extension state before processing any messages
+          const currentState = await extensionStateStorage.get();
+          if (!currentState) {
+            EmitLog({
+              name: 'content',
+              payload: { msg: 'Extension disabled - ignoring message', action: message.action },
+            });
+            sendResponse({ success: false, error: 'Extension is disabled' });
+            return;
+          }
+
           if (message.action == 'getConfig') {
             window.postMessage({ action: 'getConfig' }, '*');
           }
@@ -283,7 +375,14 @@ export default function App() {
     // ------------------------------
 
     // Listen for and Store JS Tag Config
-    document.addEventListener('config', function (event) {
+    document.addEventListener('config', async function (event) {
+      // Check extension state before processing config
+      const currentState = await extensionStateStorage.get();
+      if (!currentState) {
+        EmitLog({ name: 'content', payload: { msg: 'Extension disabled - ignoring config event' } });
+        return;
+      }
+
       EmitLog({ name: 'content', payload: { msg: 'Config event received', data: (event as any).detail } });
       const payload = (event as any).detail.data;
 
@@ -318,7 +417,14 @@ export default function App() {
     });
 
     // Listen for and Store JS Tag Entity
-    document.addEventListener('entity', function (event) {
+    document.addEventListener('entity', async function (event) {
+      // Check extension state before processing entity
+      const currentState = await extensionStateStorage.get();
+      if (!currentState) {
+        EmitLog({ name: 'content', payload: { msg: 'Extension disabled - ignoring entity event' } });
+        return;
+      }
+
       const payload = (event as any).detail.data;
 
       // Send to background script for per-tab storage
@@ -332,9 +438,7 @@ export default function App() {
         EmitLog({ name: 'storage', payload: { msg: 'Entity saved to global storage.' } });
       });
     });
-  }, []);
-
-  useEffect(() => {}, []);
+  }, [isExtensionEnabled]);
 
   return <></>;
 }

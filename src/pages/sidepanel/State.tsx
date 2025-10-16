@@ -19,7 +19,6 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
   const { documentationUrl, handleDocClick } = useDisabledState();
   const { currentTabId, isPinned, domain, url, tagConfig, pinCurrentDomain } = useCurrentTabState();
   const [resetSidePanel, setResetSidePanel] = useState(Date.now());
-  const [isEnabled, setIsEnabled] = useState(extensionState);
   const [hasLyticsSDK, setHasLyticsSDK] = useState(false);
 
   // Check if Lytics SDK is available
@@ -77,7 +76,6 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
 
   const handleStateToggle = isActive => {
     setResetSidePanel(Date.now());
-    setIsEnabled(isActive);
     extensionStateStorage.set(isActive);
     if (!isActive) {
       chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
@@ -90,13 +88,13 @@ const State: React.FC<React.PropsWithChildren<StateProps>> = () => {
 
   return (
     <Box width="100%" height="100vh" display="flex" overflow={'hidden'} flexDirection="column">
-      <TopNavigation isEnabled={isEnabled} onChange={handleStateToggle} domainState={domainState} />
+      <TopNavigation isEnabled={extensionState} onChange={handleStateToggle} domainState={domainState} />
 
-      {isEnabled ? (
+      {extensionState ? (
         <Box>
           {isPinned ? (
             <>
-              <SidePanel key={resetSidePanel} isEnabled={isEnabled} />
+              <SidePanel key={resetSidePanel} isEnabled={extensionState} />
             </>
           ) : (
             <EnabledState
