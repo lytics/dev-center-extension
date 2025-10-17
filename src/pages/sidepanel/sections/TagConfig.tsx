@@ -9,10 +9,10 @@ interface ConfigTabProps {
 }
 
 const StyledPanel = styled(Box)(({ theme }) => ({
-  width: '100%', // Fill container width (outer frame is 395px with 10px padding on each side = 375px content)
-  backgroundColor: '#272728', // Dark background
+  width: '100%',
+  backgroundColor: '#272728', // Dark background (appColors.common.darkPanel)
   borderRadius: theme.spacing(1), // 8px - slightly rounded corners
-  padding: theme.spacing(1.25), // 10px
+  padding: '0.625rem', // 10px inner padding
   cursor: 'default',
   transition: 'none',
   '&:hover': {
