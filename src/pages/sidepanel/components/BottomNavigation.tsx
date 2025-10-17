@@ -16,14 +16,19 @@ interface NavigationSection {
   ariaLabel: string;
 }
 
-const StyledBottomNavigation = styled(BottomNavigation)(({ theme }) => ({
+const StyledBottomNavigation = styled(BottomNavigation)(() => ({
   position: 'fixed',
   bottom: 0,
   width: '100%',
-  height: 'auto',
+  height: '70px',
   display: 'flex',
   justifyContent: 'space-between',
-  padding: theme.spacing(1.5, 2),
+  alignItems: 'center',
+  gap: '10px',
+  padding: '12px 16px',
+  backgroundColor: '#E9E8EDB8', // Figma background with transparency
+  backdropFilter: 'blur(13.3px)', // Figma blur value
+  WebkitBackdropFilter: 'blur(13.3px)', // Safari support
   cursor: 'default',
   transition: 'none',
   '&:hover': {
