@@ -11,7 +11,10 @@ interface ConfigTabProps {
 const StyledPanel = styled(Box)(({ theme }) => ({
   width: '100%',
   backgroundColor: '#272728', // Dark background (appColors.common.darkPanel)
-  borderRadius: theme.spacing(1), // 8px - slightly rounded corners
+  borderTopLeftRadius: theme.spacing(1), // 8px - rounded top-left corner
+  borderTopRightRadius: theme.spacing(1), // 8px - rounded top-right corner
+  borderBottomLeftRadius: 0, // Sharp bottom-left corner
+  borderBottomRightRadius: 0, // Sharp bottom-right corner
   padding: '0.625rem', // 10px inner padding
   cursor: 'default',
   transition: 'none',
