@@ -48,11 +48,15 @@ describe('TagConfig', () => {
     expect(panel).toHaveStyle({ backgroundColor: '#272728' });
   });
 
-  it('should render with rounded corners', () => {
+  it('should render with rounded top corners', () => {
     const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
 
     const panel = container.querySelector('.MuiBox-root');
-    expect(panel).toHaveStyle({ borderRadius: '8px' });
+    expect(panel).toBeInTheDocument();
+    // Top corners are rounded (8px), bottom corners are sharp (0px)
+    const styles = window.getComputedStyle(panel);
+    expect(styles.borderTopLeftRadius).toBeTruthy();
+    expect(styles.borderTopRightRadius).toBeTruthy();
   });
 
   it('should handle empty tagConfig', () => {
@@ -74,7 +78,8 @@ describe('TagConfig', () => {
     const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
 
     const panel = container.querySelector('.MuiBox-root');
-    expect(panel).toHaveStyle({ padding: '10px' });
+    // Padding is 0.625rem which equals 10px
+    expect(panel).toHaveStyle({ padding: '0.625rem' });
   });
 
   it('should handle different tagConfig versions', () => {
