@@ -13,13 +13,11 @@ vi.mock('@root/src/pages/sidepanel/components/TreeDisplay', () => ({
 
 describe('TagConfig', () => {
   const mockTagConfig: TagConfigModel = {
-    account: 'test-account-123',
     stream: 'test-stream',
-    cid: 'test-cid-456',
-    apitoken: 'test-api-token',
-    domain: 'https://example.com',
+    cid: ['test-cid-456'], // cid is string[] according to model
     version: '3.5.0',
-    loaded: true,
+    url: 'https://example.com',
+    src: 'https://c.lytics.io/api/tag/test-account-123/latest.min.js',
   };
 
   const renderWithTheme = (component: React.ReactElement) => {
@@ -37,9 +35,9 @@ describe('TagConfig', () => {
     renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
 
     const treeDisplay = screen.getByTestId('tree-display');
-    expect(treeDisplay).toHaveTextContent(mockTagConfig.account);
     expect(treeDisplay).toHaveTextContent(mockTagConfig.stream);
     expect(treeDisplay).toHaveTextContent(mockTagConfig.version);
+    expect(treeDisplay).toHaveTextContent(mockTagConfig.url);
   });
 
   it('should render with dark background styling', () => {
@@ -93,15 +91,15 @@ describe('TagConfig', () => {
 
   it('should handle tagConfig with missing optional fields', () => {
     const partialConfig = {
-      account: 'test-account',
       stream: 'test-stream',
+      version: '3.5.0',
     } as TagConfigModel;
 
     renderWithTheme(<TagConfig tagConfig={partialConfig} />);
 
     const treeDisplay = screen.getByTestId('tree-display');
     expect(treeDisplay).toBeInTheDocument();
-    expect(treeDisplay).toHaveTextContent('test-account');
+    expect(treeDisplay).toHaveTextContent('test-stream');
   });
 
   it('should not have hover effects', () => {
