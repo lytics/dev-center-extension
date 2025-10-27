@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { appColors } from '@root/src/theme/palette';
 import TreeDisplay from '@root/src/pages/sidepanel/components/TreeDisplay';
 
 interface ProfileDetailTabProps {
@@ -9,12 +10,9 @@ interface ProfileDetailTabProps {
 
 const StyledPanel = styled(Box)(({ theme }) => ({
   width: '100%',
-  backgroundColor: '#272728', // Dark background (appColors.common.darkPanel)
-  borderTopLeftRadius: theme.spacing(1), // 8px - rounded top-left corner
-  borderTopRightRadius: theme.spacing(1), // 8px - rounded top-right corner
-  borderBottomLeftRadius: 0, // Sharp bottom-left corner
-  borderBottomRightRadius: 0, // Sharp bottom-right corner
-  padding: '0.625rem', // 10px inner padding
+  backgroundColor: appColors.common.darkPanel,
+  borderRadius: `${theme.spacing(1)} ${theme.spacing(1)} 0 0`, // 8px top corners, 0px bottom corners (top-left, top-right, bottom-right, bottom-left)
+  padding: '0.625rem',
   cursor: 'default',
   transition: 'none',
   '&:hover': {
