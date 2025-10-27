@@ -32,9 +32,6 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
   };
 
   useEffect(() => {
-    // Debug: Log profile structure
-    console.log('Profile data structure:', profile);
-
     // total attributes available
     if (profile?.data?.user) {
       setTotalAttributes(Object.keys(profile.data.user).length);
