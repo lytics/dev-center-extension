@@ -140,6 +140,12 @@ export const appContent = {
     learnMoreText: 'Learn more',
     learnMoreUrl: 'https://docs.lytics.com/docs/personalization-api#allowlist-fields-for-public-api',
   },
+
+  // ProfileMetadata Component
+  profileMetadata: {
+    lastUpdatedLabel: 'Profile Last Updated',
+    lastAttributeLabel: 'Last Attribute',
+  },
 } as const;
 
 // Type for accessing content with autocomplete

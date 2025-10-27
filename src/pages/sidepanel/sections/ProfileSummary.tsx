@@ -1,109 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Chip, Divider, LinearProgress, Stack, Typography } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { Lock } from '@mui/icons-material';
-import SimpleTable from '@root/src/pages/sidepanel/components/SimpleTable';
+import { Box } from '@mui/material';
 import ProfileHeader from '@root/src/pages/sidepanel/sections/profile/ProfileHeader';
 import AudienceMembership from '@root/src/pages/sidepanel/sections/profile/AudienceMembership';
 import Attributes from '@root/src/pages/sidepanel/sections/profile/Attributes';
 import BehaviorMetrics from '@root/src/pages/sidepanel/sections/profile/BehaviorMetrics';
 import Interests from '@root/src/pages/sidepanel/sections/profile/Interests';
-
-interface BarStylesProps {
-  backgroundGradient: string;
-}
-
-const barStyles = makeStyles(() => ({
-  linearProgress: ({ backgroundGradient }: BarStylesProps) => ({
-    background: '#DCDCEA',
-    borderRadius: '2px',
-    '& .MuiLinearProgress-bar': {
-      background: backgroundGradient,
-    },
-  }),
-}));
+import ProfileMetadata from '@root/src/pages/sidepanel/sections/profile/ProfileMetadata';
 interface ProfileSummaryTabProps {
   profile: any;
 }
 
-const HighlightBox: React.FC<{ headline: string; cta?: React.ReactNode; value: React.ReactNode }> = ({
-  headline,
-  value,
-  cta,
-}) => {
-  return (
-    <Box
-      p={2}
-      sx={{
-        borderRadius: '5px',
-        backgroundColor: '#D9D9E1',
-        width: '100%',
-      }}>
-      <Typography variant="body2" align="center">
-        {headline}
-      </Typography>
-      <Typography variant="h5" align="center" sx={{ fontWeight: 600 }}>
-        {value}
-      </Typography>
-      {cta && <Box>{cta}</Box>}
-    </Box>
-  );
-};
-
-interface CustomBarChartProps {
-  data: any;
-  color1?: string;
-  color2?: string;
-}
-
-const CustomBarChart: React.FC<CustomBarChartProps> = ({ data, color1, color2 }: CustomBarChartProps) => {
-  const classes = barStyles({
-    backgroundGradient: `linear-gradient(75deg, ${color1 || '#6C31B8'} 60%, ${color2 || '#AB32DE'} 100%)`,
-  });
-
-  const truncateString = (str, maxLength) => {
-    if (str.length > maxLength) {
-      return str.substring(0, maxLength) + '...';
-    }
-    return str;
-  };
-
-  return (
-    <Stack spacing={0.5}>
-      {data.map((item, index) => (
-        <Stack key={index} spacing={1} direction={'row'} ml={1} mr={1}>
-          <Box
-            sx={{
-              width: '200px',
-              borderRadius: '2px',
-              // background: 'linear-gradient(90deg, rgba(255, 255, 255, 0) 80%, #D8D8E5 100%)',
-            }}>
-            <Typography variant="body2" sx={{ fontSize: 12, textAlign: 'right' }}>
-              {truncateString(item.label, 20)}
-            </Typography>
-          </Box>
-          <LinearProgress
-            variant="determinate"
-            value={Math.round(item.value * 100)}
-            sx={{
-              width: '100%',
-              height: '1rem',
-            }}
-            className={classes.linearProgress}
-          />
-        </Stack>
-      ))}
-    </Stack>
-  );
-};
-
 const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
   const [hasContent, setHasContent] = useState(false);
-  const [hasScores, setHasScores] = useState(false);
   const [totalAttributes, setTotalAttributes] = useState(0);
   const [scores, setScores] = useState([]);
-  const [affinities, setAffinities] = useState<{ [key: string]: number }>({});
-  const [computedAttributes, setComputedAttributes] = useState<{ [key: string]: string }>({});
 
   const appendScore = (scoresArray, profileData, propertyName, label) => {
     const propertyValue = profileData?.user?.[propertyName];
@@ -122,31 +32,22 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
   };
 
   useEffect(() => {
+    // Debug: Log profile structure
+    console.log('Profile data structure:', profile);
+
     // total attributes available
     if (profile?.data?.user) {
       setTotalAttributes(Object.keys(profile.data.user).length);
     }
 
-    // populate content
+    // populate content (for Interests component)
     if (profile?.data?.user?.lytics_content) {
-      const affinityEntries = Object.entries(profile.data.user.lytics_content);
-      const filteredEntries = affinityEntries.filter(([key]) => key.length > 1);
-      const slicedEntries = filteredEntries.slice(0, 20);
-      const affinityObject = Object.fromEntries(slicedEntries);
-      setAffinities(affinityObject as { [key: string]: number });
       setHasContent(true);
-    }
-    // populate computed attributes
-    if (profile?.data?.user?.segments) {
-      const segmentsArray = profile.data.user.segments;
-      const computedAttributesObject = segmentsArray.reduce((result, segment) => {
-        result[segment] = segment;
-        return result;
-      }, {});
-      setComputedAttributes(computedAttributesObject);
+    } else {
+      setHasContent(false);
     }
 
-    // populate scores
+    // populate scores (for Behavior component)
     let updatedScores = [];
     updatedScores = appendScore(updatedScores, profile.data, 'score_consistency', 'Consistency');
     updatedScores = appendScore(updatedScores, profile.data, 'score_frequency', 'Frequency');
@@ -157,34 +58,19 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
     updatedScores = appendScore(updatedScores, profile.data, 'score_quantity', 'Quantity');
     updatedScores = appendScore(updatedScores, profile.data, 'score_recency', 'Recency');
     updatedScores = appendScore(updatedScores, profile.data, 'score_volatility', 'Volatility');
-
-    if (updatedScores.length > 0) {
-      setHasScores(true);
-    } else {
-      setHasScores(false);
-    }
     setScores(updatedScores);
   }, [profile]);
-
-  const computedAttributesValue = Object.values(computedAttributes).join(', ');
-
-  const sortedData = Object.entries(affinities)
-    .map(([label, value]) => ({ label, value }))
-    .sort((a, b) => b.value - a.value);
-
-  const openNewTab = url => {
-    window.open(url, '_blank');
-  };
 
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        flexGrow: 1,
-        fontSize: '12px',
-        gap: '0.75rem', // 12px gap between components
+        width: '100%',
         paddingTop: '0.75rem', // 12px gap from top (tab divider)
+        gap: '0.75rem', // 12px gap between components
+        overflow: 'auto',
+        paddingBottom: '5rem', // Extra padding at bottom for scroll space
       }}>
       {/* NEW: Profile Header Component */}
       <ProfileHeader
@@ -221,132 +107,45 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
       {/* NEW: Interests Component */}
       <Interests hasData={hasContent} />
 
-      <Stack direction={'row'} spacing={2} justifyContent={'center'} alignItems={'center'}>
-        <HighlightBox
-          headline={'Available Attributes'}
-          value={totalAttributes}
-          cta={
-            <Box
-              borderRadius={2}
-              textAlign={'center'}
-              mt={1}
-              pt={2}
-              sx={{
-                backgroundColor: '#E9E9EA',
-              }}>
-              <Button
-                variant="outlined"
-                size="small"
-                color="secondary"
-                onClick={() => openNewTab('https://docs.lytics.com/docs/account-settings#lytics-api')}>
-                Surface Additional Attributes
-              </Button>
-              <Typography
-                p={2}
-                sx={{
-                  fontSize: '12px',
-                }}>
-                You may have more attributes available for personalization. Review documentation on how to configure
-                which attributes are surfaced to the web.
-              </Typography>
-            </Box>
-          }
-        />
-      </Stack>
-      <Box mt={1}>
-        <SimpleTable
-          rows={[
-            { label: 'Lytics ID', value: profile?.data?.user?._id || 'Unknown' },
-            { label: 'Last _UID (Cookie)', value: profile?.data?.user?._uid || profile?.data?._uid || 'Unknown' },
-            {
-              label: 'Audiences',
-              position: 'top',
-              fancyValue: (
-                <Box pl={1} pr={1} display="flex" justifyContent="center" flexDirection="row" flexWrap="wrap">
-                  {computedAttributesValue.split(',').map((attribute, index) => (
-                    <Chip
-                      size={'small'}
-                      variant={'outlined'}
-                      key={index}
-                      label={attribute}
-                      sx={{ borderRadius: 1, mr: 1, mb: 1, backgroundColor: '#FFF' }}
-                    />
-                  ))}
-                </Box>
-              ),
-            },
-            {
-              label: 'Behavior',
-              position: 'top',
-              fancyValue: (
-                <Box>
-                  {hasScores ? (
-                    <CustomBarChart data={scores} color1={'#00BAE3'} color2={'#85DB83'} />
-                  ) : (
-                    <Stack
-                      direction={'row'}
-                      p={1}
-                      border={1}
-                      bgcolor={'#FFF'}
-                      borderRadius={1}
-                      borderColor={'#F3F3F3'}
-                      alignItems="center">
-                      <Box mr={1} color={'#C8C8D6'}>
-                        <Lock />
-                      </Box>
-                      <Typography variant="subtitle2" align="left" color={'#A5A5B1'}>
-                        Scores are not currently shared for this account. You can share them{' '}
-                        <a
-                          href="https://docs.lytics.com/docs/personalization-api#allowlist-fields-for-public-api"
-                          target="_blank"
-                          rel="noreferrer">
-                          here
-                        </a>
-                        .
-                      </Typography>
-                    </Stack>
-                  )}
-                </Box>
-              ),
-            },
-            {
-              label: 'Interests',
-              position: 'top',
-              fancyValue: (
-                <Box>
-                  {hasContent ? (
-                    <CustomBarChart data={sortedData} color1={'#9D70FD'} color2={'#D36FDE'} />
-                  ) : (
-                    <Stack
-                      direction={'row'}
-                      p={1}
-                      border={1}
-                      bgcolor={'#FFF'}
-                      borderRadius={1}
-                      borderColor={'#F3F3F3'}
-                      alignItems="center">
-                      <Box mr={1} color={'#C8C8D6'}>
-                        <Lock />
-                      </Box>
-                      <Typography variant="subtitle2" align="left" color={'#A5A5B1'}>
-                        Interests are not currently shared for this account. You can share them{' '}
-                        <a
-                          href="https://docs.lytics.com/docs/personalization-api#allowlist-fields-for-public-api"
-                          target="_blank"
-                          rel="noreferrer">
-                          here
-                        </a>
-                        .
-                      </Typography>
-                    </Stack>
-                  )}
-                </Box>
-              ),
-            },
-          ]}
-        />
-        <Divider sx={{ mt: 0.5 }} />
-      </Box>
+      {/* NEW: Profile Metadata Component */}
+      <ProfileMetadata
+        lastUpdated={
+          profile?.data?.user?._modified
+            ? (() => {
+                const updatedTime = new Date(profile.data.user._modified);
+                const now = new Date();
+                const diffMs = now.getTime() - updatedTime.getTime();
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+
+                if (diffMins < 1) return 'Just now';
+                if (diffMins < 60) return `${diffMins} min. ago`;
+                if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+                if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+
+                return updatedTime.toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                });
+              })()
+            : 'Unknown'
+        }
+        lastAttribute={(() => {
+          // Get the most recent attribute by checking which fields exist and their values
+          const user = profile?.data?.user;
+          if (!user) return 'Unknown';
+
+          // Common attributes to check (excluding system fields)
+          const attributes = Object.keys(user).filter(
+            key => !key.startsWith('_') && !key.startsWith('score_') && key !== 'segments',
+          );
+
+          // Return the first non-system attribute, or a default
+          return attributes.length > 0 ? attributes[0] : 'Unknown';
+        })()}
+      />
     </Box>
   );
 };
