@@ -29,6 +29,14 @@ vi.mock('@src/shared/storages/tagConfigStorage', () => ({
   },
 }));
 
+vi.mock('@src/shared/storages/extensionStateStorage', () => ({
+  default: {
+    get: vi.fn().mockResolvedValue(true),
+    set: vi.fn().mockResolvedValue(undefined),
+    subscribe: vi.fn(() => vi.fn()), // Returns unsubscribe function
+  },
+}));
+
 // Mock chrome.runtime
 global.chrome = {
   runtime: {
@@ -65,8 +73,9 @@ Object.defineProperty(document, 'addEventListener', {
 
 describe('Auto-Detection Functions', () => {
   let mockChromeRuntime: any;
+  let mockExtensionStateStorage: any;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
 
     // Setup Chrome API mocks
@@ -84,6 +93,11 @@ describe('Auto-Detection Functions', () => {
       writable: true,
       value: undefined,
     });
+
+    // Get the mocked extension state storage and ensure it returns true by default
+    const extensionStateStorage = await import('@src/shared/storages/extensionStateStorage');
+    mockExtensionStateStorage = extensionStateStorage.default;
+    vi.mocked(mockExtensionStateStorage.get).mockResolvedValue(true);
   });
 
   afterEach(() => {
@@ -277,6 +291,60 @@ describe('Auto-Detection Functions', () => {
         domain: 'example.com',
         retryCount: 0,
       });
+    });
+  });
+
+  describe('Extension State Guards', () => {
+    test('should respect extension state when disabled', async () => {
+      // Mock extension as disabled
+      vi.mocked(mockExtensionStateStorage.get).mockResolvedValue(false);
+
+      // Setup jstag as available
+      (window as any).jstag = { someMethod: vi.fn() };
+
+      // Attempt auto-detection
+      await startAutoDetection('example.com');
+
+      // Should not send message when disabled
+      expect(mockChromeRuntime.sendMessage).not.toHaveBeenCalled();
+    });
+
+    test('should allow operations when extension is enabled', async () => {
+      // Mock extension as enabled (already set in beforeEach, but being explicit)
+      vi.mocked(mockExtensionStateStorage.get).mockResolvedValue(true);
+
+      // Setup jstag as available
+      (window as any).jstag = { someMethod: vi.fn() };
+
+      // Attempt auto-detection
+      await startAutoDetection('example.com');
+
+      // Should successfully send detection message
+      expect(mockChromeRuntime.sendMessage).toHaveBeenCalledWith({
+        action: 'recordDetection',
+        domain: 'example.com',
+        confidence: 0.9,
+      });
+    });
+
+    test('should stop polling when extension is disabled mid-detection', async () => {
+      // Setup jstag as unavailable initially
+      (window as any).jstag = undefined;
+
+      // Start polling
+      pollForJstag('example.com');
+
+      // Wait a bit
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Disable extension mid-detection
+      vi.mocked(mockExtensionStateStorage.get).mockResolvedValue(false);
+
+      // Wait for next poll attempt
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      // Should not have sent any messages
+      expect(mockChromeRuntime.sendMessage).not.toHaveBeenCalled();
     });
   });
 });
