@@ -3,6 +3,11 @@ import { Box, Button, Chip, Divider, LinearProgress, Stack, Typography } from '@
 import { makeStyles } from '@mui/styles';
 import { Lock } from '@mui/icons-material';
 import SimpleTable from '@root/src/pages/sidepanel/components/SimpleTable';
+import ProfileHeader from '@root/src/pages/sidepanel/sections/profile/ProfileHeader';
+import AudienceMembership from '@root/src/pages/sidepanel/sections/profile/AudienceMembership';
+import Attributes from '@root/src/pages/sidepanel/sections/profile/Attributes';
+import BehaviorMetrics from '@root/src/pages/sidepanel/sections/profile/BehaviorMetrics';
+import Interests from '@root/src/pages/sidepanel/sections/profile/Interests';
 
 interface BarStylesProps {
   backgroundGradient: string;
@@ -178,7 +183,44 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         flexDirection: 'column',
         flexGrow: 1,
         fontSize: '12px',
+        gap: '0.75rem', // 12px gap between components
+        paddingTop: '0.75rem', // 12px gap from top (tab divider)
       }}>
+      {/* NEW: Profile Header Component */}
+      <ProfileHeader
+        lyticsId={profile?.data?.user?._id || 'Unknown'}
+        lastUid={profile?.data?.user?._uid || profile?.data?._uid || 'Unknown'}
+        completeness={78}
+      />
+
+      {/* NEW: Audience Membership Component */}
+      <AudienceMembership
+        audiences={
+          profile?.data?.user?.segments || ['anonymous_profiles', 'smt_new', 'all', 'orc_experience_24bd33fc6ab8...']
+        }
+      />
+
+      {/* NEW: Attributes Component */}
+      <Attributes count={totalAttributes || 46} />
+
+      {/* NEW: Behavior Metrics Component */}
+      <BehaviorMetrics
+        metrics={
+          scores.length > 0
+            ? scores.map(score => ({
+                label: score.label,
+                value: Math.round(score.value * 100),
+              }))
+            : [
+                { label: 'Consistency', value: 0 },
+                { label: 'Frequency', value: 0 },
+              ]
+        }
+      />
+
+      {/* NEW: Interests Component */}
+      <Interests hasData={hasContent} />
+
       <Stack direction={'row'} spacing={2} justifyContent={'center'} alignItems={'center'}>
         <HighlightBox
           headline={'Available Attributes'}
