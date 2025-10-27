@@ -48,6 +48,17 @@ const CountBadge = styled(Box)(({ theme }) => ({
   color: appColors.neutral[900],
 }));
 
+const DescriptionBox = styled(Box)(({ theme }) => ({
+  width: '100%',
+  minWidth: '21.4375rem', // 343px
+  minHeight: '5.75rem', // 92px
+  gap: '0.625rem', // 10px
+  padding: '0.75rem', // 12px
+  backgroundColor: appColors.common.white,
+  borderRadius: theme.spacing(1), // 8px
+  border: '1px solid #E6E6E6',
+}));
+
 const DescriptionText = styled(Typography)(() => ({
   fontSize: appColors.common.fontSize.small,
   color: appColors.neutral[600],
@@ -73,16 +84,18 @@ export const Attributes = ({ count, textContent = appContent.attributes }: Attri
         <CountBadge>{count}</CountBadge>
       </HeaderRow>
 
-      <DescriptionText>
-        {textContent.description}{' '}
-        <StyledLink
-          href={textContent.learnMoreUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Learn more about configuring attributes">
-          {textContent.learnMoreText}
-        </StyledLink>
-      </DescriptionText>
+      <DescriptionBox>
+        <DescriptionText>
+          {textContent.description}{' '}
+          <StyledLink
+            href={textContent.learnMoreUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Learn more about configuring attributes">
+            {textContent.learnMoreText}
+          </StyledLink>
+        </DescriptionText>
+      </DescriptionBox>
     </Container>
   );
 };

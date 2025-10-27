@@ -37,10 +37,14 @@ const EmptyStateContainer = styled(Stack)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'flex-start',
-  gap: theme.spacing(1.5), // 12px
-  padding: theme.spacing(1.5), // 12px
-  backgroundColor: appColors.neutral[50],
+  width: '100%',
+  minWidth: '21.4375rem', // 343px
+  minHeight: '4.6875rem', // 75px
+  gap: '0.625rem', // 10px
+  padding: '0.75rem', // 12px
+  backgroundColor: appColors.common.white,
   borderRadius: theme.spacing(1), // 8px
+  border: '1px solid #E6E6E6',
 }));
 
 const LockIcon = styled(Lock)(() => ({

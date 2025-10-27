@@ -70,9 +70,9 @@ const StyledLinearProgress = styled(LinearProgress)(({ theme }) => ({
   width: '100%',
   height: '0.5rem', // 8px
   borderRadius: theme.spacing(0.5),
-  backgroundColor: appColors.neutral[100],
+  backgroundColor: appColors.common.colors.accentLight, // Light purple background
   '& .MuiLinearProgress-bar': {
-    background: `linear-gradient(90deg, ${appColors.common.colors.accent} 0%, ${appColors.secondary.light} 100%)`,
+    backgroundColor: appColors.common.colors.accent, // Solid purple, no gradient
     borderRadius: theme.spacing(0.5),
   },
 }));

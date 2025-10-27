@@ -60,6 +60,7 @@ const appColors = {
     colors: {
       textSecondary: '#7D7A7A', // Secondary text color
       accent: '#8848F9', // Accent color for buttons and links
+      accentLight: '#E8DBFF', // Light purple for backgrounds/progress bars
       autoDetection: {
         background: '#DDE3FF', // Auto-detection background
         border: '#516EFF', // Auto-detection border

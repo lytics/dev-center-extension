@@ -42,7 +42,7 @@ const AudienceChipsContainer = styled(Stack)(() => ({
 }));
 
 const StyledChip = styled(Chip)(() => ({
-  backgroundColor: '#E8DBFF', // Light purple background from Figma
+  backgroundColor: appColors.common.colors.accentLight, // Light purple background from theme
   borderRadius: '6.25rem', // 100px - full pill shape
   padding: '0.375rem 1rem', // 6px 16px
   height: 'auto',
@@ -61,7 +61,7 @@ const StyledChip = styled(Chip)(() => ({
     fontSize: '1rem',
   },
   '&:hover': {
-    backgroundColor: '#E8DBFF',
+    backgroundColor: appColors.common.colors.accentLight,
   },
 }));
 
