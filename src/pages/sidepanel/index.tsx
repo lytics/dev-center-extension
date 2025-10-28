@@ -1,8 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter as Router } from 'react-router-dom';
+
 import State from '@pages/sidepanel/State';
 import { AppThemeProvider } from '@src/theme/ThemeProvider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 function init() {
   const appContainer = document.querySelector('#app-container');
@@ -12,13 +16,17 @@ function init() {
   }
 
   const root = createRoot(appContainer);
+  const queryClient = new QueryClient();
 
   root.render(
     <React.StrictMode>
       <AppThemeProvider>
-        <Router>
-          <State />
-        </Router>
+        <QueryClientProvider client={queryClient}>
+          <Router>
+            <State />
+          </Router>
+          <ReactQueryDevtools buttonPosition="top-right" />
+        </QueryClientProvider>
       </AppThemeProvider>
     </React.StrictMode>,
   );
