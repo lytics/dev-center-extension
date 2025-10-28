@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { messageBroker } from '../../../../shared/message-broker';
 import { IMessage } from '../../../../shared/message-broker/types';
+import { TagConfigModel } from '../../../../shared/models/tagConfigModel';
 import { useCurrentTab } from '../useCurrentTab';
 
 const getMessageRequest = (
@@ -15,14 +16,14 @@ const getMessageRequest = (
   },
 });
 
-const getTagConfig = async (currentTabId: number) => {
+const getTagConfig = async (currentTabId: number): Promise<TagConfigModel> => {
   return await messageBroker.send(getMessageRequest(currentTabId));
 };
 
 export const useTagConfig = () => {
   const currentTab = useCurrentTab();
 
-  return useQuery({
+  return useQuery<TagConfigModel>({
     queryKey: ['tagConfig', currentTab?.url, currentTab?.id],
     queryFn: () => getTagConfig(currentTab.id),
     enabled: !!currentTab?.id,

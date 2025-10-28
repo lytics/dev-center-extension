@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { injectScript, setupBackgroundToContentListener, setupRetryHandler } from './scriptInjection';
@@ -91,7 +93,7 @@ describe('Script Injection Module', () => {
 
   describe('setupRetryHandler', () => {
     test('should handle retry messages', () => {
-      const retriesRef = { current: 0 };
+      const retriesRef = { current: 0 } as React.MutableRefObject<number>;
       const scriptInjectedRef = { current: false };
 
       setupRetryHandler(retriesRef, scriptInjectedRef);
@@ -106,7 +108,7 @@ describe('Script Injection Module', () => {
     });
 
     test('should not handle non-retry messages', () => {
-      const retriesRef = { current: 0 };
+      const retriesRef = { current: 0 } as React.MutableRefObject<number>;
       const scriptInjectedRef = { current: false };
 
       setupRetryHandler(retriesRef, scriptInjectedRef);
@@ -118,6 +120,41 @@ describe('Script Injection Module', () => {
       window.dispatchEvent(new MessageEvent('message', { data: nonRetryEvent.data }));
 
       expect(retriesRef.current).toBe(0);
+    });
+
+    test('should inject script on retry message', () => {
+      const retriesRef = { current: 0 } as React.MutableRefObject<number>;
+      const scriptInjectedRef = { current: false };
+
+      setupRetryHandler(retriesRef, scriptInjectedRef);
+
+      const retryEvent = {
+        data: { type: 'retry' },
+      };
+
+      window.dispatchEvent(new MessageEvent('message', { data: retryEvent.data }));
+
+      expect(document.createElement).toHaveBeenCalledWith('script');
+    });
+
+    test('should handle multiple retries', () => {
+      const retriesRef = { current: 0 } as React.MutableRefObject<number>;
+      const scriptInjectedRef = { current: false };
+
+      setupRetryHandler(retriesRef, scriptInjectedRef);
+
+      window.dispatchEvent(new MessageEvent('message', { data: { type: 'retry' } }));
+      window.dispatchEvent(new MessageEvent('message', { data: { type: 'retry' } }));
+
+      expect(retriesRef.current).toBe(2);
+    });
+
+    test('should return handler function', () => {
+      const retriesRef = { current: 0 } as React.MutableRefObject<number>;
+      const handler = setupRetryHandler(retriesRef);
+
+      expect(handler).toBeDefined();
+      expect(typeof handler).toBe('function');
     });
   });
 
@@ -162,6 +199,13 @@ describe('Script Injection Module', () => {
       };
 
       window.dispatchEvent(new MessageEvent('message', { ...differentActionEvent }));
+    });
+
+    test('should return handler function', () => {
+      const handler = setupBackgroundToContentListener();
+
+      expect(handler).toBeDefined();
+      expect(typeof handler).toBe('function');
     });
   });
 });

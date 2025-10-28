@@ -70,7 +70,7 @@ export const setupChromeMessageListener = () => {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         document.removeEventListener('config', configHandler);
-        reject(new Error(`Config retrieval timeout after ${TIMEOUT_MS / 100} seconds`));
+        reject(new Error(`Config retrieval timeout after ${TIMEOUT_MS / 1000} seconds`));
       }, TIMEOUT_MS);
 
       const configHandler = (event: CustomEvent) => {

@@ -73,7 +73,7 @@ describe('Event Handler Module', () => {
 
       const configData = { cid: 'test-cid', stream: 'test-stream' };
       const event = new CustomEvent('config', {
-        detail: { data: JSON.stringify(configData) },
+        detail: { data: configData },
       });
 
       document.dispatchEvent(event);
@@ -82,10 +82,10 @@ describe('Event Handler Module', () => {
 
       expect(global.chrome.runtime.sendMessage).toHaveBeenCalledWith({
         action: 'saveTagConfig',
-        payload: JSON.stringify(configData),
+        payload: configData,
       });
 
-      expect(mockTagConfigStore.set).toHaveBeenCalledWith(JSON.stringify(configData));
+      expect(mockTagConfigStore.set).toHaveBeenCalledWith(configData);
 
       expect(global.chrome.runtime.sendMessage).toHaveBeenCalledWith({
         action: 'recordDetection',
@@ -101,7 +101,7 @@ describe('Event Handler Module', () => {
 
       const configData = { cid: 'test-cid', stream: 'test-stream' };
       const event = new CustomEvent('config', {
-        detail: { data: JSON.stringify(configData) },
+        detail: { data: configData },
       });
 
       document.dispatchEvent(event);
@@ -119,7 +119,7 @@ describe('Event Handler Module', () => {
 
       const configData = { cid: 'test-cid', stream: 'test-stream' };
       const event = new CustomEvent('config', {
-        detail: { data: JSON.stringify(configData) },
+        detail: { data: configData },
       });
 
       document.dispatchEvent(event);
@@ -128,7 +128,7 @@ describe('Event Handler Module', () => {
 
       expect(global.chrome.runtime.sendMessage).toHaveBeenCalledWith({
         action: 'saveTagConfig',
-        payload: JSON.stringify(configData),
+        payload: configData,
       });
     });
   });
@@ -146,7 +146,7 @@ describe('Event Handler Module', () => {
 
       const entityData = { _uid: 'test-uid', email: 'test@example.com' };
       const event = new CustomEvent('entity', {
-        detail: { data: JSON.stringify(entityData) },
+        detail: { data: entityData },
       });
 
       document.dispatchEvent(event);
@@ -155,10 +155,10 @@ describe('Event Handler Module', () => {
 
       expect(global.chrome.runtime.sendMessage).toHaveBeenCalledWith({
         action: 'saveEntity',
-        payload: JSON.stringify(entityData),
+        payload: entityData,
       });
 
-      expect(mockEntityStore.set).toHaveBeenCalledWith(JSON.stringify(entityData));
+      expect(mockEntityStore.set).toHaveBeenCalledWith(entityData);
     });
 
     test('should not process entity event when extension is disabled', async () => {
@@ -168,7 +168,7 @@ describe('Event Handler Module', () => {
 
       const entityData = { _uid: 'test-uid', email: 'test@example.com' };
       const event = new CustomEvent('entity', {
-        detail: { data: JSON.stringify(entityData) },
+        detail: { data: entityData },
       });
 
       document.dispatchEvent(event);
@@ -184,14 +184,14 @@ describe('Event Handler Module', () => {
 
       const entityData = { _uid: 'test-uid', email: 'test@example.com' };
       const event = new CustomEvent('entity', {
-        detail: { data: JSON.stringify(entityData) },
+        detail: { data: entityData },
       });
 
       document.dispatchEvent(event);
 
       await new Promise(resolve => setTimeout(resolve, 0));
 
-      expect(mockEntityStore.set).toHaveBeenCalledWith(JSON.stringify(entityData));
+      expect(mockEntityStore.set).toHaveBeenCalledWith(entityData);
     });
   });
 
@@ -203,7 +203,7 @@ describe('Event Handler Module', () => {
 
       const configData = { cid: 'test-cid', stream: 'test-stream' };
       const event = new CustomEvent('config', {
-        detail: { data: JSON.stringify(configData) },
+        detail: { data: configData },
       });
 
       document.dispatchEvent(event);
@@ -220,7 +220,7 @@ describe('Event Handler Module', () => {
 
       const entityData = { _uid: 'test-uid', email: 'test@example.com' };
       const event = new CustomEvent('entity', {
-        detail: { data: JSON.stringify(entityData) },
+        detail: { data: entityData },
       });
 
       document.dispatchEvent(event);
@@ -237,7 +237,7 @@ describe('Event Handler Module', () => {
 
       const configData = { cid: 'test-cid', stream: 'test-stream' };
       const event = new CustomEvent('config', {
-        detail: { data: JSON.stringify(configData) },
+        detail: { data: configData },
       });
 
       document.dispatchEvent(event);
