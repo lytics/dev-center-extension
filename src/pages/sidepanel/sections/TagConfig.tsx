@@ -12,7 +12,7 @@ interface ConfigTabProps {
 const StyledPanel = styled(Box)(({ theme }) => ({
   width: '100%',
   backgroundColor: appColors.common.darkPanel,
-  borderRadius: `${theme.spacing(1)} ${theme.spacing(1)} 0 0`, // 8px top corners, 0px bottom corners (top-left, top-right, bottom-right, bottom-left)
+  borderRadius: theme.spacing(1), // 8px all corners
   padding: '0.625rem', // 10px inner padding
   cursor: 'default',
   transition: 'none',

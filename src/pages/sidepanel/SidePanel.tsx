@@ -104,7 +104,15 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
         </Box>
       ) : (
         <>
-          <Box justifyContent={'center'} alignItems={'flex-start'} display="flex" flexDirection="column">
+          <Box
+            justifyContent={'center'}
+            alignItems={'flex-start'}
+            display="flex"
+            flexDirection="column"
+            sx={{
+              height: 'calc(100vh - 160px)', // Full height minus top navigation (~90px) and bottom navigation (70px)
+              overflow: 'hidden',
+            }}>
             <Routes>
               <Route path="/settings" element={<Configuration />} />
               <Route

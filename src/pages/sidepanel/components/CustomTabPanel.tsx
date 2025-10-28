@@ -8,10 +8,10 @@ interface TabPanelProps {
   value: number;
 }
 
-const TabPanelContainer = styled(Box)(() => ({
-  padding: '0.625rem', // 10px padding between outer frame and inner content
-  height: 'calc(100vh - 185px)',
-  overflow: 'auto',
+const TabPanelContainer = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(1.25), // 10px padding
+  paddingBottom: theme.spacing(12), // 96px bottom space to clear bottom navigation + buttons
+  boxSizing: 'border-box',
 }));
 
 const CustomTabPanel = (props: TabPanelProps): JSX.Element => {

@@ -53,9 +53,9 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates, getter, s
   ];
 
   return (
-    <Stack alignItems={'flex-start'} justifyContent={'center'} height={'100%'} width={'100%'}>
+    <Stack alignItems={'flex-start'} justifyContent={'flex-start'} height={'100%'} width={'100%'}>
       <TabNavigation tabs={tabs} value={getter} onChange={handleSetTab} />
-      <Box flexGrow={1} width={'100%'} overflow={'auto'}>
+      <Box flexGrow={1} width={'100%'} overflow={'auto'} sx={{ height: 0 }}>
         <CustomTabPanel value={getter} index={0}>
           {candidates?.experiences.length > 0 ? (
             <TabDetails items={candidates?.experiences} />

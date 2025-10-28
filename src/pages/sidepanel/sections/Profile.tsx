@@ -24,9 +24,9 @@ const Profile: React.FC<ProfileTabProps> = ({ profileIsLoading, profile, getter,
   ];
 
   return (
-    <Stack alignItems={'flex-start'} justifyContent={'center'} height={'100vh'} width={'100%'} overflow={'hidden'}>
+    <Stack alignItems={'flex-start'} justifyContent={'flex-start'} height={'100%'} width={'100%'}>
       <TabNavigation tabs={tabs} value={getter} onChange={handleSetTab} />
-      <Box flexGrow={1} width={'100%'} overflow={'auto'}>
+      <Box flexGrow={1} width={'100%'} overflow={'auto'} sx={{ height: 0 }}>
         <CustomTabPanel value={getter} index={0}>
           {profileIsLoading ? (
             <Box m={2}>
