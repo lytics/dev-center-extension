@@ -20,10 +20,15 @@ const StyledBottomNavigation = styled(BottomNavigation)(({ theme }) => ({
   position: 'fixed',
   bottom: 0,
   width: '100%',
-  height: 'auto',
+  height: '4.375rem', // 70px (Figma spec)
   display: 'flex',
   justifyContent: 'space-between',
-  padding: theme.spacing(1.5, 2),
+  alignItems: 'center',
+  gap: '0.625rem', // 10px (Figma spec)
+  padding: '0.75rem 1rem', // 12px top/bottom, 16px left/right (Figma spec)
+  backgroundColor: theme.palette.background.default,
+  backdropFilter: 'blur(13.3px)', // 13.3px - Figma blur value
+  WebkitBackdropFilter: 'blur(13.3px)', // Safari support
   cursor: 'default',
   transition: 'none',
   '&:hover': {

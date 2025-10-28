@@ -16,6 +16,11 @@ interface TagStatusProps {
 
 const StyledContainer = styled(Box)(({ theme }) => ({
   paddingInline: theme.spacing(1.25),
+  paddingBottom: theme.spacing(12), // 96px bottom space to clear bottom navigation
+  height: '100%',
+  width: '100%',
+  overflow: 'auto',
+  boxSizing: 'border-box',
   cursor: 'default',
   transition: 'none',
   '&:hover': {
