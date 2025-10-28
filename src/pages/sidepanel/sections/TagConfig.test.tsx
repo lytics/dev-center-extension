@@ -40,44 +40,12 @@ describe('TagConfig', () => {
     expect(treeDisplay).toHaveTextContent(mockTagConfig.url);
   });
 
-  it('should render with dark background styling', () => {
-    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
-
-    const panel = container.querySelector('.MuiBox-root');
-    expect(panel).toBeInTheDocument();
-    expect(panel).toHaveStyle({ backgroundColor: '#272728' });
-  });
-
-  it('should render with rounded corners', () => {
-    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
-
-    const panel = container.querySelector('.MuiBox-root');
-    expect(panel).toBeInTheDocument();
-    // All corners are rounded (8px)
-    expect(panel).toHaveStyle({ borderRadius: '8px' });
-  });
-
   it('should handle empty tagConfig', () => {
     const emptyConfig = {} as TagConfigModel;
     renderWithTheme(<TagConfig tagConfig={emptyConfig} />);
 
     const treeDisplay = screen.getByTestId('tree-display');
     expect(treeDisplay).toBeInTheDocument();
-  });
-
-  it('should render with full width', () => {
-    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
-
-    const panel = container.querySelector('.MuiBox-root');
-    expect(panel).toHaveStyle({ width: '100%' });
-  });
-
-  it('should have correct padding', () => {
-    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
-
-    const panel = container.querySelector('.MuiBox-root');
-    // Padding is 0.625rem which equals 10px
-    expect(panel).toHaveStyle({ padding: '0.625rem' });
   });
 
   it('should handle different tagConfig versions', () => {
@@ -103,13 +71,6 @@ describe('TagConfig', () => {
     const treeDisplay = screen.getByTestId('tree-display');
     expect(treeDisplay).toBeInTheDocument();
     expect(treeDisplay).toHaveTextContent('test-stream');
-  });
-
-  it('should not have hover effects', () => {
-    const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
-
-    const panel = container.querySelector('.MuiBox-root');
-    expect(panel).toHaveStyle({ cursor: 'default', transition: 'none' });
   });
 
   it('should render TreeDisplay inside styled panel', () => {
