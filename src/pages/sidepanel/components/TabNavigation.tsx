@@ -34,7 +34,7 @@ const StyledTabs = styled(Tabs)(({ theme }) => ({
 const StyledTab = styled(Tab)(({ theme }) => ({
   minHeight: '2rem', // 32px
   height: '2rem', // 32px
-  padding: `${theme.spacing(0.75)} ${theme.spacing(1.25)}`, // 6px top/bottom, 10px left/right
+  padding: theme.spacing(0.75, 1.25), // 6px top/bottom, 10px left/right
   fontSize: appColors.common.fontSize.baseSmall,
   fontWeight: appColors.common.fontWeight.semiBold,
   fontFamily: appColors.common.fontFamily,
