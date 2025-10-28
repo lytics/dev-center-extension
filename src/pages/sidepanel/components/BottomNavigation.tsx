@@ -16,7 +16,7 @@ interface NavigationSection {
   ariaLabel: string;
 }
 
-const StyledBottomNavigation = styled(BottomNavigation)(() => ({
+const StyledBottomNavigation = styled(BottomNavigation)(({ theme }) => ({
   position: 'fixed',
   bottom: 0,
   width: '100%',
@@ -26,7 +26,8 @@ const StyledBottomNavigation = styled(BottomNavigation)(() => ({
   alignItems: 'center',
   gap: '0.625rem', // 10px
   padding: '0.75rem 1rem', // 12px 16px
-  backgroundColor: '#E9E8EDB8', // Figma background with transparency
+  backgroundColor: theme.palette.background.default,
+  opacity: 0.72,
   backdropFilter: 'blur(0.83125rem)', // 13.3px - Figma blur value
   WebkitBackdropFilter: 'blur(0.83125rem)', // Safari support
   cursor: 'default',
