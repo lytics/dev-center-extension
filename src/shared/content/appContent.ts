@@ -18,8 +18,8 @@ export const appContent = {
 
   // EnabledState Component
   enabledState: {
-    title: 'Configured domain not detected',
-    buttonText: 'Configure domains',
+    title: 'Lytics SDK detected',
+    buttonText: 'Analyze domains',
     pinnedUrlText: {
       prefix: 'Wait a minute! You are currently analyzing ',
       suffix: ". If you'd like to analyze this domain instead pin it below.",
@@ -29,6 +29,11 @@ export const appContent = {
     noPinnedUrlText:
       "To analyze this domain, add it to your configured domains list. If you haven't yet installed the Lytics tag, please refer to our Lytics JavaScript SDK ",
     adBlockerNotice: 'Using an Ad Blocker? You may need to disable it temporarily to use this extension.',
+    noSdkTitle: 'No Lytics SDK available for this domain',
+    noSdkDescription:
+      'The Lytics JavaScript SDK was not detected on this domain. To use this extension, you need to install the Lytics tag. Please refer to our',
+    noSdkDocumentationText: 'Lytics JavaScript SDK documentation',
+    noSdkSuffix: ' for installation instructions.',
   },
 
   // TopNavigation Component
@@ -95,6 +100,19 @@ export const appContent = {
   personalizationTabs: {
     experiences: 'Experiences',
     legacyCampaigns: 'Legacy Campaigns',
+  },
+  // Lytics Request Type Descriptions
+  lyticsRequestDescriptions: {
+    'load-js-tag':
+      'Loaded the core Lytics JavaScript SDK. Used for collecting data and surfacing the active visitors profile back to the browser.',
+    'load-profile': 'Loaded the active visitors full profile from Lytics.',
+    'collect-data': 'Collected data via jstag.send based on visitor activity.',
+    'load-pathfora-tag': 'Loaded the Pathfora JavaScript SDK for advanced onsite personalization.',
+    'load-pathfora-css':
+      'Loaded the default Pathfora JavaScript SDK styles to ensure modals and inline widgets are styled correctly.',
+    'load-experience-config': 'Loaded the experience configurations from the Lytics Experience Engine.',
+    'load-campaign-config':
+      'Loaded the legacy campaign configurations from Lytics. This feature is being deprecated. Reach out to support for additional guidance.',
   },
 
   // External Links

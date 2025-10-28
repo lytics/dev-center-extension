@@ -14,6 +14,7 @@ describe('EnabledState', () => {
     tabValid: true,
     onPin: vi.fn(),
     documentationUrl: 'https://docs.lytics.com/test',
+    hasLyticsSDK: true, // SDK is detected
   };
 
   beforeEach(() => {
@@ -73,6 +74,10 @@ describe('EnabledState', () => {
       documentationLinkText: 'custom docs',
       noPinnedUrlText: 'Custom no pinned URL text',
       adBlockerNotice: 'Custom ad blocker notice',
+      noSdkTitle: 'No SDK',
+      noSdkDescription: 'No SDK description',
+      noSdkDocumentationText: 'docs',
+      noSdkSuffix: ' suffix',
     };
 
     render(
@@ -84,5 +89,23 @@ describe('EnabledState', () => {
     expect(screen.getByText('Custom Title')).toBeInTheDocument();
     expect(screen.getByText('Custom Button')).toBeInTheDocument();
     expect(screen.getByText('Custom ad blocker notice')).toBeInTheDocument();
+  });
+
+  it('renders no SDK state when hasLyticsSDK is false', () => {
+    const noSDKProps = {
+      ...mockProps,
+      hasLyticsSDK: false,
+    };
+
+    render(
+      <ThemeProvider theme={appTheme}>
+        <EnabledState {...noSDKProps} />
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByText(appContent.enabledState.noSdkTitle)).toBeInTheDocument();
+    expect(screen.getByText(appContent.enabledState.noSdkDocumentationText)).toBeInTheDocument();
+    expect(screen.queryByText(appContent.enabledState.title)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: appContent.enabledState.buttonText })).not.toBeInTheDocument();
   });
 });

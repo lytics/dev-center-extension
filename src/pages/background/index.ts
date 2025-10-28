@@ -1,14 +1,15 @@
 import 'webextension-polyfill';
 
 import { currentTabAutoDetector } from '@root/src/pages/background/currentTabAutoDetector';
+import { createNetworkTrafficHandler } from '@root/src/pages/background/lyticsNetworkHandler';
 import { EmitLog } from '@root/src/shared/components/EmitLog';
-import { EventModel } from '@src/shared/models/eventModel';
 import entityStore from '@src/shared/storages/entityStorage';
 import { domainStore } from '@src/shared/storages/extensionDomainStorage';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
 import { autoDetectedDomainsStore } from '@src/shared/storages/autoDetectedDomainsStorage';
+import domainStateStore from '@src/shared/storages/tabStateStorage';
 
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(error => {
   EmitLog({ name: 'background', payload: { msg: 'Failed to set side panel behavior', error: error.message } });
@@ -152,154 +153,9 @@ domainStore.subscribe(() => {
 // --------------------------------------------------------
 // Handle Listen for Requests to lytics.io
 // --------------------------------------------------------
-const parseURL = (url: string, body: any, type: string): EventModel => {
-  // Parse URL
-  const parsedURL = new URL(url);
-  const parsedBody = new URLSearchParams(body);
-
-  // Get URL components
-  const protocol = parsedURL.protocol; // e.g., 'https:'
-  const host = parsedURL.host; // e.g., 'example.com'
-  const pathname = parsedURL.pathname; // e.g., '/path/to/page'
-  const search = parsedURL.search; // e.g., '?param1=value1&param2=value2'
-
-  // Parse query parameters into an object
-  const queryParams = new URLSearchParams(search);
-  const queryParamObj: Record<string, string> = {};
-  queryParams.forEach((value, key) => {
-    queryParamObj[key] = value;
-  });
-
-  const parsedBodyDataObj = {};
-  if (parsedBody) {
-    parsedBody.forEach((value, key) => {
-      parsedBodyDataObj[key] = decodeURIComponent(value);
-    });
-  }
-
-  let ts: string;
-  if (queryParamObj.ts) {
-    ts = queryParamObj.ts;
-  } else if ((parsedBodyDataObj as any).ts) {
-    ts = (parsedBodyDataObj as any).ts;
-  } else {
-    ts = Date.now().toString();
-  }
-
-  // Assign description based on type
-  let description: string;
-  switch (type) {
-    case 'load-js-tag':
-      description =
-        'Loaded the core Lytics JavaScript SDK. Used for collecting data and surfacing the active visitors profile back to the browser.';
-      break;
-    case 'load-profile':
-      description = 'Loaded the active visitors full profile from Lytics.';
-      break;
-    case 'collect-data':
-      description = 'Collected data via jstag.send based on visitor activity.';
-      break;
-    case 'load-pathfora-tag':
-      description = 'Loaded the Pathfora JavaScript SDK for advanced onsite personalization.';
-      break;
-    case 'load-pathfora-css':
-      description =
-        'Loaded the default Pathfora JavaScript SDK styles to ensure modals and inline widgets are styled correctly.';
-      break;
-    case 'load-experience-config':
-      description = 'Loaded the experience configurations from the Lytics Experience Engine.';
-      break;
-    case 'load-campaign-config':
-      description =
-        'Loaded the legacy campaign configurations from Lytics. This feature is being deprecated. Reach out to support for additional guidance.';
-      break;
-    default:
-      description = `Communicated with Lytics via a generic or unhandled request (${type}).`;
-  }
-
-  return {
-    protocol,
-    host,
-    pathname,
-    queryParamObj,
-    parsedBodyDataObj,
-    ts: parseInt(ts),
-    type,
-    description,
-  } as EventModel;
-};
-
-const handleNetworkTraffic = details => {
-  try {
-    // get the active tab url that generated the request
-    const activeTabUrl = details.initiator;
-    if (!activeTabUrl) {
-      return;
-    }
-
-    // parse the active tab url
-    const activeDomain = new URL(activeTabUrl).hostname;
-
-    // if the active domain matches the sticky domain, then we can proceed with existing logic
-    if (activeDomain !== stickyDomain) {
-      EmitLog({ name: 'background', payload: { msg: `Request from non-sticky domain <${activeDomain}>` } });
-      return;
-    }
-
-    const url = details.url;
-    let postData;
-    let result: EventModel;
-
-    switch (true) {
-      case url.includes('/api/tag/'):
-        EmitLog({ name: 'background', payload: { msg: 'Called Core Tag', url: url } });
-        result = parseURL(url, {}, 'load-js-tag');
-        break;
-
-      case url.includes('/api/personalize/'):
-        EmitLog({ name: 'background', payload: { msg: 'Called Entity API', url: url } });
-        result = parseURL(url, {}, 'load-profile');
-        break;
-
-      case url.includes('/c/'):
-        EmitLog({ name: 'background', payload: { msg: 'Collection API', url: url } });
-        if (details.requestBody) {
-          postData = details?.requestBody?.formData?._js[0];
-        }
-        result = parseURL(url, postData || {}, 'collect-data');
-        break;
-
-      case url.includes('/static/pathfora.min.js'):
-        EmitLog({ name: 'background', payload: { msg: 'Called Pathfora Tag', url: url } });
-        result = parseURL(url, {}, 'load-pathfora-tag');
-        break;
-
-      case url.includes('static/pathfora.min.css'):
-        EmitLog({ name: 'background', payload: { msg: 'Called Pathfora Styles', url: url } });
-        result = parseURL(url, {}, 'load-pathfora-css');
-        break;
-
-      case url.includes('/experience/candidate'):
-        EmitLog({ name: 'background', payload: { msg: 'Called Experience Config API', url: url } });
-        result = parseURL(url, {}, 'load-experience-config');
-        break;
-
-      case url.includes('/api/program/campaign/config'):
-        EmitLog({ name: 'background', payload: { msg: 'Called Legacy Campaign Config API', url: url } });
-        result = parseURL(url, {}, 'load-campaign-config');
-        break;
-
-      default:
-        EmitLog({ name: 'background', payload: { msg: 'Unhandled API Requset', url: url } });
-    }
-    tagActivityStore.add(JSON.stringify(result));
-  } catch (error) {
-    EmitLog({
-      name: 'background',
-      payload: { msg: 'Error in handleNetworkTraffic', error: error.message, url: details?.url },
-    });
-  }
-};
+const handleNetworkTraffic = createNetworkTrafficHandler({
+  getStickyDomain: () => stickyDomain,
+});
 
 // --------------------------------------------------------
 // Handle Auto-Detection Messages
@@ -469,6 +325,78 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       }
       sendResponse({ success: true });
     }
+
+    // Handle tagConfig save from content script
+    if (message.action === 'saveTagConfig') {
+      const tabId = sender.tab?.id?.toString();
+      const tabUrl = sender.tab?.url;
+      if (tabId && tabUrl && message.payload) {
+        const domain = new URL(tabUrl).hostname;
+
+        // Parse the payload if it's a string (tagLink sends stringified data)
+        let parsedConfig = message.payload;
+        if (typeof message.payload === 'string') {
+          try {
+            parsedConfig = JSON.parse(message.payload);
+          } catch (error) {
+            EmitLog({
+              name: 'background',
+              payload: { msg: `Error parsing tag config`, error: error.message },
+            });
+            sendResponse({ success: false, error: 'Invalid JSON' });
+            return;
+          }
+        }
+
+        // Save to domain state (shared across all tabs on this domain)
+        await domainStateStore.updateDomainState(domain, {
+          tagConfig: parsedConfig,
+        });
+        EmitLog({
+          name: 'background',
+          payload: {
+            msg: `Tag config saved for domain ${domain}`,
+            hasData: Object.keys(parsedConfig).length > 0,
+            tabId,
+          },
+        });
+      }
+      sendResponse({ success: true });
+    }
+
+    // Handle entity save from content script
+    if (message.action === 'saveEntity') {
+      const tabId = sender.tab?.id?.toString();
+      const tabUrl = sender.tab?.url;
+      if (tabId && tabUrl && message.payload) {
+        const domain = new URL(tabUrl).hostname;
+
+        // Parse the payload if it's a string (tagLink sends stringified data)
+        let parsedProfile = message.payload;
+        if (typeof message.payload === 'string') {
+          try {
+            parsedProfile = JSON.parse(message.payload);
+          } catch (error) {
+            EmitLog({
+              name: 'background',
+              payload: { msg: `Error parsing entity profile`, error: error.message },
+            });
+            sendResponse({ success: false, error: 'Invalid JSON' });
+            return;
+          }
+        }
+
+        // Save to domain state (shared across all tabs on this domain)
+        await domainStateStore.updateDomainState(domain, {
+          profile: parsedProfile,
+        });
+        EmitLog({
+          name: 'background',
+          payload: { msg: `Entity profile saved for domain ${domain}`, tabId },
+        });
+      }
+      sendResponse({ success: true });
+    }
   } catch (error) {
     EmitLog({
       name: 'background',
@@ -480,3 +408,45 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   // Return true for async operations
   return true;
 });
+
+// --------------------------------------------------------
+// Per-Domain Storage Cleanup
+// --------------------------------------------------------
+
+// Unregister tab from domain when tab is closed
+chrome.tabs.onRemoved.addListener(async (tabId: number) => {
+  try {
+    const tabIdStr = tabId.toString();
+
+    // Get all domains and unregister this tab from each
+    const allDomains = await domainStateStore.getAllDomains();
+    for (const domain of allDomains) {
+      await domainStateStore.unregisterTab(domain, tabIdStr);
+    }
+
+    // Immediately cleanup domains with no active tabs
+    await domainStateStore.cleanupInactiveDomains();
+
+    EmitLog({
+      name: 'background',
+      payload: { msg: `Tab ${tabIdStr} closed, unregistered and cleaned up inactive domains` },
+    });
+  } catch (error) {
+    EmitLog({
+      name: 'background',
+      payload: { msg: 'Error cleaning up closed tab', error: error.message, tabId },
+    });
+  }
+});
+
+// Periodic cleanup of inactive domains (every 60 seconds)
+setInterval(async () => {
+  try {
+    await domainStateStore.cleanupInactiveDomains();
+  } catch (error) {
+    EmitLog({
+      name: 'background',
+      payload: { msg: 'Error in periodic domain cleanup', error: error.message },
+    });
+  }
+}, 60000);
