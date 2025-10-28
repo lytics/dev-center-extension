@@ -48,14 +48,13 @@ describe('TagConfig', () => {
     expect(panel).toHaveStyle({ backgroundColor: '#272728' });
   });
 
-  it('should render with rounded top corners', () => {
+  it('should render with rounded corners', () => {
     const { container } = renderWithTheme(<TagConfig tagConfig={mockTagConfig} />);
 
     const panel = container.querySelector('.MuiBox-root');
     expect(panel).toBeInTheDocument();
-    // Top corners are rounded (8px), bottom corners are sharp (0px)
-    // Check for borderRadius property (works better in JSDOM than individual corner properties)
-    expect(panel).toHaveStyle({ borderRadius: '8px 8px 0 0' });
+    // All corners are rounded (8px)
+    expect(panel).toHaveStyle({ borderRadius: '8px' });
   });
 
   it('should handle empty tagConfig', () => {
