@@ -1,10 +1,12 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Stack, Typography } from '@mui/material';
 import { ExpandMore } from '@mui/icons-material';
 import { TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigModel';
 import TreeDisplay from '@root/src/pages/sidepanel/components/TreeDisplay';
 import CustomTabPanel from '@root/src/pages/sidepanel/components/CustomTabPanel';
+import { TabNavigation } from '@root/src/pages/sidepanel/components/TabNavigation';
 import EmptyState from '@root/src/pages/sidepanel/components/EmptyState';
+import { appContent } from '@root/src/shared/content/appContent';
 
 interface PersonalizationProps {
   candidates: TagConfigPathforaCandidates;
@@ -41,18 +43,18 @@ const TabDetails = ({ items }: { items: any[] }) => {
 };
 
 const Personalization: React.FC<PersonalizationProps> = ({ candidates, getter, setter }) => {
-  const handleSetTab = (event, newValue) => {
+  const handleSetTab = (event: React.SyntheticEvent, newValue: number) => {
     setter(newValue);
   };
 
+  const tabs = [
+    { id: 'experiences', label: appContent.personalizationTabs.experiences, disabled: false },
+    { id: 'legacy', label: appContent.personalizationTabs.legacyCampaigns, disabled: false },
+  ];
+
   return (
     <Stack alignItems={'flex-start'} justifyContent={'center'} height={'100%'} width={'100%'}>
-      <Box borderBottom={1} borderColor={'divider'} width={'100%'}>
-        <Tabs value={getter} onChange={handleSetTab} textColor="secondary" indicatorColor="secondary">
-          <Tab id="experiences" label="Experiences" />
-          <Tab id="legacy" disabled={false} label="Legacy Campaigns" />
-        </Tabs>
-      </Box>
+      <TabNavigation tabs={tabs} value={getter} onChange={handleSetTab} />
       <Box flexGrow={1} width={'100%'} overflow={'auto'}>
         <CustomTabPanel value={getter} index={0}>
           {candidates?.experiences.length > 0 ? (

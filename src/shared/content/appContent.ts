@@ -86,6 +86,21 @@ export const appContent = {
     autoDetectedTitle: 'Auto-detected',
   },
 
+  // Tab Navigation Content
+  profileTabs: {
+    summary: 'Summary',
+    details: 'Details',
+  },
+
+  debuggerTabs: {
+    configuration: 'Configuration',
+    activity: 'Activity',
+  },
+
+  personalizationTabs: {
+    experiences: 'Experiences',
+    legacyCampaigns: 'Legacy Campaigns',
+  },
   // Lytics Request Type Descriptions
   lyticsRequestDescriptions: {
     'load-js-tag':
