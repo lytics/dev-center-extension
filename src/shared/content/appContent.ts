@@ -114,6 +114,21 @@ export const appContent = {
     'load-campaign-config':
       'Loaded the legacy campaign configurations from Lytics. This feature is being deprecated. Reach out to support for additional guidance.',
   },
+  // Tab Navigation Content
+  profileTabs: {
+    summary: 'Summary',
+    details: 'Details',
+  },
+
+  debuggerTabs: {
+    configuration: 'Configuration',
+    activity: 'Activity',
+  },
+
+  personalizationTabs: {
+    experiences: 'Experiences',
+    legacyCampaigns: 'Legacy Campaigns',
+  },
 
   // External Links
   externalLinks: {
