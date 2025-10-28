@@ -26,7 +26,8 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { tagConfig: currentTabTagConfig, profile: currentTabProfile, domainState } = useCurrentTabState();
+  // Get per-tab state from hook
+  const { tagConfig: currentTabTagConfig, profile: currentTabProfile, domainState, tagActivity } = useCurrentTabState();
 
   const [isLoading, setIsLoading] = useState(true);
   const [profileIsLoading, setProfileIsLoading] = useState(false);
@@ -143,7 +144,10 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
                   />
                 }
               />
-              <Route path="*" element={<TagStatus tagIsInstalled={tagIsInstalled} tagConfig={tagConfig} />} />
+              <Route
+                path="*"
+                element={<TagStatus tagIsInstalled={tagIsInstalled} tagConfig={tagConfig} tagActivity={tagActivity} />}
+              />
             </Routes>
           </Box>
           <BottomNavigation value={activePath} onChange={newValue => handleNavigation(newValue)} />

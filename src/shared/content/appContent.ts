@@ -71,6 +71,10 @@ export const appContent = {
       enabled: 'Enabled',
       disabled: 'Disabled',
       defaultStream: 'default',
+      lastActivity: 'Last Activity',
+      Requestoday: 'Request Today',
+      dataCollection: 'Data Collection',
+      active: 'Active',
     },
   },
 
