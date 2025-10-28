@@ -8,8 +8,8 @@ interface TabPanelProps {
   value: number;
 }
 
-const TabPanelContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(1),
+const TabPanelContainer = styled(Box)(() => ({
+  padding: '0.625rem', // 10px padding between outer frame and inner content
   height: 'calc(100vh - 185px)',
   overflow: 'auto',
 }));
