@@ -11,7 +11,6 @@ interface AttributesProps {
 
 const Container = styled(Box)(({ theme }) => ({
   width: '100%',
-  minHeight: '10.6875rem', // 171px minimum height
   backgroundColor: appColors.common.white,
   borderRadius: theme.spacing(1.5), // 12px
   padding: '1.5rem 1rem', // 24px 16px
@@ -50,8 +49,6 @@ const CountBadge = styled(Box)(({ theme }) => ({
 
 const DescriptionBox = styled(Box)(({ theme }) => ({
   width: '100%',
-  minHeight: '5.75rem', // 92px
-  gap: '0.625rem', // 10px
   padding: '0.75rem', // 12px
   backgroundColor: appColors.common.white,
   borderRadius: theme.spacing(1), // 8px

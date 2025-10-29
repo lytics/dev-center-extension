@@ -12,7 +12,6 @@ interface InterestsProps {
 
 const Container = styled(Box)(({ theme }) => ({
   width: '100%',
-  minHeight: '9.625rem', // 154px minimum height
   backgroundColor: appColors.common.white,
   borderRadius: theme.spacing(1.5), // 12px
   padding: '1.5rem 1rem', // 24px 16px
@@ -36,9 +35,8 @@ const TitleText = styled(Typography)(() => ({
 const EmptyStateContainer = styled(Stack)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'flex-start',
+  alignItems: 'center',
   width: '100%',
-  minHeight: '4.6875rem', // 75px
   gap: '0.625rem', // 10px
   padding: '0.75rem', // 12px
   backgroundColor: appColors.common.white,

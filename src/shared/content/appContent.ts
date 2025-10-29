@@ -124,7 +124,7 @@ export const appContent = {
     description:
       'You may have more attributes available for personalization. Review documentation on how to configure which attributes are surfaced to the web.',
     learnMoreText: 'Learn more',
-    learnMoreUrl: 'https://docs.lytics.com/docs/account-settings#lytics-api',
+    learnMoreUrl: 'https://docs.lytics.com/docs/developer-attributes',
   },
 
   // BehaviorMetrics Component
