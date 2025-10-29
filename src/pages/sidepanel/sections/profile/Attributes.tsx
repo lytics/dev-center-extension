@@ -50,13 +50,13 @@ const CountBadge = styled(Box)(({ theme }) => ({
 
 const DescriptionBox = styled(Box)(({ theme }) => ({
   width: '100%',
-  minWidth: '21.4375rem', // 343px
   minHeight: '5.75rem', // 92px
   gap: '0.625rem', // 10px
   padding: '0.75rem', // 12px
   backgroundColor: appColors.common.white,
   borderRadius: theme.spacing(1), // 8px
   border: '1px solid #E6E6E6',
+  boxSizing: 'border-box',
 }));
 
 const DescriptionText = styled(Typography)(() => ({
