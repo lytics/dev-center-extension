@@ -98,8 +98,8 @@ export const appContent = {
   },
 
   personalizationTabs: {
-    experiences: 'Experiences',
-    legacyCampaigns: 'Legacy Campaigns',
+    experiences: 'Active',
+    legacyCampaigns: 'Legacy',
   },
   // Lytics Request Type Descriptions
   lyticsRequestDescriptions: {

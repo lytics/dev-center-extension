@@ -78,12 +78,7 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates, getter, s
             <Box mt={8}>
               <EmptyState
                 type={'deprecated'}
-                body={
-                  <Box maxWidth={375}>
-                    Great news! No legacy campaigns are currently active on this page and you are not at risk of using a
-                    sunset feature.
-                  </Box>
-                }
+                body={<Box maxWidth={375}>Great news! No legacy campaigns detected</Box>}
               />
             </Box>
           )}
