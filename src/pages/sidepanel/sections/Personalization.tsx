@@ -75,11 +75,19 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates, getter, s
               {candidates?.legacyABTests?.length > 0 && <TabDetails items={candidates?.legacyABTests} />}
             </>
           ) : (
-            <Box mt={8}>
-              <EmptyState
-                type={'deprecated'}
-                body={<Box maxWidth={375}>Great news! No legacy campaigns detected</Box>}
-              />
+            <Box display="flex" justifyContent="center" alignItems="center" width="100%" height="100%">
+              <Box
+                width="23.4375rem"
+                height="15.1875rem"
+                gap="0.75rem"
+                display="flex"
+                justifyContent="center"
+                alignItems="center">
+                <EmptyState
+                  type={'deprecated'}
+                  body={<Box maxWidth={375}>Great news! No legacy campaigns detected</Box>}
+                />
+              </Box>
             </Box>
           )}
         </CustomTabPanel>
