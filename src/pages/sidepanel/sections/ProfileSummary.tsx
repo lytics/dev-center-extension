@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box } from '@mui/material';
 import ProfileHeader from '@root/src/pages/sidepanel/sections/profile/ProfileHeader';
 import AudienceMembership from '@root/src/pages/sidepanel/sections/profile/AudienceMembership';
@@ -58,16 +58,50 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
     setScores(updatedScores);
   }, [profile]);
 
+  const lastUpdatedText = useMemo(() => {
+    const modified = profile?.data?.user?._modified;
+    if (!modified) return 'Unknown';
+
+    const updatedTime = new Date(modified);
+    const now = new Date();
+    const diffMs = now.getTime() - updatedTime.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min. ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+
+    return updatedTime.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }, [profile?.data?.user?._modified]);
+
+  const lastAttributeText = useMemo(() => {
+    const user = profile?.data?.user;
+    if (!user) return 'Unknown';
+
+    const attributes = Object.keys(user).filter(
+      key => !key.startsWith('_') && !key.startsWith('score_') && key !== 'segments',
+    );
+
+    return attributes.length > 0 ? attributes[0] : 'Unknown';
+  }, [profile?.data?.user]);
+
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        paddingTop: '0.75rem', // 12px gap from top (tab divider)
-        gap: '0.75rem', // 12px gap between components
+        paddingTop: '0.75rem',
+        gap: '0.75rem',
         overflow: 'auto',
-        paddingBottom: '5rem', // Extra padding at bottom for scroll space
+        paddingBottom: '5rem',
       }}>
       {/* NEW: Profile Header Component */}
       <ProfileHeader
@@ -76,17 +110,14 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         completeness={78}
       />
 
-      {/* NEW: Audience Membership Component */}
       <AudienceMembership
         audiences={
           profile?.data?.user?.segments || ['anonymous_profiles', 'smt_new', 'all', 'orc_experience_24bd33fc6ab8...']
         }
       />
 
-      {/* NEW: Attributes Component */}
       <Attributes count={totalAttributes || 46} />
 
-      {/* NEW: Behavior Metrics Component */}
       <BehaviorMetrics
         metrics={
           scores.length > 0
@@ -101,48 +132,9 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         }
       />
 
-      {/* NEW: Interests Component */}
       <Interests hasData={hasContent} />
 
-      {/* NEW: Profile Metadata Component */}
-      <ProfileMetadata
-        lastUpdated={
-          profile?.data?.user?._modified
-            ? (() => {
-                const updatedTime = new Date(profile.data.user._modified);
-                const now = new Date();
-                const diffMs = now.getTime() - updatedTime.getTime();
-                const diffMins = Math.floor(diffMs / 60000);
-                const diffHours = Math.floor(diffMs / 3600000);
-                const diffDays = Math.floor(diffMs / 86400000);
-
-                if (diffMins < 1) return 'Just now';
-                if (diffMins < 60) return `${diffMins} min. ago`;
-                if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-                if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-
-                return updatedTime.toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                });
-              })()
-            : 'Unknown'
-        }
-        lastAttribute={(() => {
-          // Get the most recent attribute by checking which fields exist and their values
-          const user = profile?.data?.user;
-          if (!user) return 'Unknown';
-
-          // Common attributes to check (excluding system fields)
-          const attributes = Object.keys(user).filter(
-            key => !key.startsWith('_') && !key.startsWith('score_') && key !== 'segments',
-          );
-
-          // Return the first non-system attribute, or a default
-          return attributes.length > 0 ? attributes[0] : 'Unknown';
-        })()}
-      />
+      <ProfileMetadata lastUpdated={lastUpdatedText} lastAttribute={lastAttributeText} />
     </Box>
   );
 };

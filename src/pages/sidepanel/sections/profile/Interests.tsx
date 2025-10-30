@@ -14,10 +14,10 @@ const Container = styled(Box)(({ theme }) => ({
   width: '100%',
   backgroundColor: appColors.common.white,
   borderRadius: theme.spacing(1.5), // 12px
-  padding: '1.5rem 1rem', // 24px 16px
+  padding: theme.spacing(3, 2), // 24px 16px
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.75rem', // 12px
+  gap: theme.spacing(1.5), // 12px
   cursor: 'default',
   transition: 'none',
   '&:hover': {
@@ -37,12 +37,11 @@ const EmptyStateContainer = styled(Stack)(({ theme }) => ({
   flexDirection: 'row',
   alignItems: 'center',
   width: '100%',
-  gap: '0.625rem', // 10px
-  padding: '0.75rem', // 12px
+  gap: theme.spacing(1.25), // 10px
+  padding: theme.spacing(1.5), // 12px
   backgroundColor: appColors.common.white,
   borderRadius: theme.spacing(1), // 8px
-  border: '1px solid #E6E6E6',
-  boxSizing: 'border-box',
+  border: `1px solid ${appColors.neutral[200]}`,
 }));
 
 const LockIcon = styled(Lock)(() => ({
@@ -82,7 +81,7 @@ export const Interests = ({ hasData, textContent = appContent.interests }: Inter
               href={textContent.learnMoreUrl}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Learn more about sharing interests">
+              aria-label={textContent.learnMoreAriaLabel}>
               {textContent.learnMoreText}
             </StyledLink>
           </EmptyStateText>

@@ -12,11 +12,11 @@ interface AttributesProps {
 const Container = styled(Box)(({ theme }) => ({
   width: '100%',
   backgroundColor: appColors.common.white,
-  borderRadius: theme.spacing(1.5), // 12px
-  padding: '1.5rem 1rem', // 24px 16px
+  borderRadius: theme.spacing(1.5),
+  padding: theme.spacing(3, 2),
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.75rem', // 12px
+  gap: theme.spacing(1.5),
   cursor: 'default',
   transition: 'none',
   '&:hover': {
@@ -41,7 +41,7 @@ const TitleText = styled(Typography)(() => ({
 const CountBadge = styled(Box)(({ theme }) => ({
   backgroundColor: appColors.neutral[100],
   borderRadius: theme.spacing(0.5), // 4px
-  padding: '0.25rem 0.5rem', // 4px 8px
+  padding: theme.spacing(0.5, 1),
   fontSize: appColors.common.fontSize.baseSmall,
   fontWeight: appColors.common.fontWeight.semiBold,
   color: appColors.neutral[900],
@@ -49,11 +49,10 @@ const CountBadge = styled(Box)(({ theme }) => ({
 
 const DescriptionBox = styled(Box)(({ theme }) => ({
   width: '100%',
-  padding: '0.75rem', // 12px
+  padding: theme.spacing(1.5),
   backgroundColor: appColors.common.white,
   borderRadius: theme.spacing(1), // 8px
-  border: '1px solid #E6E6E6',
-  boxSizing: 'border-box',
+  border: `1px solid ${appColors.neutral[200]}`,
 }));
 
 const DescriptionText = styled(Typography)(() => ({
@@ -88,7 +87,7 @@ export const Attributes = ({ count, textContent = appContent.attributes }: Attri
             href={textContent.learnMoreUrl}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Learn more about configuring attributes">
+            aria-label={textContent.learnMoreAriaLabel}>
             {textContent.learnMoreText}
           </StyledLink>
         </DescriptionText>
