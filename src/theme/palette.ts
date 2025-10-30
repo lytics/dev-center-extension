@@ -43,6 +43,7 @@ const appColors = {
   // Common Design Tokens
   common: {
     white: '#ffffff', // Pure white background
+    darkPanel: '#272728', // Dark panel background
     fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif',
     fontSize: {
       base: '1rem', // Standard font size (16px)

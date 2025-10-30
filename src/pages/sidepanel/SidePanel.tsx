@@ -1,19 +1,19 @@
 import '@pages/sidepanel/SidePanel.css';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 import { Box, CircularProgress } from '@mui/material';
 import BottomNavigation from '@root/src/pages/sidepanel/components/BottomNavigation';
+import { useCurrentTabState } from '@root/src/pages/sidepanel/hooks/useCurrentTabState';
 import Configuration from '@root/src/pages/sidepanel/sections/Configuration';
 import Debugger from '@root/src/pages/sidepanel/sections/Debugger';
 import Personalization from '@root/src/pages/sidepanel/sections/Personalization';
 import Profile from '@root/src/pages/sidepanel/sections/Profile';
+import { hasProfile, hasTagConfig } from '@root/src/pages/sidepanel/utils/domainStateHelpers';
 import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
 import { EmitLog } from '@src/shared/components/EmitLog';
-import { useCurrentTabState } from '@root/src/pages/sidepanel/hooks/useCurrentTabState';
-import { hasTagConfig, hasProfile } from '@root/src/pages/sidepanel/utils/domainStateHelpers';
 
 import TagStatus from './sections/TagStatus';
 
@@ -27,32 +27,26 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
   const location = useLocation();
 
   // Get per-tab state from hook
-  const { tagConfig: currentTabTagConfig, profile: currentTabProfile, domainState } = useCurrentTabState();
+  const { tagConfig: currentTabTagConfig, profile: currentTabProfile, domainState, tagActivity } = useCurrentTabState();
 
-  // Local state for component-specific concerns
   const [isLoading, setIsLoading] = useState(true);
   const [profileIsLoading, setProfileIsLoading] = useState(false);
   const [debugTab, setDebugTab] = useState(0);
   const [profileTab, setProfileTab] = useState(0);
   const [personalizationTab, setPersonalizationTab] = useState(0);
 
-  // DERIVED STATE - No useEffect needed! Pure computation from props/state
   const tagConfig = currentTabTagConfig as TagConfigModel;
   const currentProfile = currentTabProfile;
   const tagIsInstalled = hasTagConfig(domainState);
   const candidates = useMemo(() => tagConfig?.pathfora?.publish?.candidates || {}, [tagConfig]);
 
-  // Compute active path from location (derived state)
   const activePath = useMemo(() => {
     return location.pathname === '/src/pages/sidepanel/index.html' ? '/' : location.pathname;
   }, [location.pathname]);
 
-  // Single useEffect for data fetching fallback and logging
   useEffect(() => {
-    // Log reset on key change
     EmitLog({ name: 'sidepanel', payload: { msg: 'SidePanel reset.' } });
 
-    // Handle tag config loading
     if (hasTagConfig(domainState)) {
       setIsLoading(false);
       EmitLog({
@@ -60,7 +54,6 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
         payload: { msg: 'Tag config updated from per-tab storage', config: currentTabTagConfig },
       });
     } else if (isEnabled) {
-      // Request config from content script as fallback
       setIsLoading(true);
       chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
         if (tabs[0]?.id) {
@@ -79,7 +72,6 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
       });
     }
 
-    // Handle profile loading
     if (hasProfile(domainState)) {
       setProfileIsLoading(false);
       EmitLog({
@@ -87,7 +79,6 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
         payload: { msg: 'Profile updated from per-tab storage' },
       });
     } else if (isEnabled) {
-      // Request profile from content script as fallback
       setProfileIsLoading(true);
       chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
         if (tabs[0]?.id) {
@@ -114,7 +105,15 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
         </Box>
       ) : (
         <>
-          <Box justifyContent={'center'} alignItems={'flex-start'} display="flex" flexDirection="column">
+          <Box
+            justifyContent={'center'}
+            alignItems={'flex-start'}
+            display="flex"
+            flexDirection="column"
+            sx={{
+              height: 'calc(100vh - 160px)', // Full height minus top navigation (~90px) and bottom navigation (70px)
+              overflow: 'hidden',
+            }}>
             <Routes>
               <Route path="/settings" element={<Configuration />} />
               <Route
@@ -145,7 +144,10 @@ const SidePanel: React.FC<SidePanelProps> = ({ key, isEnabled }) => {
                   />
                 }
               />
-              <Route path="*" element={<TagStatus tagIsInstalled={tagIsInstalled} tagConfig={tagConfig} />} />
+              <Route
+                path="*"
+                element={<TagStatus tagIsInstalled={tagIsInstalled} tagConfig={tagConfig} tagActivity={tagActivity} />}
+              />
             </Routes>
           </Box>
           <BottomNavigation value={activePath} onChange={newValue => handleNavigation(newValue)} />

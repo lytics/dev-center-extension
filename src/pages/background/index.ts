@@ -3,17 +3,56 @@ import 'webextension-polyfill';
 import { currentTabAutoDetector } from '@root/src/pages/background/currentTabAutoDetector';
 import { createNetworkTrafficHandler } from '@root/src/pages/background/lyticsNetworkHandler';
 import { EmitLog } from '@root/src/shared/components/EmitLog';
+import { autoDetectedDomainsStore } from '@src/shared/storages/autoDetectedDomainsStorage';
 import entityStore from '@src/shared/storages/entityStorage';
 import { domainStore } from '@src/shared/storages/extensionDomainStorage';
 import extensionStateStorage from '@src/shared/storages/extensionStateStorage';
+import domainStateStore from '@src/shared/storages/tabStateStorage';
 import tagActivityStore from '@src/shared/storages/tagActivityStorage';
 import tagConfigStore from '@src/shared/storages/tagConfigStorage';
-import { autoDetectedDomainsStore } from '@src/shared/storages/autoDetectedDomainsStorage';
-import domainStateStore from '@src/shared/storages/tabStateStorage';
 
-chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(error => {
-  EmitLog({ name: 'background', payload: { msg: 'Failed to set side panel behavior', error: error.message } });
-});
+import { messageBroker } from '../../shared/message-broker';
+import { IMessage } from '../../shared/message-broker/types';
+
+// --------------------------------------------------------
+// Service Worker Keep-Alive Mechanism
+// --------------------------------------------------------
+let keepAliveInterval: NodeJS.Timeout | null = null;
+
+/**
+ * Starts the keep-alive mechanism to prevent service worker from going inactive
+ * Chrome Manifest V3 service workers can become inactive after ~30 seconds of inactivity
+ * This function pings the Chrome API every 20 seconds to keep the worker alive
+ */
+const startKeepAlive = () => {
+  // Clear any existing interval
+  if (keepAliveInterval) {
+    clearInterval(keepAliveInterval);
+  }
+
+  // Ping every 20 seconds to prevent service worker from going inactive
+  keepAliveInterval = setInterval(() => {
+    chrome.runtime.getPlatformInfo(() => {
+      // Just accessing chrome API keeps the worker alive
+      EmitLog({ name: 'background', payload: { msg: 'Keep-alive ping' } });
+    });
+  }, 20000); // 20 seconds
+
+  EmitLog({ name: 'background', payload: { msg: 'Keep-alive mechanism started' } });
+};
+
+/**
+ * Stops the keep-alive mechanism when extension is disabled
+ */
+const stopKeepAlive = () => {
+  if (keepAliveInterval) {
+    clearInterval(keepAliveInterval);
+    keepAliveInterval = null;
+    EmitLog({ name: 'background', payload: { msg: 'Keep-alive mechanism stopped' } });
+  }
+};
+
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(error => console.error(error));
 
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
   if (!tab.url) return;
@@ -50,6 +89,10 @@ const handleStateChange = () => {
             });
           EmitLog({ name: 'background', payload: { msg: 'Extension Activated' } });
           clearAllThings();
+
+          // Start keep-alive mechanism to prevent service worker from going inactive
+          startKeepAlive();
+
           try {
             chrome.webRequest.onBeforeRequest.addListener(
               handleNetworkTraffic,
@@ -78,6 +121,10 @@ const handleStateChange = () => {
             });
           EmitLog({ name: 'background', payload: { msg: 'Extension Deactivated' } });
           clearAllThings();
+
+          // Stop keep-alive mechanism when extension is disabled
+          stopKeepAlive();
+
           try {
             chrome.webRequest.onBeforeRequest.removeListener(handleNetworkTraffic);
           } catch (error) {
@@ -199,8 +246,34 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.runtime.onSuspend.addListener(() => {
   EmitLog({ name: 'background', payload: { msg: 'Extension suspending' } });
-  // Cleanup before suspension
+  // Stop keep-alive on suspension
+  stopKeepAlive();
 });
+
+// --------------------------------------------------------
+// Initialize Keep-Alive on Service Worker Startup
+// --------------------------------------------------------
+// When the service worker first loads, check if extension is enabled
+// and start keep-alive mechanism if needed
+extensionStateStorage
+  .get()
+  .then(state => {
+    if (state === true) {
+      EmitLog({
+        name: 'background',
+        payload: { msg: 'Service worker initialized - extension is enabled, starting keep-alive' },
+      });
+      startKeepAlive();
+    } else {
+      EmitLog({ name: 'background', payload: { msg: 'Service worker initialized - extension is disabled' } });
+    }
+  })
+  .catch(error => {
+    EmitLog({
+      name: 'background',
+      payload: { msg: 'Failed to check extension state on service worker startup', error: error.message },
+    });
+  });
 
 // --------------------------------------------------------
 // Current Tab Auto-Detection
@@ -450,3 +523,10 @@ setInterval(async () => {
     });
   }
 }, 60000);
+messageBroker.handle('GET_CONFIG', async (message: IMessage) => {
+  const tabMessage: IMessage = {
+    key: 'GET_CONFIG',
+  };
+
+  return await messageBroker.sendToTab(message.payload.currentTabId, tabMessage);
+});

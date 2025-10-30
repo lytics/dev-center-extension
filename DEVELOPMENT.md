@@ -205,6 +205,289 @@ volta pin yarn@<new-version>
 ```
 This will update the `volta` section in `package.json`.
 
+## Message Broker
+
+### Overview
+The Message Broker provides a type-safe, error-handled abstraction over Chrome's messaging API, enabling reliable communication between extension components (background scripts, content scripts, and sidepanel).
+
+### Architecture
+Located in `src/shared/message-broker/`, the broker consists of:
+- **`broker.ts`** - Core `MessageBroker` class with send/receive capabilities
+- **`types.ts`** - Message type definitions and keys
+- **`index.ts`** - Singleton instance export
+
+### Core Concepts
+
+#### Message Structure
+```typescript
+interface IMessage<T = any> {
+  key: MessageKey;
+  payload?: T;
+}
+
+type MessageKey = 'GET_CONFIG';
+```
+
+Messages are strongly typed with a `key` (for routing) and optional `payload` (for data).
+
+#### Singleton Pattern
+```typescript
+import { messageBroker } from '@root/src/shared/message-broker';
+```
+
+Use the singleton instance exported from the message broker module. This ensures consistent message handling across the extension.
+
+### API Methods
+
+#### 1. Sending Messages - `send<T>()`
+Sends a message to the background script and awaits a response.
+
+```typescript
+const response = await messageBroker.send<ConfigType>({
+  key: 'GET_CONFIG',
+  payload: { option: 'value' }
+});
+```
+
+**Features:**
+- Generic return type for type-safe responses
+- Automatic error handling for invalid contexts
+- User-friendly error messages for common failures
+
+**Error Handling:**
+```typescript
+try {
+  const result = await messageBroker.send({ key: 'GET_CONFIG' });
+} catch (error) {
+  console.error('Message failed:', error.message);
+}
+```
+
+Common errors:
+- `Invalid message: key is required` - Missing message key
+- `Chrome runtime is not available` - Extension context unavailable
+- `Extension context invalidated` - Extension needs reload
+
+#### 2. Handling Messages - `handle<T>()`
+Registers a handler for incoming messages with a specific key.
+
+```typescript
+messageBroker.handle('GET_CONFIG', async (message: IMessage) => {
+  const config = await fetchConfiguration();
+  return { success: true, data: config };
+});
+```
+
+**Features:**
+- Async handler support with automatic promise resolution
+- Automatic error serialization
+- Key-based message routing
+
+**Handler Requirements:**
+- Must return a Promise (use `async` or return `Promise.resolve()`)
+- Errors thrown in handler are caught and sent as error responses
+- Handler is called only when message key matches
+
+#### 3. Sending to Specific Tab - `sendToTab<T>()`
+Sends a message to a specific tab's content script.
+
+```typescript
+const response = await messageBroker.sendToTab<EntityData>(
+  tabId,
+  { key: 'GET_CONFIG' }
+);
+```
+
+**Features:**
+- Tab ID validation (must be positive integer)
+- Tab existence checking
+- Content script availability validation
+
+### Usage Patterns
+
+#### Background Script (Message Handler)
+```typescript
+import { messageBroker } from '@root/src/shared/message-broker';
+
+messageBroker.handle('GET_CONFIG', async (message: IMessage) => {
+  const tabId = message.payload.currentTabId;
+  
+  return await messageBroker.sendToTab(tabId, {
+    key: 'GET_CONFIG'
+  });
+});
+```
+
+#### Content Script (Message Handler)
+```typescript
+import { messageBroker } from '@root/src/shared/message-broker';
+
+export const setupChromeMessageListener = () => {
+  messageBroker.handle('GET_CONFIG', async () => {
+    return new Promise((resolve, reject) => {
+      window.postMessage({ action: 'getConfig' }, '*');
+      
+      const configHandler = (event: CustomEvent) => {
+        const config = JSON.parse(event.detail.data);
+        resolve(config);
+      };
+      
+      document.addEventListener('config', configHandler as EventListener);
+    });
+  });
+};
+```
+
+### Adding New Message Types
+
+#### 1. Define the Message Key
+```typescript
+type MessageKey = 'GET_CONFIG' | 'NEW_MESSAGE_TYPE';
+```
+
+#### 2. Define Payload Types (Optional)
+```typescript
+interface NewMessagePayload {
+  data: string;
+  options: Record<string, any>;
+}
+```
+
+#### 3. Register Handler
+```typescript
+messageBroker.handle('NEW_MESSAGE_TYPE', async (message: IMessage<NewMessagePayload>) => {
+  const { data, options } = message.payload;
+  return { success: true };
+});
+```
+
+#### 4. Send Messages
+```typescript
+const result = await messageBroker.send<ResponseType>({
+  key: 'NEW_MESSAGE_TYPE',
+  payload: { data: 'test', options: {} }
+});
+```
+
+### Best Practices
+
+#### Type Safety
+Always specify generic types for send operations:
+```typescript
+const config = await messageBroker.send<ConfigType>({ key: 'GET_CONFIG' });
+```
+
+#### Error Handling
+Always wrap broker calls in try-catch blocks:
+```typescript
+try {
+  const result = await messageBroker.send({ key: 'GET_CONFIG' });
+} catch (error) {
+  console.error('Config fetch failed:', error);
+}
+```
+
+#### Message Key Management
+- Define all message keys in `types.ts`
+- Use descriptive, action-oriented names
+- Follow naming convention: `VERB_NOUN` (e.g., `GET_CONFIG`, `UPDATE_SETTINGS`)
+
+#### Handler Registration
+- Register handlers once during initialization
+- Don't register handlers inside loops or conditionally
+- Ensure handlers are registered before messages are sent
+
+#### Response Structure
+Maintain consistent response structures:
+```typescript
+{ success: true, data: any }
+
+{ error: 'Error message' }
+```
+
+### Testing
+
+#### Mocking the Broker
+```typescript
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { MessageBroker } from '@root/src/shared/message-broker/broker';
+
+describe('Component with message broker', () => {
+  let mockBrowser: typeof chrome;
+  
+  beforeEach(() => {
+    mockBrowser = {
+      runtime: {
+        sendMessage: vi.fn().mockResolvedValue({ success: true }),
+        lastError: undefined,
+        onMessage: {
+          addListener: vi.fn()
+        }
+      }
+    } as unknown as typeof chrome;
+  });
+  
+  it('sends message successfully', async () => {
+    const broker = new MessageBroker(mockBrowser);
+    const result = await broker.send({ key: 'GET_CONFIG' });
+    
+    expect(result).toEqual({ success: true });
+  });
+});
+```
+
+### Common Patterns
+
+#### Request-Response with Timeout
+```typescript
+const fetchWithTimeout = async (timeoutMs: number) => {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      reject(new Error(`Request timeout after ${timeoutMs}ms`));
+    }, timeoutMs);
+    
+    messageBroker.send({ key: 'GET_CONFIG' })
+      .then(result => {
+        clearTimeout(timeout);
+        resolve(result);
+      })
+      .catch(error => {
+        clearTimeout(timeout);
+        reject(error);
+      });
+  });
+};
+```
+
+#### Broadcasting to All Tabs
+```typescript
+const broadcastToAllTabs = async (message: IMessage) => {
+  const tabs = await chrome.tabs.query({});
+  const results = await Promise.allSettled(
+    tabs.map(tab => messageBroker.sendToTab(tab.id, message))
+  );
+  return results;
+};
+```
+
+### Troubleshooting
+
+#### "Receiving end does not exist"
+- **Cause**: Content script not loaded or tab closed
+- **Solution**: Check tab state before sending, handle error gracefully
+
+#### "Extension context invalidated"
+- **Cause**: Extension was reloaded or updated
+- **Solution**: Prompt user to reload page or refresh extension
+
+#### Handler not called
+- **Cause**: Message key mismatch or handler not registered
+- **Solution**: Verify key matches exactly, ensure handler registered before message sent
+
+#### Response not received
+- **Cause**: Handler didn't return true (async listener pattern)
+- **Solution**: `handle()` method automatically returns true, ensure handler returns a Promise
+
 ## Code Quality
 - ESLint and Prettier configurations
 - TypeScript strict mode

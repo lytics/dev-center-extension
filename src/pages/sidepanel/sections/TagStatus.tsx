@@ -6,16 +6,24 @@ import { styled } from '@mui/material/styles';
 import SimpleTable from '@root/src/pages/sidepanel/components/SimpleTable';
 import { appContent } from '@root/src/shared/content/appContent';
 import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
+import { EventModel } from '@root/src/shared/models/eventModel';
 import { appColors } from '@root/src/theme/palette';
+import { formatLastActivity, getLastActivityTimestamp } from '@root/src/pages/sidepanel/utils/tagActivityHelpers';
 
 interface TagStatusProps {
   tagIsInstalled: boolean;
   tagConfig: TagConfigModel;
+  tagActivity: EventModel[];
   textContent?: typeof appContent.tagStatus;
 }
 
 const StyledContainer = styled(Box)(({ theme }) => ({
   paddingInline: theme.spacing(1.25),
+  paddingBottom: theme.spacing(12), // 96px bottom space to clear bottom navigation
+  height: '100%',
+  width: '100%',
+  overflow: 'auto',
+  boxSizing: 'border-box',
   cursor: 'default',
   transition: 'none',
   '&:hover': {
@@ -101,7 +109,12 @@ const StyledDescriptionTypography = styled(Typography)(({ theme }) => ({
   padding: theme.spacing(1),
 }));
 
-const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig, textContent = appContent.tagStatus }) => {
+const TagStatus: React.FC<TagStatusProps> = ({
+  tagIsInstalled,
+  tagConfig,
+  tagActivity,
+  textContent = appContent.tagStatus,
+}) => {
   const [legacyTag, setLegacyTag] = useState(false);
 
   useEffect(() => {
@@ -112,6 +125,10 @@ const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig, textCo
       }
     }
   }, [tagConfig]);
+
+  // Calculate last activity time
+  const lastActivityTimestamp = getLastActivityTimestamp(tagActivity);
+  const lastActivityText = formatLastActivity(lastActivityTimestamp);
 
   return (
     <StyledContainer>
@@ -154,6 +171,14 @@ const TagStatus: React.FC<TagStatusProps> = ({ tagIsInstalled, tagConfig, textCo
                   label: textContent.tableLabels.thirdPartyCookies,
                   value: tagConfig?.loadid ? textContent.tableLabels.enabled : textContent.tableLabels.disabled,
                 },
+              ]}
+            />
+          </StyledTableContainer>
+          <StyledTableContainer>
+            <SimpleTable
+              rows={[
+                { label: textContent.tableLabels.lastActivity, value: lastActivityText },
+                { label: textContent.tableLabels.dataCollection, value: textContent.tableLabels.active },
               ]}
             />
           </StyledTableContainer>
