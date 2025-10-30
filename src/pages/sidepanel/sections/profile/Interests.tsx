@@ -13,11 +13,11 @@ interface InterestsProps {
 const Container = styled(Box)(({ theme }) => ({
   width: '100%',
   backgroundColor: appColors.common.white,
-  borderRadius: theme.spacing(1.5), // 12px
-  padding: theme.spacing(3, 2), // 24px 16px
+  borderRadius: theme.spacing(1.5),
+  padding: theme.spacing(3, 2),
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(1.5), // 12px
+  gap: theme.spacing(1.5),
   cursor: 'default',
   transition: 'none',
   '&:hover': {
@@ -37,10 +37,10 @@ const EmptyStateContainer = styled(Stack)(({ theme }) => ({
   flexDirection: 'row',
   alignItems: 'center',
   width: '100%',
-  gap: theme.spacing(1.25), // 10px
-  padding: theme.spacing(1.5), // 12px
+  gap: theme.spacing(1.25),
+  padding: theme.spacing(1.5),
   backgroundColor: appColors.common.white,
-  borderRadius: theme.spacing(1), // 8px
+  borderRadius: theme.spacing(1),
   border: `1px solid ${appColors.neutral[200]}`,
 }));
 

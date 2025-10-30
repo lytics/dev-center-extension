@@ -16,13 +16,13 @@ interface BehaviorMetricsProps {
 
 const Container = styled(Box)(({ theme }) => ({
   width: '100%',
-  minHeight: '21.25rem', // 340px minimum height
+  minHeight: '21.25rem',
   backgroundColor: appColors.common.white,
-  borderRadius: theme.spacing(1.5), // 12px
-  padding: '1.5rem 1rem', // 24px 16px
+  borderRadius: theme.spacing(1.5),
+  padding: '1.5rem 1rem',
   display: 'flex',
   flexDirection: 'column',
-  gap: '1.5rem', // 24px
+  gap: '1.5rem',
   cursor: 'default',
   transition: 'none',
   '&:hover': {
@@ -40,13 +40,13 @@ const TitleText = styled(Typography)(() => ({
 const MetricsContainer = styled(Stack)(() => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: '1rem', // 16px gap between metrics
+  gap: '1rem',
 }));
 
 const MetricRow = styled(Stack)(() => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.5rem', // 8px gap between label and progress bar
+  gap: '0.5rem',
 }));
 
 const MetricLabel = styled(Typography)(() => ({
@@ -59,9 +59,9 @@ const StyledLinearProgress = styled(LinearProgress)(({ theme }) => ({
   width: '100%',
   height: '0.5rem', // 8px
   borderRadius: theme.spacing(0.5),
-  backgroundColor: appColors.common.colors.accentLight, // Light purple background
+  backgroundColor: appColors.common.colors.accentLight,
   '& .MuiLinearProgress-bar': {
-    backgroundColor: appColors.common.colors.accent, // Solid purple, no gradient
+    backgroundColor: appColors.common.colors.accent,
     borderRadius: theme.spacing(0.5),
   },
 }));

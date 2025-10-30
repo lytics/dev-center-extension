@@ -51,7 +51,7 @@ const DescriptionBox = styled(Box)(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(1.5),
   backgroundColor: appColors.common.white,
-  borderRadius: theme.spacing(1), // 8px
+  borderRadius: theme.spacing(1),
   border: `1px solid ${appColors.neutral[200]}`,
 }));
 

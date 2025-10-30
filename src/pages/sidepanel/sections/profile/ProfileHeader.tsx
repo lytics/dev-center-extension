@@ -13,13 +13,13 @@ interface ProfileHeaderProps {
 
 const Container = styled(Box)(({ theme }) => ({
   width: '100%',
-  minHeight: '11.3125rem', // 181px minimum height
+  minHeight: '11.3125rem',
   backgroundColor: appColors.common.white,
-  borderRadius: theme.spacing(1.5), // 12px
-  padding: '1.5rem 1rem', // 24px 16px
+  borderRadius: theme.spacing(1.5),
+  padding: '1.5rem 1rem',
   display: 'flex',
   flexDirection: 'column',
-  gap: '1.5rem', // 24px
+  gap: '1.5rem',
   cursor: 'default',
   transition: 'none',
   '&:hover': {
@@ -68,11 +68,11 @@ const ProgressBarWrapper = styled(Stack)(({ theme }) => ({
 
 const StyledLinearProgress = styled(LinearProgress)(({ theme }) => ({
   width: '100%',
-  height: '0.5rem', // 8px
+  height: '0.5rem',
   borderRadius: theme.spacing(0.5),
-  backgroundColor: appColors.common.colors.accentLight, // Light purple background
+  backgroundColor: appColors.common.colors.accentLight,
   '& .MuiLinearProgress-bar': {
-    backgroundColor: appColors.common.colors.accent, // Solid purple, no gradient
+    backgroundColor: appColors.common.colors.accent,
     borderRadius: theme.spacing(0.5),
   },
 }));

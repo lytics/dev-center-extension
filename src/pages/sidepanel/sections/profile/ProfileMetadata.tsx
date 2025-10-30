@@ -12,13 +12,13 @@ interface ProfileMetadataProps {
 
 const Container = styled(Box)(({ theme }) => ({
   width: '100%',
-  minHeight: '7.6875rem', // 123px minimum height
+  minHeight: '7.6875rem',
   backgroundColor: appColors.common.white,
-  borderRadius: theme.spacing(1.5), // 12px
-  padding: '1.5rem 1rem', // 24px 16px
+  borderRadius: theme.spacing(1.5),
+  padding: '1.5rem 1rem',
   display: 'flex',
   flexDirection: 'column',
-  gap: '1.5rem', // 24px
+  gap: '1.5rem',
   cursor: 'default',
   transition: 'none',
   '&:hover': {

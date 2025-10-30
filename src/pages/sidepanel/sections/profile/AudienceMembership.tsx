@@ -12,14 +12,13 @@ interface AudienceMembershipProps {
 
 const Container = styled(Box)(({ theme }) => ({
   width: '100%',
-  minHeight: '10.3125rem', // 165px minimum height
+  minHeight: '10.3125rem',
   backgroundColor: appColors.common.white,
-  borderRadius: theme.spacing(1.5), // 12px
-  padding: '1.5rem 1rem', // 24px 16px
+  borderRadius: theme.spacing(1.5),
+  padding: '1.5rem 1rem',
   display: 'flex',
   flexDirection: 'column',
-  gap: '1.25rem', // 20px
-  cursor: 'default',
+  gap: '1.25rem',
   transition: 'none',
   '&:hover': {
     boxShadow: 'none',
@@ -42,16 +41,16 @@ const AudienceChipsContainer = styled(Stack)(() => ({
 }));
 
 const StyledChip = styled(Chip)(() => ({
-  backgroundColor: appColors.common.colors.accentLight, // Light purple background from theme
-  borderRadius: '6.25rem', // 100px - full pill shape
-  padding: '0.375rem 1rem', // 6px 16px
+  backgroundColor: appColors.common.colors.accentLight,
+  borderRadius: '6.25rem',
+  padding: '0.375rem 1rem',
   height: 'auto',
   fontSize: appColors.common.fontSize.small,
   fontWeight: appColors.common.fontWeight.medium,
   color: appColors.neutral[900],
   border: 'none',
   cursor: 'default',
-  gap: '0.5rem', // 8px gap between label and icon
+  gap: '0.5rem',
   '& .MuiChip-label': {
     padding: 0,
   },
@@ -83,7 +82,7 @@ export const AudienceMembership = ({
           <StyledChip
             key={index}
             label={audience}
-            onDelete={() => {}} // Using onDelete to show icon on right side
+            onDelete={() => {}}
             deleteIcon={<QuestionIcon />}
             aria-label={`${audience} audience with information`}
           />
