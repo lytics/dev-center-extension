@@ -123,6 +123,50 @@ export const appContent = {
   externalLinks: {
     chromeExtensionDocs: 'https://docs.lytics.com/docs/chrome-extension',
   },
+
+  // ProfileHeader Component
+  profileHeader: {
+    lyticsIdLabel: 'Lytics ID',
+    lastUidLabel: 'Last _UID (Cookie)',
+    completenessLabel: 'Profile Completeness',
+    completeText: 'complete',
+  },
+
+  // AudienceMembership Component
+  audienceMembership: {
+    title: 'Audience Membership',
+  },
+
+  // Attributes Component
+  attributes: {
+    title: 'Attributes',
+    description:
+      'You may have more attributes available for personalization. Review documentation on how to configure which attributes are surfaced to the web.',
+    learnMoreText: 'Learn more',
+    learnMoreUrl: 'https://docs.lytics.com/docs/developer-attributes',
+    learnMoreAriaLabel: 'Learn more about configuring attributes',
+  },
+
+  // BehaviorMetrics Component
+  behaviorMetrics: {
+    title: 'Behavior',
+  },
+
+  // Interests Component
+  interests: {
+    title: 'Interests',
+    emptyMessage:
+      'Interests are not currently shared for this account. You can share them to make them available in this tool.',
+    learnMoreText: 'Learn more',
+    learnMoreUrl: 'https://docs.lytics.com/docs/personalization-api#allowlist-fields-for-public-api',
+    learnMoreAriaLabel: 'Learn more about sharing interests',
+  },
+
+  // ProfileMetadata Component
+  profileMetadata: {
+    lastUpdatedLabel: 'Profile Last Updated',
+    lastAttributeLabel: 'Last Attribute',
+  },
 } as const;
 
 // Type for accessing content with autocomplete
