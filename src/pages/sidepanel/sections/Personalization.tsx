@@ -63,7 +63,7 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates, getter, s
             <Box mt={8}>
               <EmptyState
                 type={'listening'}
-                body={<Box maxWidth={375}>No active Lytics managed experiences were found.</Box>}
+                body={<Box maxWidth={375}>{appContent.personalizationEmptyStates.noExperiences}</Box>}
               />
             </Box>
           )}
@@ -75,7 +75,7 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates, getter, s
               {candidates?.legacyABTests?.length > 0 && <TabDetails items={candidates?.legacyABTests} />}
             </>
           ) : (
-            <Box display="flex" justifyContent="center" alignItems="center" width="100%" height="100%">
+            <Box display="flex" justifyContent="center" alignItems="center" height="100%">
               <Box
                 width="23.4375rem"
                 height="15.1875rem"
@@ -85,7 +85,7 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates, getter, s
                 alignItems="center">
                 <EmptyState
                   type={'deprecated'}
-                  body={<Box maxWidth={375}>Great news! No legacy campaigns detected</Box>}
+                  body={<Box maxWidth={375}>{appContent.personalizationEmptyStates.noLegacyCampaigns}</Box>}
                 />
               </Box>
             </Box>

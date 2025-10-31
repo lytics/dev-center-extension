@@ -101,6 +101,14 @@ export const appContent = {
     experiences: 'Active',
     legacyCampaigns: 'Legacy',
   },
+
+  // Personalization Empty States
+  personalizationEmptyStates: {
+    noExperiences: 'No active Lytics managed experiences were found.',
+    noLegacyCampaigns: 'Great news! No legacy campaigns detected',
+    noLegacyCampaignsSubtext: "You're using the latest personalization framework",
+  },
+
   // Lytics Request Type Descriptions
   lyticsRequestDescriptions: {
     'load-js-tag':

@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import { GeneralEmpty, ListeningEmpty } from '@root/src/pages/sidepanel/assets/svg/empty';
 import { Sparkles } from '@root/src/pages/sidepanel/assets/svg/sparkles';
 import { appColors } from '@root/src/theme/palette';
+import { appContent } from '@root/src/shared/content/appContent';
 
 type EmptyType = 'empty' | 'listening' | 'deprecated';
 
@@ -15,8 +16,7 @@ interface EmptyStateProps {
 const DeprecatedContainer = styled(Stack)(() => ({
   width: '18.8125rem', // 301px
   height: '9rem', // 144px
-  paddingLeft: '2.9375rem', // 47px
-  paddingRight: '2.9375rem', // 47px
+  padding: '0 2.9375rem', // 0 47px (top/bottom left/right)
   gap: '1.5rem', // 24px
   justifyContent: 'center',
   alignItems: 'center',
@@ -60,7 +60,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ body, type }) => {
         {translateType(type)}
         <Stack gap={'0.5rem'} alignItems={'center'}>
           <DeprecatedText>{body}</DeprecatedText>
-          <SecondaryText>You&apos;re using the latest personalization framework</SecondaryText>
+          <SecondaryText>{appContent.personalizationEmptyStates.noLegacyCampaignsSubtext}</SecondaryText>
         </Stack>
       </DeprecatedContainer>
     );
