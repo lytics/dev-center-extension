@@ -52,12 +52,12 @@ const DescriptionBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1.5),
   backgroundColor: appColors.common.white,
   borderRadius: theme.spacing(1),
-  border: `1px solid ${appColors.neutral[200]}`,
+  border: `1px solid ${appColors.neutral[500]}`,
 }));
 
 const DescriptionText = styled(Typography)(() => ({
   fontSize: appColors.common.fontSize.small,
-  color: appColors.neutral[600],
+  color: appColors.neutral[300],
   lineHeight: appColors.common.lineHeight.tight,
 }));
 

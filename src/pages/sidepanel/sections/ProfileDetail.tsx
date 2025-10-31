@@ -31,7 +31,7 @@ const ExportButton = styled(Button)(({ theme }) => ({
   fontSize: appColors.common.fontSize.base,
   textTransform: 'none',
   borderRadius: theme.spacing(1),
-  border: `1px solid ${appColors.neutral[200]}`,
+  border: `1px solid ${appColors.neutral[500]}`,
   '&:hover': {
     backgroundColor: appColors.neutral[50],
   },
