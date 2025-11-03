@@ -16,18 +16,17 @@ interface TabNavigationProps {
 }
 
 const TabsContainer = styled(Box)(({ theme }) => ({
-  width: '100%',
   padding: theme.spacing(2),
 }));
 
 const StyledTabs = styled(Tabs)(({ theme }) => ({
-  minHeight: '2.5rem', // 40px
   height: '2.5rem', // 40px
+  cursor: 'pointer',
   '& .MuiTabs-flexContainer': {
-    gap: theme.spacing(1.5), // 12px gap between tabs
+    gap: theme.spacing(1.5),
   },
   '& .MuiTabs-indicator': {
-    display: 'none', // Hide the default underline indicator
+    display: 'none',
   },
 }));
 
@@ -35,9 +34,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   minHeight: '2rem', // 32px
   height: '2rem', // 32px
   padding: theme.spacing(0.75, 1.25), // 6px top/bottom, 10px left/right
-  fontSize: appColors.common.fontSize.baseSmall,
-  fontWeight: appColors.common.fontWeight.semiBold,
-  fontFamily: appColors.common.fontFamily,
+  font: `${appColors.common.fontWeight.semiBold} ${appColors.common.fontSize.baseSmall} ${appColors.common.fontFamily}`,
   textTransform: 'none',
   color: appColors.neutral[400],
   backgroundColor: 'transparent',

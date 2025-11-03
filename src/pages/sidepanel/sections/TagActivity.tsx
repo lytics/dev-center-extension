@@ -4,10 +4,17 @@ import { ExpandMore, Delete } from '@mui/icons-material';
 import { EventModel, EventType } from '@src/shared/models/eventModel';
 import TreeDisplay from '@root/src/pages/sidepanel/components/TreeDisplay';
 import EmptyState from '@root/src/pages/sidepanel/components/EmptyState';
+import { styled } from '@mui/material/styles';
 import { useCurrentTabState } from '@root/src/pages/sidepanel/hooks/useCurrentTabState';
+import { appColors } from '@root/src/theme/palette';
+import { appContent } from '@root/src/shared/content/appContent';
 import moment from 'moment';
 
-const TagActivity = () => {
+interface TagActivityProps {
+  textContent?: typeof appContent.tagActivity;
+}
+
+const TagActivity = ({ textContent = appContent.tagActivity }: TagActivityProps) => {
   const { tagActivity: currentTabActivity, clearActivity } = useCurrentTabState();
   const [tagActivity, setTagActivity] = useState<EventModel[]>([] as EventModel[]);
 
@@ -37,6 +44,34 @@ const TagActivity = () => {
     setTagActivity([]);
   };
 
+  const StyledTableContainer = styled(Box)(({ theme }) => ({
+    background: appColors.common.white,
+    // padding: theme.spacing(3, 2),
+    borderRadius: theme.spacing(1.5),
+    marginTop: theme.spacing(2),
+  }));
+
+  const StyledAccordion = styled(Accordion)(() => ({
+    backgroundColor: appColors.common.white,
+    '&.MuiAccordion-root::before': {
+      background: 'rgba(82, 82, 82, 0.13)',
+    },
+  }));
+
+  const StyledChip = styled(Chip)(() => ({
+    color: appColors.common.colors.accent,
+    backgroundColor: 'rgba(147, 59, 255, 0.12)',
+    fontWeight: appColors.common.fontWeight.semiBold,
+    fontSize: appColors.common.fontSize.small,
+    borderColor: 'transparent',
+  }));
+
+  const StyledTimeTypography = styled(Typography)(() => ({
+    color: appColors.common.colors.textSecondary,
+    fontWeight: appColors.common.fontWeight.medium,
+    fontSize: appColors.common.fontSize.small,
+  }));
+
   return (
     <Box fontSize={12}>
       <Box textAlign={'right'} m={1}>
@@ -46,27 +81,19 @@ const TagActivity = () => {
           color={'secondary'}
           onClick={handleClearActivity}
           startIcon={<Delete />}>
-          Clear Logs
+          {textContent.clearLogsLabel}
         </Button>
       </Box>
       {tagActivity.length === 0 ? (
         <Box mt={6}>
-          <EmptyState
-            type={'empty'}
-            body={
-              <Box maxWidth={375}>
-                No activity has been seen since extension activated. Please emit an event using jstag.send or refresh
-                the page.
-              </Box>
-            }
-          />
+          <EmptyState type={'empty'} body={<Box maxWidth={375}>{textContent.emptyStateMessage}</Box>} />
         </Box>
       ) : (
-        <Stack>
+        <StyledTableContainer>
           {tagActivity.map((item, index) => (
             <>
               {item && (
-                <Accordion disableGutters key={index}>
+                <StyledAccordion disableGutters key={index}>
                   <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel1a-content" id={index.toString()}>
                     <Stack
                       direction={'row'}
@@ -74,8 +101,8 @@ const TagActivity = () => {
                       width="100%"
                       alignItems="center"
                       spacing={2}>
-                      <Chip size="small" variant="outlined" label={translateEventType(item.type)} />
-                      <Typography variant="body2">{calculateTimeAgo(item.ts)}</Typography>
+                      <StyledChip size="small" variant="outlined" label={translateEventType(item.type)} />
+                      <StyledTimeTypography variant="body2">{calculateTimeAgo(item.ts)}</StyledTimeTypography>
                     </Stack>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -94,11 +121,11 @@ const TagActivity = () => {
                       )}
                     </Stack>
                   </AccordionDetails>
-                </Accordion>
+                </StyledAccordion>
               )}
             </>
           ))}
-        </Stack>
+        </StyledTableContainer>
       )}
     </Box>
   );
