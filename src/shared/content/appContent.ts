@@ -90,6 +90,13 @@ export const appContent = {
     autoDetectedTitle: 'Auto-detected',
   },
 
+  // Section Headers
+  sectionHeaders: {
+    debug: 'Debug',
+    profile: 'Profile',
+    personalization: 'Personalization',
+  },
+
   // Tab Navigation Content
   profileTabs: {
     summary: 'Summary',

@@ -32,7 +32,7 @@ const FieldRow = styled(Stack)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   gap: theme.spacing(1),
 }));
 
@@ -40,7 +40,8 @@ const FieldLabel = styled(Typography)(() => ({
   fontWeight: appColors.common.fontWeight.semiBold,
   fontSize: appColors.common.fontSize.baseSmall,
   color: appColors.neutral[900],
-  whiteSpace: 'nowrap',
+  width: '7.5rem', // Fixed width for consistent alignment
+  flexShrink: 0,
 }));
 
 const FieldValue = styled(Typography)(() => ({
@@ -55,15 +56,18 @@ const FieldValue = styled(Typography)(() => ({
 
 const CompletenessContainer = styled(Stack)(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(0.5),
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  gap: theme.spacing(1),
 }));
 
-const ProgressBarWrapper = styled(Stack)(({ theme }) => ({
+const ProgressColumn = styled(Stack)(() => ({
   display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: theme.spacing(1),
+  flexDirection: 'column',
+  gap: '0.25rem',
+  flex: 1,
+  overflow: 'hidden',
 }));
 
 const StyledLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -78,9 +82,14 @@ const StyledLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 const CompletenessLabel = styled(Typography)(() => ({
-  fontSize: appColors.common.fontSize.small,
+  fontFamily: 'SF Pro, -apple-system',
+  fontWeight: 590,
+  fontSize: '0.8125rem', // 13px
+  lineHeight: 1, // 100%
+  letterSpacing: '-0.0125rem', // -0.2px
   color: appColors.neutral[400],
   whiteSpace: 'nowrap',
+  textAlign: 'center',
 }));
 
 export const ProfileHeader = ({
@@ -106,12 +115,12 @@ export const ProfileHeader = ({
       {/* Profile Completeness */}
       <CompletenessContainer>
         <FieldLabel>{textContent.completenessLabel}</FieldLabel>
-        <ProgressBarWrapper>
+        <ProgressColumn>
           <StyledLinearProgress variant="determinate" value={completeness} aria-label={`${completeness}% complete`} />
           <CompletenessLabel>
             {completeness}% {textContent.completeText}
           </CompletenessLabel>
-        </ProgressBarWrapper>
+        </ProgressColumn>
       </CompletenessContainer>
     </Container>
   );

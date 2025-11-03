@@ -12,7 +12,6 @@ interface AudienceMembershipProps {
 
 const Container = styled(Box)(({ theme }) => ({
   width: '100%',
-  minHeight: '10.3125rem',
   backgroundColor: appColors.common.white,
   borderRadius: theme.spacing(1.5),
   padding: '1.5rem 1rem',
