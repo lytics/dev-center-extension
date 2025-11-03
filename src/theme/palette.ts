@@ -21,7 +21,9 @@ const appColors = {
     50: '#fafafa',
     100: '#f5f5f5',
     200: '#525252',
+    300: '#B5B4C0', // Muted text color
     400: '#a3a3a3',
+    500: '#E6E6E6', // Light border color
     600: '#383838',
     900: '#171717',
   },
@@ -61,6 +63,7 @@ const appColors = {
     colors: {
       textSecondary: '#7D7A7A', // Secondary text color
       accent: '#8848F9', // Accent color for buttons and links
+      accentLight: '#E8DBFF', // Light purple for backgrounds/progress bars
       autoDetection: {
         background: '#DDE3FF', // Auto-detection background
         border: '#516EFF', // Auto-detection border

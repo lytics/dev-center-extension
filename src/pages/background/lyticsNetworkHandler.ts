@@ -164,7 +164,7 @@ const initializeDomainState = async (activeDomain: string, tabId: string): Promi
  * This prevents automatic tracking of all domains and ensures user consent.
  */
 const shouldProcessRequest = (activeDomain: string, stickyDomain: string, domainState: any): boolean => {
-  // FIRST: Only process requests from pinned domains (user must "Configure Domain")
+  // FIRST: Only process requests from pinned domains (user must "Configure/analyze/Pin Domain")
   // This ensures we don't track domains that haven't been explicitly analyzed
   if (!domainState?.isPinned) {
     EmitLog({
@@ -172,19 +172,6 @@ const shouldProcessRequest = (activeDomain: string, stickyDomain: string, domain
       payload: {
         msg: `Domain not pinned - skipping event tracking`,
         domain: activeDomain,
-      },
-    });
-    return false;
-  }
-
-  // SECOND: If another domain is pinned (stickyDomain), only allow requests from that domain
-  if (stickyDomain && activeDomain !== stickyDomain) {
-    EmitLog({
-      name: 'background',
-      payload: {
-        msg: `Request from different domain than pinned`,
-        expected: stickyDomain,
-        actual: activeDomain,
       },
     });
     return false;
