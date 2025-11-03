@@ -57,11 +57,10 @@ const EmptyStateText = styled(Typography)(() => ({
 }));
 
 const StyledLink = styled(Link)(() => ({
-  fontSize: appColors.common.fontSize.small,
+  font: '700 0.75rem/1.42 Inter, sans-serif', // Bold 12px, line-height 142%
   color: appColors.common.colors.accent,
   textDecoration: 'underline',
   cursor: 'pointer',
-  fontWeight: appColors.common.fontWeight.medium,
   '&:hover': {
     textDecoration: 'underline',
   },

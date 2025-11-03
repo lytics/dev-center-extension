@@ -36,10 +36,11 @@ const FieldRow = styled(Stack)(({ theme }) => ({
 }));
 
 const FieldLabel = styled(Typography)(() => ({
-  fontWeight: appColors.common.fontWeight.semiBold,
-  fontSize: appColors.common.fontSize.baseSmall,
+  font: '700 0.875rem/1 SF Pro, -apple-system', // Bold 14px, line-height 100%
+  letterSpacing: '-0.03125rem', // -0.5px
   color: appColors.neutral[900],
-  whiteSpace: 'nowrap',
+  width: '6.25rem', // Fixed width to force wrap - 100px
+  wordWrap: 'break-word',
 }));
 
 const FieldValue = styled(Typography)(() => ({
@@ -48,7 +49,7 @@ const FieldValue = styled(Typography)(() => ({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
-  textAlign: 'right',
+  textAlign: 'center',
   flex: 1,
 }));
 
