@@ -2,6 +2,8 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { Box, Stack } from '@mui/material';
 import CustomTabPanel from '@root/src/pages/sidepanel/components/CustomTabPanel';
 import { TabNavigation } from '@root/src/pages/sidepanel/components/TabNavigation';
+import { SectionHeader } from '@root/src/pages/sidepanel/components/SectionHeader';
+import { DebugIcon } from '@root/src/pages/sidepanel/assets/svg/DebugIcon';
 import TagActivity from '@root/src/pages/sidepanel/sections/TagActivity';
 import TagConfig from '@root/src/pages/sidepanel/sections/TagConfig';
 import { TagConfigModel } from '@root/src/shared/models/tagConfigModel';
@@ -26,6 +28,7 @@ const Debugger: React.FC<DebuggerProps> = ({ tagIsInstalled, tagConfig, getter, 
 
   return (
     <Stack alignItems={'flex-start'} justifyContent={'flex-start'} height={'100%'} width={'100%'}>
+      <SectionHeader icon={<DebugIcon />} title={appContent.sectionHeaders.debug} />
       <TabNavigation tabs={tabs} value={getter} onChange={handleSetTab} />
       <Box flexGrow={1} width={'100%'} overflow={'auto'} sx={{ height: 0 }}>
         <CustomTabPanel value={getter} index={0}>
