@@ -29,7 +29,7 @@ const StyledBottomNavigation = styled(BottomNavigation)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   backdropFilter: 'blur(13.3px)', // 13.3px - Figma blur value
   WebkitBackdropFilter: 'blur(13.3px)', // Safari support
-  cursor: 'default',
+  cursor: 'pointer',
   transition: 'none',
   '&:hover': {
     boxShadow: 'none',

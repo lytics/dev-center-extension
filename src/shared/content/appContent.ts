@@ -90,6 +90,13 @@ export const appContent = {
     autoDetectedTitle: 'Auto-detected',
   },
 
+  // Section Headers
+  sectionHeaders: {
+    debug: 'Debug',
+    profile: 'Profile',
+    personalization: 'Personalization',
+  },
+
   // Tab Navigation Content
   profileTabs: {
     summary: 'Summary',
@@ -174,6 +181,13 @@ export const appContent = {
   profileMetadata: {
     lastUpdatedLabel: 'Profile Last Updated',
     lastAttributeLabel: 'Last Attribute',
+  },
+
+  // TagActivity Component
+  tagActivity: {
+    clearLogsLabel: 'Clear Logs',
+    emptyStateMessage:
+      'No activity has been seen since extension activated. Please emit an event using jstag.send or refresh the page.',
   },
 } as const;
 

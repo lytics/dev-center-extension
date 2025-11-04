@@ -2,6 +2,8 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { Box, Stack, CircularProgress } from '@mui/material';
 import CustomTabPanel from '@root/src/pages/sidepanel/components/CustomTabPanel';
 import { TabNavigation } from '@root/src/pages/sidepanel/components/TabNavigation';
+import { SectionHeader } from '@root/src/pages/sidepanel/components/SectionHeader';
+import { ProfileIcon } from '@root/src/pages/sidepanel/assets/svg/ProfileIcon';
 import ProfileDetail from '@root/src/pages/sidepanel/sections/ProfileDetail';
 import ProfileSummary from '@root/src/pages/sidepanel/sections/ProfileSummary';
 import { appContent } from '@root/src/shared/content/appContent';
@@ -25,6 +27,7 @@ const Profile: React.FC<ProfileTabProps> = ({ profileIsLoading, profile, getter,
 
   return (
     <Stack alignItems={'flex-start'} justifyContent={'flex-start'} height={'100%'} width={'100%'}>
+      <SectionHeader icon={<ProfileIcon />} title={appContent.sectionHeaders.profile} />
       <TabNavigation tabs={tabs} value={getter} onChange={handleSetTab} />
       <Box flexGrow={1} width={'100%'} overflow={'auto'} sx={{ height: 0 }}>
         <CustomTabPanel value={getter} index={0}>

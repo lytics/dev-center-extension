@@ -5,6 +5,8 @@ import { TagConfigPathforaCandidates } from '@root/src/shared/models/tagConfigMo
 import TreeDisplay from '@root/src/pages/sidepanel/components/TreeDisplay';
 import CustomTabPanel from '@root/src/pages/sidepanel/components/CustomTabPanel';
 import { TabNavigation } from '@root/src/pages/sidepanel/components/TabNavigation';
+import { SectionHeader } from '@root/src/pages/sidepanel/components/SectionHeader';
+import { PersonalizationIcon } from '@root/src/pages/sidepanel/assets/svg/PersonalizationIcon';
 import EmptyState from '@root/src/pages/sidepanel/components/EmptyState';
 import { appContent } from '@root/src/shared/content/appContent';
 
@@ -54,6 +56,7 @@ const Personalization: React.FC<PersonalizationProps> = ({ candidates, getter, s
 
   return (
     <Stack alignItems={'flex-start'} justifyContent={'flex-start'} height={'100%'} width={'100%'}>
+      <SectionHeader icon={<PersonalizationIcon />} title={appContent.sectionHeaders.personalization} />
       <TabNavigation tabs={tabs} value={getter} onChange={handleSetTab} />
       <Box flexGrow={1} width={'100%'} overflow={'auto'} sx={{ height: 0 }}>
         <CustomTabPanel value={getter} index={0}>
