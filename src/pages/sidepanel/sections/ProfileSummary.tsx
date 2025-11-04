@@ -132,7 +132,7 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         }
       />
 
-      <Interests hasData={hasContent} />
+      <Interests hasData={hasContent} interests={profile?.data?.user?.lytics_content || []} />
 
       <ProfileMetadata lastUpdated={lastUpdatedText} lastAttribute={lastAttributeText} />
     </Box>

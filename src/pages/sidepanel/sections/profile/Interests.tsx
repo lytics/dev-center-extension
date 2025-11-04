@@ -7,6 +7,7 @@ import { appContent } from '@root/src/shared/content/appContent';
 
 interface InterestsProps {
   hasData: boolean;
+  interests?: string[];
   textContent?: typeof appContent.interests;
 }
 
@@ -57,7 +58,7 @@ const EmptyStateText = styled(Typography)(() => ({
 }));
 
 const StyledLink = styled(Link)(() => ({
-  font: '700 0.75rem/1.42 Inter, sans-serif', // Bold 12px, line-height 142%
+  font: `${appColors.common.fontWeight.bold} 0.75rem/1.42 Inter, sans-serif`, // Bold 12px, line-height 142%
   color: appColors.common.colors.accent,
   textDecoration: 'underline',
   cursor: 'pointer',
@@ -66,12 +67,24 @@ const StyledLink = styled(Link)(() => ({
   },
 }));
 
-export const Interests = ({ hasData, textContent = appContent.interests }: InterestsProps): JSX.Element => {
+const ContentText = styled(Typography)(() => ({
+  fontSize: appColors.common.fontSize.baseSmall,
+  color: appColors.neutral[600],
+  lineHeight: appColors.common.lineHeight.tight,
+}));
+
+export const Interests = ({
+  hasData,
+  interests = [],
+  textContent = appContent.interests,
+}: InterestsProps): JSX.Element => {
   return (
     <Container>
       <TitleText>{textContent.title}</TitleText>
 
-      {!hasData && (
+      {hasData && interests.length > 0 ? (
+        <ContentText>{interests.join(', ')}</ContentText>
+      ) : (
         <EmptyStateContainer>
           <LockIcon aria-hidden="true" />
           <EmptyStateText>

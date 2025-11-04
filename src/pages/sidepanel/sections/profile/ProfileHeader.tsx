@@ -82,11 +82,7 @@ const StyledLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 const CompletenessLabel = styled(Typography)(() => ({
-  fontFamily: 'SF Pro, -apple-system',
-  fontWeight: 590,
-  fontSize: '0.8125rem', // 13px
-  lineHeight: 1, // 100%
-  letterSpacing: '-0.0125rem', // -0.2px
+  font: `590 ${appColors.common.fontSize.small}/1 ${appColors.common.fontFamily}`, // 590 weight, 13px size, 100% line-height
   color: appColors.neutral[400],
   whiteSpace: 'nowrap',
   textAlign: 'center',
