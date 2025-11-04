@@ -58,14 +58,24 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   },
 }));
 
+const Divider = styled(Box)(() => ({
+  width: 'calc(100% - 1.2rem)', // Full width minus left and right margins (0.6rem each side)
+  height: '0.09375rem', // 1.5px
+  backgroundColor: `${appColors.neutral[200]}21`, // neutral[200] with 21 hex opacity (13%)
+  margin: '0 0.6rem', // 0.6rem (9.6px) horizontal margins
+}));
+
 export const TabNavigation = ({ tabs, value, onChange }: TabNavigationProps): JSX.Element => {
   return (
-    <TabsContainer>
-      <StyledTabs value={value} onChange={onChange}>
-        {tabs.map(tab => (
-          <StyledTab key={tab.id} id={tab.id} label={tab.label} disabled={tab.disabled ?? false} />
-        ))}
-      </StyledTabs>
-    </TabsContainer>
+    <>
+      <TabsContainer>
+        <StyledTabs value={value} onChange={onChange}>
+          {tabs.map(tab => (
+            <StyledTab key={tab.id} id={tab.id} label={tab.label} disabled={tab.disabled ?? false} />
+          ))}
+        </StyledTabs>
+      </TabsContainer>
+      <Divider />
+    </>
   );
 };
