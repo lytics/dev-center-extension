@@ -182,6 +182,13 @@ export const appContent = {
     lastUpdatedLabel: 'Profile Last Updated',
     lastAttributeLabel: 'Last Attribute',
   },
+
+  // TagActivity Component
+  tagActivity: {
+    clearLogsLabel: 'Clear Logs',
+    emptyStateMessage:
+      'No activity has been seen since extension activated. Please emit an event using jstag.send or refresh the page.',
+  },
 } as const;
 
 // Type for accessing content with autocomplete
