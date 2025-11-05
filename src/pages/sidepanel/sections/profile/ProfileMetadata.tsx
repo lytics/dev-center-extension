@@ -52,6 +52,7 @@ const FieldValue = styled(Typography)(() => ({
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   textAlign: 'center',
+  alignSelf: 'center',
   flex: 1,
 }));
 
