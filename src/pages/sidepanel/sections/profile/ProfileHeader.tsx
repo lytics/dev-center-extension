@@ -46,6 +46,7 @@ const FieldLabel = styled(Typography)(() => ({
 
 const FieldValue = styled(Typography)(() => ({
   fontSize: appColors.common.fontSize.baseSmall,
+  fontWeight: appColors.common.fontWeight.medium,
   color: appColors.neutral[600],
   overflow: 'hidden',
   textOverflow: 'ellipsis',
