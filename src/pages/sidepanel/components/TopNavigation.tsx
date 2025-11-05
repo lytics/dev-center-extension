@@ -10,7 +10,8 @@ import {
   IconButton,
   Divider,
 } from '@mui/material';
-import { HelpOutline, Settings } from '@mui/icons-material';
+// import { Settings } from '@mui/icons-material';
+import { HelpOutline } from '@mui/icons-material';
 import Toggle from '@root/src/pages/sidepanel/components/Toggle';
 import { AutoDetectionIndicator } from '@root/src/pages/sidepanel/components/AutoDetectionIndicator';
 import { useAutoDetection } from '@root/src/pages/sidepanel/hooks/useAutoDetection';
@@ -101,7 +102,7 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange, domainState
               <HelpOutline fontSize="medium" />
             </IconButton>
 
-            <IconButton
+            {/* <IconButton
               size="medium"
               sx={{
                 color: theme.palette.text.secondary,
@@ -114,7 +115,7 @@ const TopNavigation: React.FC<TopNavProps> = ({ isEnabled, onChange, domainState
               }}
               aria-label="settings">
               <Settings fontSize="medium" />
-            </IconButton>
+            </IconButton> */}
           </Box>
         </Toolbar>
 

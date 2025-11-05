@@ -17,6 +17,7 @@ interface TabNavigationProps {
 
 const TabsContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
+  paddingTop: '1.5rem', // 24px
 }));
 
 const StyledTabs = styled(Tabs)(({ theme }) => ({

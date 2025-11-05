@@ -81,12 +81,12 @@ describe('TopNavigation', () => {
       expect(screen.getByText('Disable Extension')).toBeInTheDocument();
     });
 
-    it('should render help and settings icons', () => {
-      renderWithTheme();
+    // it('should render help and settings icons', () => {
+    //   renderWithTheme();
 
-      expect(screen.getByLabelText('help')).toBeInTheDocument();
-      expect(screen.getByLabelText('settings')).toBeInTheDocument();
-    });
+    //   expect(screen.getByLabelText('help')).toBeInTheDocument();
+    //   expect(screen.getByLabelText('settings')).toBeInTheDocument();
+    // });
   });
 
   describe('Toggle Functionality', () => {
@@ -123,14 +123,14 @@ describe('TopNavigation', () => {
     });
   });
 
-  describe('Settings Icon', () => {
-    it('should render settings icon with correct aria-label', () => {
-      renderWithTheme();
+  // describe('Settings Icon', () => {
+  //   it('should render settings icon with correct aria-label', () => {
+  //     renderWithTheme();
 
-      const settingsButton = screen.getByLabelText('settings');
-      expect(settingsButton).toBeInTheDocument();
-    });
-  });
+  //     const settingsButton = screen.getByLabelText('settings');
+  //     expect(settingsButton).toBeInTheDocument();
+  //   });
+  // });
 
   describe('Auto Detection Indicator', () => {
     it('should call useAutoDetection with correct parameters', () => {

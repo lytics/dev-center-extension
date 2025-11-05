@@ -13,7 +13,7 @@ const HeaderContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: theme.spacing(1.25), // 10px between icon and text
   height: theme.spacing(5), // 40px
-  padding: `${theme.spacing(1.375)} ${theme.spacing(2)} ${theme.spacing(0.875)} ${theme.spacing(3)}`, // 11px 16px 7px 24px (top right bottom left)
+  padding: `1.375rem ${theme.spacing(2)} ${theme.spacing(0.875)} ${theme.spacing(3)}`, // 11px 16px 7px 24px (top right bottom left)
   width: '100%',
   opacity: 1,
 }));

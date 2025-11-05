@@ -59,10 +59,12 @@ const DescriptionText = styled(Typography)(() => ({
   fontSize: appColors.common.fontSize.small,
   color: appColors.neutral[300],
   lineHeight: appColors.common.lineHeight.tight,
+  fontWeight: appColors.common.fontWeight.medium,
 }));
 
 const StyledLink = styled(Link)(() => ({
-  font: `${appColors.common.fontWeight.bold} 0.75rem/1.42 Inter, sans-serif`, // Bold 12px, line-height 142%
+  fontWeight: appColors.common.fontWeight.bold,
+  fontSize: appColors.common.fontSize.small,
   color: appColors.common.colors.accent,
   textDecoration: 'underline',
   cursor: 'pointer',
