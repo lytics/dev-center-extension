@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, Stack, Typography, Chip } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { HelpOutline } from '@mui/icons-material';
 import { appColors } from '@root/src/theme/palette';
 import { appContent } from '@root/src/shared/content/appContent';
 
@@ -53,19 +52,9 @@ const StyledChip = styled(Chip)(() => ({
   '& .MuiChip-label': {
     padding: 0,
   },
-  '& .MuiChip-deleteIcon': {
-    margin: 0,
-    color: appColors.common.colors.accent,
-    fontSize: '1rem',
-  },
   '&:hover': {
     backgroundColor: appColors.common.colors.accentLight,
   },
-}));
-
-const QuestionIcon = styled(HelpOutline)(() => ({
-  fontSize: '1rem',
-  color: appColors.common.colors.accent,
 }));
 
 export const AudienceMembership = ({
@@ -78,13 +67,7 @@ export const AudienceMembership = ({
 
       <AudienceChipsContainer>
         {audiences.map((audience, index) => (
-          <StyledChip
-            key={index}
-            label={audience}
-            onDelete={() => {}}
-            deleteIcon={<QuestionIcon />}
-            aria-label={`${audience} audience with information`}
-          />
+          <StyledChip key={index} label={audience} aria-label={`${audience} audience`} />
         ))}
       </AudienceChipsContainer>
     </Container>

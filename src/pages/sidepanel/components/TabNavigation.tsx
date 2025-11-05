@@ -16,12 +16,10 @@ interface TabNavigationProps {
 }
 
 const TabsContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-  paddingTop: '1.5rem', // 24px
+  padding: `1.5rem ${theme.spacing(2)} 0.5rem`, // 16px top/sides, 8px bottom
 }));
 
 const StyledTabs = styled(Tabs)(({ theme }) => ({
-  height: '2.5rem', // 40px
   cursor: 'pointer',
   '& .MuiTabs-flexContainer': {
     gap: theme.spacing(1.5),
