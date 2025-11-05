@@ -25,7 +25,7 @@ const DeprecatedContainer = styled(Stack)(() => ({
 const DeprecatedText = styled(Box)(() => ({
   width: '12.9375rem', // 207px
   height: '2.375rem', // 38px
-  font: '700 1rem/1 SF Pro, sans-serif',
+  font: '700 1rem/1 SF Pro, -apple-system, BlinkMacSystemFont, sans-serif',
   textAlign: 'center',
   color: appColors.neutral[600],
 }));
@@ -33,7 +33,7 @@ const DeprecatedText = styled(Box)(() => ({
 const SecondaryText = styled(Box)(() => ({
   width: '12.9375rem', // 207px
   height: '2.125rem', // 34px
-  font: '500 0.875rem/1 SF Pro, sans-serif',
+  font: '500 0.875rem/1 SF Pro, -apple-system, BlinkMacSystemFont, sans-serif',
   textAlign: 'center',
   color: appColors.neutral[400],
 }));
@@ -69,7 +69,13 @@ const EmptyState: React.FC<EmptyStateProps> = ({ body, type }) => {
   return (
     <Stack width={'100%'} height={'100%'} justifyContent={'center'} alignItems={'center'}>
       <Box width={'125px'}>{translateType(type)}</Box>
-      <Box pt={1} pb={5} fontSize={'14px'} textAlign={'center'} color={'#B0A5D4'}>
+      <Box
+        pt={1}
+        pb={5}
+        fontSize={'14px'}
+        textAlign={'center'}
+        color={appColors.neutral[300]}
+        fontFamily={'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif'}>
         {body}
       </Box>
     </Stack>

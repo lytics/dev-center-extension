@@ -36,7 +36,7 @@ const FieldRow = styled(Stack)(({ theme }) => ({
 }));
 
 const FieldLabel = styled(Typography)(() => ({
-  font: '700 0.875rem/1 SF Pro, -apple-system', // Bold 14px, line-height 100%
+  font: '700 0.875rem/1 SF Pro, -apple-system, BlinkMacSystemFont, sans-serif', // Bold 14px, line-height 100%
   letterSpacing: '-0.03125rem', // -0.5px
   color: appColors.neutral[600], // #383838
   width: '6.25rem', // Fixed width to force wrap - 100px
@@ -45,6 +45,7 @@ const FieldLabel = styled(Typography)(() => ({
 
 const FieldValue = styled(Typography)(() => ({
   fontSize: appColors.common.fontSize.baseSmall,
+  fontFamily: appColors.common.fontFamily,
   color: appColors.neutral[600],
   overflow: 'hidden',
   textOverflow: 'ellipsis',
