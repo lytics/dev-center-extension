@@ -72,10 +72,10 @@ const EmptyState: React.FC<EmptyStateProps> = ({ body, type }) => {
       <Box
         pt={1}
         pb={5}
-        fontSize={'14px'}
+        fontSize={appColors.common.fontSize.baseSmall}
         textAlign={'center'}
         color={appColors.neutral[300]}
-        fontFamily={'SF Pro, -apple-system, BlinkMacSystemFont, sans-serif'}>
+        fontFamily={appColors.common.fontFamily}>
         {body}
       </Box>
     </Stack>
