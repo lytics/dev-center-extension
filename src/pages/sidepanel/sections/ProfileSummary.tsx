@@ -118,19 +118,14 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
 
       <Attributes count={totalAttributes || 46} />
 
-      <BehaviorMetrics
-        metrics={
-          scores.length > 0
-            ? scores.map(score => ({
-                label: score.label,
-                value: Math.round(score.value * 100),
-              }))
-            : [
-                { label: 'Consistency', value: 0 },
-                { label: 'Frequency', value: 0 },
-              ]
-        }
-      />
+      {scores.length > 0 && (
+        <BehaviorMetrics
+          metrics={scores.map(score => ({
+            label: score.label,
+            value: Math.round(score.value * 100),
+          }))}
+        />
+      )}
 
       <Interests hasData={hasContent} interests={profile?.data?.user?.lytics_content || []} />
 
