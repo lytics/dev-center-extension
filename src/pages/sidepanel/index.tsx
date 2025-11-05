@@ -6,7 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import State from '@pages/sidepanel/State';
 import { AppThemeProvider } from '@src/theme/ThemeProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 function init() {
   const appContainer = document.querySelector('#app-container');
@@ -25,7 +25,7 @@ function init() {
           <Router>
             <State />
           </Router>
-          <ReactQueryDevtools buttonPosition="top-right" />
+          {/* <ReactQueryDevtools buttonPosition="top-right" /> */}
         </QueryClientProvider>
       </AppThemeProvider>
     </React.StrictMode>,
