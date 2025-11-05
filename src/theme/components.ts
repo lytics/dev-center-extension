@@ -105,7 +105,8 @@ export const components: Components<Omit<Theme, 'components'>> = {
   MuiTabs: {
     styleOverrides: {
       root: {
-        minHeight: '3rem',
+        height: '2rem',
+        minHeight: '2rem',
       },
       indicator: {
         height: '0.1875rem',

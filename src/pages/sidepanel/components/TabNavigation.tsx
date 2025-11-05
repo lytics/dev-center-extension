@@ -16,12 +16,10 @@ interface TabNavigationProps {
 }
 
 const TabsContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-  paddingTop: '1.5rem', // 24px
+  padding: `1.5rem ${theme.spacing(2)} 0.5rem`, // 16px top/sides, 8px bottom
 }));
 
 const StyledTabs = styled(Tabs)(({ theme }) => ({
-  height: '2.5rem', // 40px
   cursor: 'pointer',
   '& .MuiTabs-flexContainer': {
     gap: theme.spacing(1.5),
@@ -61,7 +59,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
 
 const Divider = styled(Box)(() => ({
   width: 'calc(100% - 1.2rem)', // Full width minus left and right margins (0.6rem each side)
-  height: '0.09375rem', // 1.5px
+  height: '0.125rem', // 2px
   backgroundColor: `${appColors.neutral[200]}21`, // neutral[200] with 21 hex opacity (13%)
   margin: '0 0.6rem', // 0.6rem (9.6px) horizontal margins
 }));
