@@ -89,10 +89,14 @@ const StyledTableContainer = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(2),
 }));
 
+const StyledCircularProgress = styled(CircularProgress)(() => ({
+  color: appColors.common.colors.accent,
+}));
+
 const StyledSearchingCard = styled(Stack)(({ theme }) => ({
-  background: 'linear-gradient(white, white) padding-box, linear-gradient(to right, #FCC504, #E80339) border-box',
+  background: 'linear-gradient(white, white) padding-box, #8848F9 border-box',
   borderRadius: theme.spacing(1),
-  border: '4px solid transparent',
+  border: '2px solid transparent',
   padding: theme.spacing(1),
   marginTop: theme.spacing(1),
   marginBottom: theme.spacing(1),
@@ -102,11 +106,6 @@ const StyledLoadingContainer = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(2),
   marginBottom: 0,
   textAlign: 'center',
-}));
-
-const StyledDescriptionTypography = styled(Typography)(({ theme }) => ({
-  textAlign: 'center',
-  padding: theme.spacing(1),
 }));
 
 const TagStatus: React.FC<TagStatusProps> = ({
@@ -186,24 +185,18 @@ const TagStatus: React.FC<TagStatusProps> = ({
       ) : (
         <Stack>
           <StyledLoadingContainer>
-            <CircularProgress color="secondary" />
+            <StyledCircularProgress />
           </StyledLoadingContainer>
-          <StyledSearchingCard direction="row" spacing={2} display="flex" alignItems="center" justifyContent="center">
-            <Error style={{ fontSize: 26, color: appColors.warning.main }} />
+          <StyledSearchingCard
+            direction="row"
+            spacing={2}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            color={appColors.common.colors.accent}>
+            <Error style={{ fontSize: 26, color: appColors.common.colors.accent }} />
             <Typography variant="body2">{textContent.searchingForSdk}</Typography>
           </StyledSearchingCard>
-          <Box>
-            <StyledDescriptionTypography variant="body2">
-              {textContent.notFoundMessage}{' '}
-              <a
-                href="https://docs.lytics.com/docs/lytics-javascript-tag#installation"
-                target="_blank"
-                rel="noreferrer">
-                {textContent.documentationLinkText}
-              </a>
-              .
-            </StyledDescriptionTypography>
-          </Box>
         </Stack>
       )}
     </StyledContainer>

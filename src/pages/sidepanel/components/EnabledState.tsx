@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Typography } from '@mui/material';
 import { ConfigDomain } from '../assets/svg/ConfigDomain';
+import { ConfigDomainFound } from '../assets/svg/ConfigDomainFound';
 import { styled } from '@mui/material/styles';
 import { appColors } from '@root/src/theme/palette';
 import { appContent } from '@root/src/shared/content/appContent';
@@ -90,7 +91,7 @@ export const EnabledState = ({
   return (
     <Container>
       <OuterCard>
-        <ConfigDomain />
+        <ConfigDomainFound />
         <Title variant="h6" align="center">
           {textContent.title}
         </Title>
