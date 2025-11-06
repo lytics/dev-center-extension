@@ -30,7 +30,7 @@ const Debugger: React.FC<DebuggerProps> = ({ tagIsInstalled, tagConfig, getter, 
     <Stack alignItems={'flex-start'} justifyContent={'flex-start'} height={'100%'} width={'100%'}>
       <SectionHeader icon={<DebugIcon />} title={appContent.sectionHeaders.debug} />
       <TabNavigation tabs={tabs} value={getter} onChange={handleSetTab} />
-      <Box flexGrow={1} width={'100%'} overflow={'auto'} sx={{ height: 0 }}>
+      <Box flexGrow={1} width={'100%'} overflow={'auto'} sx={{ height: 0, paddingTop: '0.75rem' }}>
         <CustomTabPanel value={getter} index={0}>
           <TagConfig tagConfig={tagConfig} />
         </CustomTabPanel>

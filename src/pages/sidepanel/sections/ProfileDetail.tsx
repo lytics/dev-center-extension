@@ -50,7 +50,7 @@ const ProfileDetail: React.FC<ProfileDetailTabProps> = ({ profile }) => {
   };
 
   return (
-    <Stack spacing={2} width="100%">
+    <Stack spacing={2} width="100%" paddingTop={'0.75rem'}>
       <StyledPanel>
         <TreeDisplay data={profile?.data} collapsed={2} />
       </StyledPanel>
