@@ -101,7 +101,6 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         paddingTop: '0.75rem',
         gap: '0.75rem',
         overflow: 'auto',
-        paddingBottom: '5rem',
       }}>
       {/* NEW: Profile Header Component */}
       <ProfileHeader
