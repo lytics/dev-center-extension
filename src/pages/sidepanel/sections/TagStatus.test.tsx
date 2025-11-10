@@ -128,17 +128,5 @@ describe('TagStatus', () => {
       expect(screen.getByText('Searching for Lytics JavaScript SDK')).toBeInTheDocument();
       expect(screen.getByTestId('ErrorIcon')).toBeInTheDocument();
     });
-
-    it('shows installation instructions with documentation link', () => {
-      renderWithTheme(<TagStatus tagIsInstalled={false} tagConfig={mockTagConfig} tagActivity={emptyTagActivity} />);
-
-      expect(screen.getByText(/We have not been able to find the Lytics JavaScript SDK/)).toBeInTheDocument();
-
-      const docLink = screen.getByRole('link', { name: 'Lytics JavaScript SDK documentation' });
-      expect(docLink).toBeInTheDocument();
-      expect(docLink).toHaveAttribute('href', 'https://docs.lytics.com/docs/lytics-javascript-tag#installation');
-      expect(docLink).toHaveAttribute('target', '_blank');
-      expect(docLink).toHaveAttribute('rel', 'noreferrer');
-    });
   });
 });

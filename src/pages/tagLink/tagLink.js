@@ -33,7 +33,7 @@ class TagLinkInternal {
             this.emitLog('tag', 'get experiences');
             break;
           default:
-            this.emitLog('tag', `invalid action: ${event.data.action}`);
+            // this.emitLog('tag', `invalid action: ${event.data.action}`);
             break;
         }
       }

@@ -142,4 +142,14 @@ export const components: Components<Omit<Theme, 'components'>> = {
       },
     },
   },
+
+  // Accordion customizations
+  MuiAccordionSummary: {
+    styleOverrides: {
+      content: {
+        marginTop: '1rem', // 16px
+        marginBottom: '1rem', // 16px
+      },
+    },
+  },
 };
