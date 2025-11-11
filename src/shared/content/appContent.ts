@@ -19,7 +19,7 @@ export const appContent = {
   // EnabledState Component
   enabledState: {
     title: 'Lytics SDK detected',
-    buttonText: 'Analyze domains',
+    buttonText: 'Configure domain',
     pinnedUrlText: {
       prefix: 'Wait a minute! You are currently analyzing ',
       suffix: ". If you'd like to analyze this domain instead pin it below.",

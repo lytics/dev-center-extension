@@ -72,17 +72,16 @@ const TagActivity = ({ textContent = appContent.tagActivity }: TagActivityProps)
     fontSize: appColors.common.fontSize.small,
   }));
 
+  const StyledButton = styled(Button)(() => ({
+    color: appColors.common.colors.accent,
+  }));
+
   return (
     <Box fontSize={12}>
       <Box textAlign={'right'} m={1}>
-        <Button
-          size={'small'}
-          variant={'text'}
-          color={'secondary'}
-          onClick={handleClearActivity}
-          startIcon={<Delete />}>
+        <StyledButton size={'small'} variant={'text'} onClick={handleClearActivity} startIcon={<Delete />}>
           {textContent.clearLogsLabel}
-        </Button>
+        </StyledButton>
       </Box>
       {tagActivity.length === 0 ? (
         <Box mt={6}>
