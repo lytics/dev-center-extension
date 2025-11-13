@@ -2,6 +2,7 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import zipPack from 'vite-plugin-zip-pack';
 
 import { crx } from '@crxjs/vite-plugin';
 import react from '@vitejs/plugin-react';
@@ -44,6 +45,10 @@ export default defineConfig({
           dest: 'assets/img',
         },
       ],
+    }),
+    zipPack({
+      outDir: '.',
+      outFileName: 'extension.zip',
     }),
   ],
   publicDir,
