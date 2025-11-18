@@ -57,9 +57,8 @@ const StyledBottomNavigationAction = styled(BottomNavigationAction)<{
   paddingBlock: theme.spacing(1.5),
   backgroundColor: isSelected ? appColors.common.colors.accent : 'transparent',
   borderRadius: theme.spacing(0.5),
-  '&.Mui-selected': {
-    color: appColors.common.white,
-  },
+  color: isSelected ? appColors.common.white : '',
+
   '&:hover': {
     backgroundColor: isSelected ? 'appColors.common.colors.accent' : 'rgba(136, 72, 249, 0.1)', // Light accent color on hover
   },

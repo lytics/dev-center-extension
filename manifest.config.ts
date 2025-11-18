@@ -44,11 +44,9 @@ export default defineManifest({
     'activeTab',
     'tabs',
     'webRequest',
-    'webNavigation',
     'declarativeNetRequest',
     'declarativeNetRequestFeedback',
     'sidePanel',
-    'contextMenus',
     'management',
   ],
   web_accessible_resources: [
