@@ -92,6 +92,16 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
     return attributes.length > 0 ? attributes[0] : 'Unknown';
   }, [profile?.data?.user]);
 
+  const interestsArray = useMemo(() => {
+    const lyticsContent = profile?.data?.user?.lytics_content;
+    if (!lyticsContent || typeof lyticsContent !== 'object') return [];
+
+    return Object.entries(lyticsContent).map(([label, value]) => ({
+      label,
+      value: Math.round((typeof value === 'number' ? value : 0) * 100),
+    }));
+  }, [profile?.data?.user?.lytics_content]);
+
   return (
     <Box
       sx={{
@@ -126,7 +136,7 @@ const ProfileSummary: React.FC<ProfileSummaryTabProps> = ({ profile }) => {
         />
       )}
 
-      <Interests hasData={hasContent} interests={profile?.data?.user?.lytics_content || []} />
+      <Interests hasData={hasContent} interests={interestsArray} />
 
       <ProfileMetadata lastUpdated={lastUpdatedText} lastAttribute={lastAttributeText} />
     </Box>

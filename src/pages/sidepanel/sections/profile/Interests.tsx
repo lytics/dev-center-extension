@@ -1,13 +1,18 @@
 import React from 'react';
-import { Box, Stack, Typography, Link } from '@mui/material';
+import { Box, Stack, Typography, Link, LinearProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Lock } from '@mui/icons-material';
 import { appColors } from '@root/src/theme/palette';
 import { appContent } from '@root/src/shared/content/appContent';
 
+interface Interest {
+  label: string;
+  value: number;
+}
+
 interface InterestsProps {
   hasData: boolean;
-  interests?: string[];
+  interests?: Interest[];
   textContent?: typeof appContent.interests;
 }
 
@@ -68,11 +73,33 @@ const StyledLink = styled(Link)(() => ({
   },
 }));
 
-const ContentText = styled(Typography)(() => ({
+const InterestsContainer = styled(Stack)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(1),
+}));
+
+const InterestRow = styled(Stack)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(0.5),
+}));
+
+const InterestLabel = styled(Typography)(() => ({
   fontSize: appColors.common.fontSize.baseSmall,
-  color: appColors.neutral[600],
-  lineHeight: appColors.common.lineHeight.tight,
   fontWeight: appColors.common.fontWeight.medium,
+  color: appColors.neutral[900],
+}));
+
+const StyledLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  width: '100%',
+  height: '0.5rem', // 8px
+  borderRadius: theme.spacing(0.5),
+  backgroundColor: appColors.common.colors.accentLight,
+  '& .MuiLinearProgress-bar': {
+    backgroundColor: appColors.common.colors.accent,
+    borderRadius: theme.spacing(0.5),
+  },
 }));
 
 export const Interests = ({
@@ -85,7 +112,18 @@ export const Interests = ({
       <TitleText>{textContent.title}</TitleText>
 
       {hasData && interests.length > 0 ? (
-        <ContentText>{interests.join(', ')}</ContentText>
+        <InterestsContainer>
+          {interests.map((interest, index) => (
+            <InterestRow key={index}>
+              <InterestLabel>{interest.label}</InterestLabel>
+              <StyledLinearProgress
+                variant="determinate"
+                value={interest.value}
+                aria-label={`${interest.label}: ${interest.value}%`}
+              />
+            </InterestRow>
+          ))}
+        </InterestsContainer>
       ) : (
         <EmptyStateContainer>
           <LockIcon aria-hidden="true" />
