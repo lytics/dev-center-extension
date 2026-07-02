@@ -45,7 +45,7 @@ describe('Script Injection Module', () => {
       injectScript();
 
       expect(document.createElement).toHaveBeenCalledWith('script');
-      expect(mockScript.src).toBe('chrome-extension://test/tagLink.js');
+      expect(mockScript.src).toMatch(/^chrome-extension:\/\/test\/tagLink\.js\?v=/);
       expect(document.documentElement.appendChild).toHaveBeenCalledWith(mockScript);
     });
 

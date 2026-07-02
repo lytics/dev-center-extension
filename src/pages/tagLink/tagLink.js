@@ -70,7 +70,11 @@ class TagLinkInternal {
     if (!this.jstagExist()) return;
 
     window.jstag.call('entityReady', () => {
-      this.dispatchEvent('config', window.jstag.config);
+      try {
+        this.dispatchEvent('config', window.jstag.config);
+      } catch (err) {
+        this.emitLog('tag', { msg: 'failed to read config', error: String(err) });
+      }
     });
   }
 
@@ -79,8 +83,12 @@ class TagLinkInternal {
 
     window.jstag.call('entityReady', entity => {
       window.jstag.getid(id => {
-        entity.data._uid = id;
-        this.dispatchEvent('entity', entity);
+        try {
+          entity.data._uid = id;
+          this.dispatchEvent('entity', entity);
+        } catch (err) {
+          this.emitLog('tag', { msg: 'failed to read entity', error: String(err) });
+        }
       });
     });
   }
@@ -100,27 +108,54 @@ class TagLinkInternal {
     `);
   }
 
+  safeClone(value, seen = new WeakSet()) {
+    if (value === null || typeof value !== 'object') {
+      return typeof value === 'bigint' ? value.toString() : value;
+    }
+
+    try {
+      if (value === value.window || value.self === value) return undefined;
+    } catch {
+      return undefined;
+    }
+
+    // Only walk plain data (object literals / arrays). Anything else - DOM nodes, Window,
+    // class instances, Map/Set, etc. - can reach huge or exotic graphs (e.g. a DOM element's
+    // ownerDocument/parentNode chain), so skip it rather than cloning it.
+    const proto = Object.getPrototypeOf(value);
+    const isPlainObject = proto === Object.prototype || proto === null;
+    if (!Array.isArray(value) && !isPlainObject) {
+      return undefined;
+    }
+
+    if (seen.has(value)) return undefined;
+    seen.add(value);
+
+    if (Array.isArray(value)) return value.map(v => this.safeClone(v, seen));
+
+    const out = {};
+    for (const key in value) {
+      try {
+        const v = value[key];
+        if (typeof v !== 'function') out[key] = this.safeClone(v, seen);
+      } catch {
+        // skip unreadable (cross-origin) property
+      }
+    }
+    return out;
+  }
+
   dispatchEvent(name, payload) {
-    const safeStringify = obj => {
-      const seen = new WeakSet();
-
-      return JSON.stringify(obj, (key, value) => {
-        if (value !== null && typeof value === 'object') {
-          if (seen.has(value)) {
-            return undefined;
-          }
-          seen.add(value);
-        }
-        return value;
+    try {
+      const customEvent = new CustomEvent(name, {
+        detail: {
+          data: JSON.stringify(this.safeClone(payload)),
+        },
       });
-    };
-
-    const customEvent = new CustomEvent(name, {
-      detail: {
-        data: safeStringify(payload),
-      },
-    });
-    document.dispatchEvent(customEvent);
+      document.dispatchEvent(customEvent);
+    } catch (err) {
+      this.emitLog('tag', { msg: 'failed to serialize payload', name, error: String(err) });
+    }
   }
 }
 

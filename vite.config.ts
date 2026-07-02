@@ -17,6 +17,9 @@ const assetsDir = resolve(srcDir, 'assets');
 const publicDir = resolve(rootDir, 'public');
 
 export default defineConfig({
+  define: {
+    __TAGLINK_BUILD_ID__: JSON.stringify(Date.now()),
+  },
   resolve: {
     alias: {
       '@root': rootDir,

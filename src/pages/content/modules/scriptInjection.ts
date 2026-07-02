@@ -10,7 +10,10 @@ export const injectScript = (scriptInjectedRef?: MutableRefObject<boolean>) => {
 
   const script = document.createElement('script');
 
-  script.src = chrome.runtime.getURL('/tagLink.js');
+  // Cache-bust: tagLink.js keeps a stable filename (required by manifest.web_accessible_resources),
+  // so without a query param the browser can keep serving an old cached copy after an extension update.
+  const buildId = typeof __TAGLINK_BUILD_ID__ !== 'undefined' ? __TAGLINK_BUILD_ID__ : '';
+  script.src = `${chrome.runtime.getURL('/tagLink.js')}?v=${buildId}`;
   script.onload = () => {
     EmitLog({ name: 'content', payload: { msg: 'TagLink script loaded successfully' } });
     if (scriptInjectedRef) {

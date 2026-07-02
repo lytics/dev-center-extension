@@ -92,7 +92,7 @@ const TagActivity = ({ textContent = appContent.tagActivity }: TagActivityProps)
           {tagActivity.map((item, index) => (
             <>
               {item && (
-                <StyledAccordion disableGutters key={index}>
+                <StyledAccordion disableGutters key={item.ts} TransitionProps={{ unmountOnExit: true }}>
                   <AccordionSummary expandIcon={<ExpandMore />} aria-controls="panel1a-content" id={index.toString()}>
                     <Stack
                       direction={'row'}
