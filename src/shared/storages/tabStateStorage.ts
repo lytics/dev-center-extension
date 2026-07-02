@@ -3,6 +3,7 @@ import { EmitLog } from '@src/shared/components/EmitLog';
 import { EventModel } from '@src/shared/models/eventModel';
 
 const TabStateStorageKey = 'domainStates';
+const MAX_TAG_ACTIVITY_EVENTS = 200;
 
 export interface DomainState {
   domain: string;
@@ -129,7 +130,9 @@ const domainStateStore: DomainStateStorage = {
         allStates[domain] = createDefaultDomainState(domain);
       }
 
-      allStates[domain].tagActivity = [...(allStates[domain].tagActivity || []), event];
+      const nextActivity = [...(allStates[domain].tagActivity || []), event];
+      allStates[domain].tagActivity =
+        nextActivity.length > MAX_TAG_ACTIVITY_EVENTS ? nextActivity.slice(-MAX_TAG_ACTIVITY_EVENTS) : nextActivity;
       allStates[domain].lastUpdated = Date.now();
 
       await storage.set(allStates);

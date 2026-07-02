@@ -69,7 +69,11 @@ class TagLinkInternal {
     if (!this.jstagExist()) return;
 
     (window as any).jstag.call('entityReady', () => {
-      this.dispatchEvent('config', (window as any).jstag.config);
+      try {
+        this.dispatchEvent('config', (window as any).jstag.config);
+      } catch (err) {
+        this.emitLog('tag', { msg: 'failed to read config', error: String(err) });
+      }
     });
   }
 
@@ -78,9 +82,12 @@ class TagLinkInternal {
 
     (window as any).jstag.call('entityReady', entity => {
       (window as any).jstag.getid(id => {
-        // this.emitLog('tag', 'got entity');
-        entity.data._uid = id;
-        this.dispatchEvent('entity', entity);
+        try {
+          entity.data._uid = id;
+          this.dispatchEvent('entity', entity);
+        } catch (err) {
+          this.emitLog('tag', { msg: 'failed to read entity', error: String(err) });
+        }
       });
     });
   }
@@ -100,27 +107,54 @@ class TagLinkInternal {
     `);
   }
 
+  safeClone(value: any, seen = new WeakSet()): any {
+    if (value === null || typeof value !== 'object') {
+      return typeof value === 'bigint' ? value.toString() : value;
+    }
+
+    try {
+      if (value === value.window || value.self === value) return undefined;
+    } catch {
+      return undefined;
+    }
+
+    // Only walk plain data (object literals / arrays). Anything else - DOM nodes, Window,
+    // class instances, Map/Set, etc. - can reach huge or exotic graphs (e.g. a DOM element's
+    // ownerDocument/parentNode chain), so skip it rather than cloning it.
+    const proto = Object.getPrototypeOf(value);
+    const isPlainObject = proto === Object.prototype || proto === null;
+    if (!Array.isArray(value) && !isPlainObject) {
+      return undefined;
+    }
+
+    if (seen.has(value)) return undefined;
+    seen.add(value);
+
+    if (Array.isArray(value)) return value.map(v => this.safeClone(v, seen));
+
+    const out: Record<string, any> = {};
+    for (const key in value) {
+      try {
+        const v = value[key];
+        if (typeof v !== 'function') out[key] = this.safeClone(v, seen);
+      } catch {
+        // skip unreadable (cross-origin) property
+      }
+    }
+    return out;
+  }
+
   dispatchEvent(name: string, payload: any) {
-    const safeStringify = (obj: any) => {
-      const seen = new WeakSet();
-
-      return JSON.stringify(obj, (key, value) => {
-        if (value !== null && typeof value === 'object') {
-          if (seen.has(value)) {
-            return undefined;
-          }
-          seen.add(value);
-        }
-        return value;
+    try {
+      const customEvent = new CustomEvent(name, {
+        detail: {
+          data: JSON.stringify(this.safeClone(payload)),
+        },
       });
-    };
-
-    const customEvent = new CustomEvent(name, {
-      detail: {
-        data: safeStringify(payload),
-      },
-    });
-    document.dispatchEvent(customEvent);
+      document.dispatchEvent(customEvent);
+    } catch (err) {
+      this.emitLog('tag', { msg: 'failed to serialize payload', name, error: String(err) });
+    }
   }
 }
 

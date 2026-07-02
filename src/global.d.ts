@@ -1,3 +1,5 @@
+declare const __TAGLINK_BUILD_ID__: string;
+
 declare module 'virtual:reload-on-update-in-background-script' {
   export const reloadOnUpdate: (watchPath: string) => void;
   export default reloadOnUpdate;
