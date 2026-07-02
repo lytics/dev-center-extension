@@ -100,27 +100,43 @@ class TagLinkInternal {
     `);
   }
 
+  safeClone(value: any, seen = new WeakSet()): any {
+    if (value === null || typeof value !== 'object') return value;
+
+    try {
+      if (value === value.window || value.self === value) return undefined;
+    } catch {
+      return undefined;
+    }
+
+    if (seen.has(value)) return undefined;
+    seen.add(value);
+
+    if (Array.isArray(value)) return value.map(v => this.safeClone(v, seen));
+
+    const out: Record<string, any> = {};
+    for (const key in value) {
+      try {
+        const v = value[key];
+        if (typeof v !== 'function') out[key] = this.safeClone(v, seen);
+      } catch {
+        // skip unreadable (cross-origin) property
+      }
+    }
+    return out;
+  }
+
   dispatchEvent(name: string, payload: any) {
-    const safeStringify = (obj: any) => {
-      const seen = new WeakSet();
-
-      return JSON.stringify(obj, (key, value) => {
-        if (value !== null && typeof value === 'object') {
-          if (seen.has(value)) {
-            return undefined;
-          }
-          seen.add(value);
-        }
-        return value;
+    try {
+      const customEvent = new CustomEvent(name, {
+        detail: {
+          data: JSON.stringify(this.safeClone(payload)),
+        },
       });
-    };
-
-    const customEvent = new CustomEvent(name, {
-      detail: {
-        data: safeStringify(payload),
-      },
-    });
-    document.dispatchEvent(customEvent);
+      document.dispatchEvent(customEvent);
+    } catch (err) {
+      this.emitLog('tag', { msg: 'failed to serialize payload', name, error: String(err) });
+    }
   }
 }
 
